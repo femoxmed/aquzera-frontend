@@ -1,0 +1,1 @@
+export default function PageHeader({title,description}:{title:string;description?:string}){return <div className="mb-8 rounded-2xl bg-gradient-to-r from-primary to-secondary p-8 text-primary-foreground"><h1 className="text-3xl font-bold md:text-4xl">{title}</h1>{description&&<p className="mt-2 max-w-2xl text-primary-foreground/90">{description}</p>}</div>}

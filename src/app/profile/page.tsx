@@ -1,0 +1,1 @@
+import PageHeader from "@/components/common/PageHeader";export const metadata={title:'Profile'};export default function ProfilePage(){return <div className="container py-12"><PageHeader title="Profile" description="Manage your account information."/><div className="rounded-lg border p-6">User profile content goes here.</div></div>}
