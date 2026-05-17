@@ -9,7 +9,7 @@ export default function HeroSection() {
 	return (
 		<section className='relative overflow-hidden h-[500px] sm:h-[600px] md:h-[700px] lg:h-[824px] min-h-[400px] sm:min-h-[450px] md:min-h-[500px] lg:min-h-[520px]'>
 			<Image
-				src='/images/home-family.png'
+				src='/images/home_bg.png'
 				alt='Family enjoying Aquzera water purifier'
 				fill
 				className='object-cover object-center'
