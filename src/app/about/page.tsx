@@ -1,176 +1,149 @@
-import Image from "next/image";
-import Link from "next/link";
-import BlueFeaturesStrip from "@/components/common/BlueFeaturesStrip";
+import Image from 'next/image';
+import Link from 'next/link';
+import BlueFeaturesStrip from '@/components/common/BlueFeaturesStrip';
 
-export const metadata = { title: "About" };
+export const metadata = { title: 'About' };
 
 const processingFeatures = [
-  {
-    id: "delivery",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8">
-        <rect x="4" y="24" width="40" height="24" rx="3" />
-        <path d="M44 32h8l8 8v8h-16V32z" />
-        <circle cx="16" cy="52" r="5" />
-        <circle cx="48" cy="52" r="5" />
-        <path d="M4 32h40M20 24V16a4 4 0 014-4h12" strokeLinecap="round" />
-      </svg>
-    ),
-    title: "EFFICIENT, FAST DELIVERY",
-    description:
-      "Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.",
-  },
-  {
-    id: "installation",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8">
-        <circle cx="32" cy="32" r="12" />
-        <path d="M32 4v8M32 52v8M4 32h8M52 32h8" strokeLinecap="round" />
-        <path d="M14 14l6 6M44 44l6 6M14 50l6-6M44 20l6-6" strokeLinecap="round" />
-        <circle cx="32" cy="32" r="4" fill="currentColor" />
-      </svg>
-    ),
-    title: "QUALIFIED INSTALLATION",
-    description:
-      "Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.",
-  },
-  {
-    id: "after",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8">
-        <path d="M32 8C18.7 8 8 18.7 8 32s10.7 24 24 24 24-10.7 24-24" strokeLinecap="round" />
-        <path d="M44 8l8 8-8 8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M22 32l6 6 12-12" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    title: "AFTER INSTALLATION SERVICES",
-    description:
-      "Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.",
-  },
+	{
+		id: 'delivery',
+		icon: '🚚',
+		title: 'EFFICIENT, FAST DELIVERY',
+		description:
+			'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.',
+	},
+	{
+		id: 'installation',
+		icon: '🔌',
+		title: 'QUALIFIED INSTALLATION',
+		description:
+			'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.',
+	},
+	{
+		id: 'after',
+		icon: '🎧',
+		title: 'AFTER INSTALLATION SERVICES',
+		description:
+			'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.',
+	},
 ];
 
 export default function AboutPage() {
-  return (
-    <>
-      {/* ── AQUZERA FOR BUSINESSES ── */}
-      <section className="bg-white py-16">
-        <div className="container">
-          {/* Heading */}
-          <div className="text-center mb-10">
-            <h1
-              className="text-2xl md:text-3xl font-black text-gray-900"
-              style={{ fontFamily: "'Mona Sans','Montserrat',sans-serif", fontStretch: "125%" }}
-            >
-              Aquzera for Businesses
-            </h1>
-            <p className="mt-2 text-sm text-gray-500">
-              Bring clarity to your Business Restaurant, or Office
-            </p>
-          </div>
+	return (
+		<main className='bg-white pt-[110px] lg:pt-[130px]'>
+			{/* AQUZERA FOR BUSINESSES */}
+			<section className='bg-white px-5 pb-20 text-center sm:px-8 lg:pb-28'>
+				<div className='mx-auto max-w-[1180px]'>
+					<h1 className='mx-auto max-w-[650px] font-mona-wide text-[38px] font-bold leading-[0.95] tracking-[-0.05em] text-black sm:text-[48px] md:text-[58px]'>
+						Aquzera for
+						<br className='hidden sm:block' /> Businesses
+					</h1>
 
-          {/* Office image */}
-          <div className="relative w-full h-72 md:h-96 rounded-xl overflow-hidden mb-10">
-            <Image
-              src="/images/office-business.png"
-              alt="Aquzera for businesses — office scene"
-              fill
-              className="object-cover object-center"
-            />
-          </div>
+					<p className='mx-auto mt-6 max-w-[620px] font-montserrat text-[15px] leading-[1.4] text-black/60 sm:text-[18px]'>
+						Bring clarity to your Business Restaurant, or Office
+					</p>
 
-          {/* Body text + CTA */}
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Learn why thousands of businesses and offices are opting for Aquzera water purifiers.
-              Most people are at work for at least one-third of the day. Make sure to have a healthy
-              environment for yourself, your employees, and your customers with Aquzera and our
-              regular filter changes through our rental program.
-            </p>
-            <Link
-              href="/product"
-              className="mt-8 inline-flex items-center gap-2 bg-primary text-white text-xs font-bold tracking-[0.2em] px-8 py-3.5 hover:bg-blue-700 transition-colors"
-            >
-              EXPLORE NOW →
-            </Link>
-          </div>
-        </div>
-      </section>
+					<div className='relative mx-auto mt-12 h-[280px] w-full overflow-hidden rounded-[28px] sm:h-[380px] md:h-[480px] lg:rounded-[42px]'>
+						<Image
+							src='/images/office-business.png'
+							alt='Aquzera for businesses — office scene'
+							fill
+							priority
+							className='object-cover object-center'
+						/>
+					</div>
 
-      {/* ── QUICK AND EFFICIENT PROCESSING ── */}
-      <section className="bg-gray-950 py-16">
-        <div className="container">
-          {/* Top: heading + description */}
-          <div className="grid md:grid-cols-2 gap-10 mb-14">
-            <div>
-              <h2
-                className="text-3xl md:text-4xl font-black text-white leading-tight"
-                style={{ fontFamily: "'Mona Sans','Montserrat',sans-serif", fontStretch: "125%" }}
-              >
-                Quick and
-                <br />
-                Efficient
-                <br />
-                Processing
-              </h2>
-            </div>
-            <div className="flex items-center">
-              <p className="text-sm text-white/60 leading-relaxed max-w-xs">
-                Aquzera purification systems elevate your everyday hydration
-                through advanced filtration and refined engineering.
-                <br /><br />
-                Aquzera purification systems elevate your everyday hydration
-                through advanced filtration and refined engineering.
-              </p>
-            </div>
-          </div>
+					<p className='mx-auto mt-12 max-w-[850px] font-montserrat text-[15px] leading-[1.35] tracking-[-0.02em] text-black/65 sm:text-[18px] md:text-[21px]'>
+						Learn why thousands of businesses and offices are opting for Aquzera
+						water purifiers. Most people are at work for at least one-third of
+						the day. Make sure to have a healthy environment for yourself, your
+						employees, and your customers with Aquzera and our regular filter
+						changes through our rental program.
+					</p>
 
-          {/* Features list */}
-          <div className="space-y-0 divide-y divide-white/10">
-            {processingFeatures.map((feature, idx) => (
-              <div
-                key={feature.id}
-                className="flex items-start gap-6 py-8"
-              >
-                {/* Icon in circle — alternating left/right */}
-                {idx % 2 === 0 ? (
-                  <>
-                    {/* Icon left */}
-                    <div className="flex-shrink-0 w-16 h-16 rounded-full border border-white/20 flex items-center justify-center text-white/70">
-                      {feature.icon}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold tracking-[0.2em] text-white/90 uppercase mb-2">
-                        {feature.title}
-                      </p>
-                      <p className="text-xs text-white/50 leading-relaxed max-w-xs">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex-1 text-right hidden md:block" />
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold tracking-[0.2em] text-white/90 uppercase mb-2">
-                        {feature.title}
-                      </p>
-                      <p className="text-xs text-white/50 leading-relaxed max-w-xs">
-                        {feature.description}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 w-16 h-16 rounded-full border border-white/20 flex items-center justify-center text-white/70">
-                      {feature.icon}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+					<Link
+						href='/product'
+						className='mt-10 inline-flex h-[58px] min-w-[190px] items-center justify-center bg-[#1738e6] px-7 font-mona text-[12px] font-black uppercase tracking-[0.24em] text-white transition-opacity hover:opacity-90 sm:h-[64px] sm:min-w-[220px]'>
+						EXPLORE NOW <span className='ml-3 text-[22px]'>→</span>
+					</Link>
 
-      {/* ── BLUE FEATURES ── */}
-      <BlueFeaturesStrip />
-    </>
-  );
+					<div className='mt-14 border-t border-black/15' />
+				</div>
+			</section>
+
+			{/* QUICK AND EFFICIENT PROCESSING */}
+			<section className='bg-[linear-gradient(180deg,#000_0%,#050607_60%,#202329_100%)] px-5 py-20 text-white sm:px-8 md:py-28'>
+				<div className='mx-auto max-w-[1080px]'>
+					<div className='grid gap-8 border-b border-white/15 pb-12 md:grid-cols-[420px_1fr] md:gap-14'>
+						<h2 className='font-mona-wide text-[42px] font-bold leading-[0.9] tracking-[-0.06em] sm:text-[52px] md:text-[60px]'>
+							Quick and
+							<br />
+							Efficient
+							<br />
+							Processing
+						</h2>
+
+						<div className='max-w-[520px] font-montserrat text-[14px] leading-[1.45] text-white/55 sm:text-[16px]'>
+							<p>
+								Aquzera purification systems elevate your everyday hydration
+								through advanced filtration and refined engineering.
+							</p>
+							<p className='mt-5'>
+								From delivery to installation and support, we make the process
+								simple, fast, and reliable for every customer.
+							</p>
+						</div>
+					</div>
+
+					<div className='mt-20 space-y-20 md:space-y-28'>
+						{processingFeatures.map((feature, index) => (
+							<div
+								key={feature.id}
+								className={`grid items-center gap-8 md:grid-cols-[180px_1fr_180px] ${
+									index === 1 ? 'md:text-left' : ''
+								}`}>
+								{index !== 1 ? (
+									<>
+										<div className='flex h-[150px] w-[150px] items-center justify-center rounded-full border border-white/30 text-[48px] text-white/80'>
+											{feature.icon}
+										</div>
+
+										<div className='max-w-[520px]'>
+											<h3 className='font-mona text-[18px] font-black uppercase tracking-[0.26em] text-white'>
+												{feature.title}
+											</h3>
+											<p className='mt-5 font-montserrat text-[14px] leading-[1.45] text-white/50 sm:text-[15px]'>
+												{feature.description}
+											</p>
+										</div>
+
+										<div className='hidden md:block' />
+									</>
+								) : (
+									<>
+										<div className='hidden md:block' />
+
+										<div className='max-w-[520px] md:ml-auto'>
+											<h3 className='font-mona text-[18px] font-black uppercase tracking-[0.26em] text-white'>
+												{feature.title}
+											</h3>
+											<p className='mt-5 font-montserrat text-[14px] leading-[1.45] text-white/50 sm:text-[15px]'>
+												{feature.description}
+											</p>
+										</div>
+
+										<div className='flex h-[150px] w-[150px] items-center justify-center rounded-full border border-white/30 text-[48px] text-white/80'>
+											{feature.icon}
+										</div>
+									</>
+								)}
+							</div>
+						))}
+					</div>
+				</div>
+			</section>
+
+			<BlueFeaturesStrip />
+		</main>
+	);
 }
