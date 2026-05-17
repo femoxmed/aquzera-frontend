@@ -1,9 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
+import { useAddToCart } from '@/lib/addToCart';
 
 export default function HeroSection() {
+	const addToCart = useAddToCart();
+
 	return (
 		<section className='relative overflow-hidden h-[500px] sm:h-[600px] md:h-[700px] lg:h-[824px] min-h-[400px] sm:min-h-[450px] md:min-h-[500px] lg:min-h-[520px]'>
 			<Image
@@ -26,11 +28,18 @@ export default function HeroSection() {
 					advanced filtration and refined engineering.
 				</p>
 				<div className='mt-8'>
-					<Link
-						href='/product/aquzera-water-purifier'
-						className='inline-flex font-mona justify-center items-center gap-3 font-bold tracking-[0.18em] text-white text-sm sm:text-base px-5 sm:px-7 py-3 sm:py-[14px] h-[56px] sm:h-[66px] lg:h-[76px] w-[180px] sm:w-[200px] lg:w-[225px] bg-[#1229C0] hover:opacity-90 transition-opacity'>
+					<button
+						onClick={() =>
+							addToCart({
+								id: 'aquzera-water-purifier',
+								name: 'Aquzera Water Purifier',
+								price: 200000,
+								image: '/images/purifier-black.png',
+							})
+						}
+						className='inline-flex font-mona justify-center items-center gap-3 font-bold tracking-[0.18em] text-white text-sm sm:text-base px-5 sm:px-7 py-3 sm:py-[14px] h-[56px] sm:h-[66px] lg:h-[76px] w-[180px] sm:w-[200px] lg:w-[225px] bg-[#1229C0] hover:opacity-90 transition-opacity cursor-pointer'>
 						BUY NOW &nbsp;→
-					</Link>
+					</button>
 				</div>
 			</div>
 

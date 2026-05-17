@@ -5,53 +5,34 @@ import { HelpCircle } from 'lucide-react';
 export default function Footer() {
 	return (
 		<footer>
-			{/* Footer background image with content overlaid */}
-			<div className='relative h-52 md:h-74 overflow-hidden'>
+			{/* FOOTER IMAGE AREA */}
+			<section className='relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] xl:h-[420px] overflow-hidden bg-black/45 backdrop-blur-sm'>
 				<Image
 					src='/images/footer_bg.png'
-					alt='Footer background'
+					alt='Aquzera footer'
 					fill
-					className='object-cover'
+					className='object-cover object-center blur-[5px] bg-black/45 backdrop-blur-sm'
 				/>
-				<div className='absolute inset-0 backdrop-blur-sm bg-black/30' />
+				<div className='absolute inset-0 bg-black/65' />
 
-				{/* Footer bar overlaid on the image */}
-				<div className='absolute bottom-0 left-0 right-0 bg-black/70 py-10'>
-					<div className='container flex flex-wrap items-center justify-between gap-4'>
-						{/* Brand */}
-						<Link
-							href='/'
-							className='text-[11px] font-bold tracking-widest text-white underline underline-offset-2'>
-							AQUZERA © 2026
-						</Link>
+				<div className='absolute bottom-0 left-0 right-0 z-10 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 md:gap-6 lg:gap-8 px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 font-mona text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] xl:text-[14px] font-black uppercase tracking-[0.18em] sm:tracking-[0.2em] md:tracking-[0.22em] lg:tracking-[0.24em] text-white'>
+					<p className='underline underline-offset-2 sm:underline-offset-3 md:underline-offset-4 order-1 sm:order-none'>
+						Aquzera &copy; 2026
+					</p>
 
-						{/* Links */}
-						<div className='flex items-center gap-6'>
-							<Link
-								href='/privacy'
-								className='text-[10px] font-medium tracking-[0.12em] text-white/70 hover:text-white transition-colors'>
-								PRIVACY POLICY
-							</Link>
-							<Link
-								href='/warranty'
-								className='text-[10px] font-medium tracking-[0.12em] text-white/70 hover:text-white transition-colors'>
-								WARRANTY
-							</Link>
-							<Link
-								href='/terms'
-								className='text-[10px] font-medium tracking-[0.12em] text-white/70 hover:text-white transition-colors'>
-								TERMS & CONDITIONS
-							</Link>
-						</div>
-
-						{/* Get Help */}
-						<button className='flex items-center gap-2 rounded-full border border-white/40 px-4 py-1.5 text-[10px] font-medium tracking-widest text-white hover:bg-white/10 transition-colors'>
-							<HelpCircle className='h-3.5 w-3.5' />
-							GET HELP
-						</button>
+					<div className='flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-10 lg:gap-14 xl:gap-20 order-3 sm:order-none'>
+						<Link href='/privacy'>Privacy Policy</Link>
+						<Link href='/warranty'>Warranty</Link>
+						<Link href='/terms'>Terms & Conditions</Link>
 					</div>
+
+					<Link
+						href='/contact'
+						className='border border-white/45 px-4 sm:px-5 md:px-6 lg:px-7 xl:px-8 py-2 sm:py-2 md:py-3 hover:bg-white/10 order-2 sm:order-none'>
+						? Get Help
+					</Link>
 				</div>
-			</div>
+			</section>
 		</footer>
 	);
 }

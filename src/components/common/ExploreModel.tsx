@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
+import { useAddToCart } from '@/lib/addToCart';
 
 const specs = [
 	{ value: '15"', label: 'Inches Smart\nDisplay' },
@@ -11,6 +11,7 @@ const specs = [
 ];
 
 export default function ExploreModel() {
+	const addToCart = useAddToCart();
 	const [selectedColor, setSelectedColor] = useState<'white' | 'black'>(
 		'black',
 	);
@@ -73,14 +74,21 @@ export default function ExploreModel() {
 						</div>
 
 						<div className='mt-8 sm:mt-10 md:mt-14 lg:mt-20 flex justify-center'>
-							<Link
-								href='/product/aquzera-water-purifier'
-								className='inline-flex h-[50px] sm:h-[56px] md:h-[64px] lg:h-[73px] min-w-[160px] sm:min-w-[180px] md:min-w-[200px] lg:min-w-[237px] items-center justify-center bg-[#1738e6] px-6 sm:px-8 lg:px-10 text-[12px] sm:text-[14px] md:text-[16px] lg:text-[18px] font-black uppercase tracking-[0.18em] text-white transition-opacity hover:opacity-90'>
-								BUY NOW
+							<button
+								onClick={() =>
+									addToCart({
+										id: 'aquzera-water-purifier',
+										name: 'Aquzera Water Purifier',
+										price: 200000,
+										image: '/images/purifier.png',
+									})
+								}
+								className='inline-flex h-[50px] sm:h-[56px] md:h-[64px] lg:h-[73px] min-w-[160px] sm:min-w-[180px] md:min-w-[200px] lg:min-w-[237px] items-center justify-center bg-[#1738e6] px-6 sm:px-8 lg:px-10 text-[12px] sm:text-[14px] md:text-[16px] lg:text-[18px] font-black uppercase tracking-[0.18em] text-white transition-opacity hover:opacity-90 cursor-pointer'>
+								BUY NOW{' '}
 								<span className='ml-2 sm:ml-3 text-[18px] sm:text-[22px] md:text-[26px] lg:text-[29px] leading-none'>
 									→
 								</span>
-							</Link>
+							</button>
 						</div>
 					</div>
 				</div>
