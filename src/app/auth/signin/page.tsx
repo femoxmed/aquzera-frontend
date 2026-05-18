@@ -5,8 +5,10 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { toast } from 'sonner';
 import { Eye } from 'lucide-react';
 import { signinSchema } from '@/lib/validators';
+import { useRouter } from 'next/navigation';
 
 export default function SignInPage() {
+	const pathname = useRouter();
 	return (
 		<section className='px-4 py-10 sm:px-6 sm:py-12 md:py-14 lg:py-16'>
 			<div className='mx-auto w-full max-w-[330px] sm:max-w-[360px] md:max-w-[390px] lg:max-w-[410px]'>
@@ -24,6 +26,7 @@ export default function SignInPage() {
 					validationSchema={signinSchema}
 					onSubmit={() => {
 						toast.success('Signed in successfully');
+						pathname.push('/dashboard');
 					}}>
 					<Form className='mt-7 space-y-5 sm:mt-8 sm:space-y-6'>
 						<div>
@@ -81,7 +84,7 @@ export default function SignInPage() {
 							</p>
 
 							<Link
-								href='/dashboard'
+								href='/auth/signup'
 								className='mt-5 flex h-[48px] w-full items-center justify-center border border-white/70 font-mona text-[11px] font-black uppercase tracking-[0.22em] text-white transition hover:bg-white hover:text-black sm:h-[54px] sm:text-[12px]'>
 								Create My Account
 							</Link>
