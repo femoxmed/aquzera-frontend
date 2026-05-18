@@ -3,8 +3,7 @@ import { Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 import { QueryProvider } from '@/providers/QueryProvider';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+import AuthLayoutClient from '@/components/common/AuthLayoutClient';
 
 const montserrat = Montserrat({
 	subsets: ['latin'],
@@ -150,9 +149,7 @@ export default function RootLayout({
 			</head>
 			<body className={monaSans.variable}>
 				<QueryProvider>
-					<Header />
-					<main className='min-h-screen'>{children}</main>
-					<Footer />
+					<AuthLayoutClient>{children}</AuthLayoutClient>
 				</QueryProvider>
 			</body>
 		</html>

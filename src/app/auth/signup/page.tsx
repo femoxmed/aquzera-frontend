@@ -1,55 +1,110 @@
 'use client';
+
 import Link from 'next/link';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { toast } from 'sonner';
+import { Eye } from 'lucide-react';
 import { signupSchema } from '@/lib/validators';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 export default function SignUpPage() {
 	return (
-		<div className='container max-w-md py-16'>
-			<h1 className='mb-6 text-3xl font-bold'>Create Account</h1>
-			<Formik
-				initialValues={{ name: '', email: '', password: '' }}
-				validationSchema={signupSchema}
-				onSubmit={() => {
-					toast.success('Account created');
-				}}>
-				<Form className='space-y-4'>
-					<div>
-						<Field as={Input} name='name' placeholder='Name' />
-						<p className='text-sm text-red-500'>
-							<ErrorMessage name='name' />
+		<section className='px-4 py-10 sm:px-6 sm:py-12 md:py-14 lg:py-16'>
+			<div className='mx-auto w-full max-w-[330px] sm:max-w-[360px] md:max-w-[390px] lg:max-w-[410px]'>
+				<p className='font-montserrat text-[12px] text-[#a7ff18] sm:text-[13px]'>
+					Step 1 of 2
+				</p>
+
+				<h1 className='mt-3 font-mona text-[32px] font-black leading-none tracking-[-0.05em] text-white sm:text-[36px] md:text-[40px]'>
+					Create Account
+				</h1>
+
+				<p className='mt-3 font-montserrat text-[12px] leading-[1.3] text-white/45 sm:text-[13px]'>
+					Let’s create a free account. It’s quick and easy
+				</p>
+
+				<Formik
+					initialValues={{ name: '', email: '', password: '' }}
+					validationSchema={signupSchema}
+					onSubmit={() => {
+						toast.success('Account created');
+					}}>
+					<Form className='mt-7 space-y-5 sm:mt-8 sm:space-y-6'>
+						<div>
+							<label className='mb-3 block font-mona text-[10px] font-black uppercase tracking-[0.22em] text-white sm:text-[11px]'>
+								Enter Your Full Name
+							</label>
+
+							<Field
+								name='name'
+								placeholder='e.g Yusuf Bello'
+								className='h-[49px] w-full border border-white/35 bg-transparent px-4 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:text-[13px]'
+							/>
+
+							<p className='mt-1 text-xs text-red-400'>
+								<ErrorMessage name='name' />
+							</p>
+						</div>
+
+						<div>
+							<label className='mb-3 block font-mona text-[10px] font-black uppercase tracking-[0.22em] text-white sm:text-[11px]'>
+								Email Address
+							</label>
+
+							<Field
+								name='email'
+								placeholder='example@domain.com'
+								className='h-[49px] w-full border border-white/35 bg-transparent px-4 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:text-[13px]'
+							/>
+
+							<p className='mt-1 text-xs text-red-400'>
+								<ErrorMessage name='email' />
+							</p>
+						</div>
+
+						<div>
+							<div className='mb-3 flex items-center justify-between'>
+								<label className='block font-mona text-[10px] font-black uppercase tracking-[0.22em] text-white sm:text-[11px]'>
+									Password ***
+								</label>
+
+								<Eye className='h-4 w-4 text-white/80' />
+							</div>
+
+							<Field
+								name='password'
+								type='password'
+								className='h-[49px] w-full border border-white/35 bg-transparent px-4 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:text-[13px]'
+							/>
+
+							<p className='mt-1 text-xs text-red-400'>
+								<ErrorMessage name='password' />
+							</p>
+
+							<p className='mt-3 font-montserrat text-[11px] leading-[1.25] text-white/45 sm:text-[12px]'>
+								You can use character set such as{' '}
+								<span className='text-[#a7ff18]'>#$%@*&amp;^290</span> Would be
+								more secured
+							</p>
+						</div>
+
+						<button
+							type='submit'
+							className='h-[48px] w-full bg-[#1738e6] font-mona text-[12px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 sm:h-[54px] sm:text-[13px]'>
+							Next
+						</button>
+
+						<p className='font-montserrat text-[12px] text-white/45'>
+							I already have an account
 						</p>
-					</div>
-					<div>
-						<Field as={Input} name='email' placeholder='Email' />
-						<p className='text-sm text-red-500'>
-							<ErrorMessage name='email' />
-						</p>
-					</div>
-					<div>
-						<Field
-							as={Input}
-							name='password'
-							type='password'
-							placeholder='Password'
-						/>
-						<p className='text-sm text-red-500'>
-							<ErrorMessage name='password' />
-						</p>
-					</div>
-					<Button className='w-full' type='submit'>
-						Sign Up
-					</Button>
-				</Form>
-			</Formik>
-			<p className='mt-4 text-sm text-muted-foreground'>
-				Already have an account?{' '}
-				<Link className='text-primary' href='/auth/signin'>
-					Sign in
-				</Link>
-			</p>
-		</div>
+
+						<Link
+							href='/auth/signin'
+							className='flex h-[48px] w-full items-center justify-center border border-white/70 font-mona text-[11px] font-black uppercase tracking-[0.22em] text-white transition hover:bg-white hover:text-black sm:h-[54px] sm:text-[12px]'>
+							Go To Sign In
+						</Link>
+					</Form>
+				</Formik>
+			</div>
+		</section>
 	);
 }
