@@ -19,7 +19,7 @@ export default function ProductHero() {
 
 			<div className='relative z-10 mx-auto flex h-full max-w-[1500px] items-center px-4 sm:px-6 md:px-8 lg:px-10 xl:px-16 pt-8 sm:pt-10 md:pt-12'>
 				<div className='max-w-[280px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[480px] xl:max-w-[520px]'>
-					<h1 className='font-mona-wide font-black leading-[0.95] tracking-[-0.04em] text-white text-[28px] sm:text-[34px] md:text-[44px] lg:text-[52px] xl:text-[62px]'>
+					<h1 className='font-mona-wide font-bold leading-[0.95] tracking-[-0.04em] text-white text-[28px] sm:text-[34px] md:text-[44px] lg:text-[52px] xl:text-[62px]'>
 						Aquzera
 						<br />
 						Water Purifier*

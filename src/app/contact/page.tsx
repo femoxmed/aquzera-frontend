@@ -16,7 +16,7 @@ export default function ContactPage() {
 							We’re here to help
 						</p>
 
-						<h1 className='mt-3 font-mona text-[34px] font-black leading-none tracking-[-0.05em] text-white sm:text-[40px] md:text-[48px]'>
+						<h1 className='mt-3 font-mona-wide text-[34px] font-bold leading-none tracking-[-0.05em] text-white sm:text-[40px] md:text-[48px]'>
 							Contact Us
 						</h1>
 
