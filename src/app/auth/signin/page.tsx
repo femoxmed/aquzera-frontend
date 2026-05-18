@@ -81,7 +81,7 @@ export default function SignInPage() {
 							</p>
 
 							<Link
-								href='/auth/signup'
+								href='/dashboard'
 								className='mt-5 flex h-[48px] w-full items-center justify-center border border-white/70 font-mona text-[11px] font-black uppercase tracking-[0.22em] text-white transition hover:bg-white hover:text-black sm:h-[54px] sm:text-[12px]'>
 								Create My Account
 							</Link>
