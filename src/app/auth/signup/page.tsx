@@ -14,7 +14,7 @@ export default function SignUpPage() {
 					Step 1 of 2
 				</p>
 
-				<h1 className='mt-3 font-mona text-[32px] font-black leading-none tracking-[-0.05em] text-white sm:text-[36px] md:text-[40px]'>
+				<h1 className='mt-3 font-mona-wide text-[32px] font-bold leading-none tracking-[-0.05em] text-white sm:text-[36px] md:text-[40px]'>
 					Create Account
 				</h1>
 

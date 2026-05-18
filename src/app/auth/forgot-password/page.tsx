@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
 	return (
 		<section className='px-4 py-10 sm:px-6 sm:py-12 md:py-14 lg:py-16'>
 			<div className='mx-auto w-full max-w-[330px] sm:max-w-[360px] md:max-w-[390px] lg:max-w-[410px]'>
-				<h1 className='font-mona text-[32px] font-black leading-none tracking-[-0.05em] text-white sm:text-[36px] md:text-[40px]'>
+				<h1 className='font-mona-wide text-[32px] font-bold leading-none tracking-[-0.05em] text-white sm:text-[36px] md:text-[40px]'>
 					Password Recovery
 				</h1>
 
