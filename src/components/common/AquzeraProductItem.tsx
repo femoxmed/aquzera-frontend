@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAddToCart } from '@/lib/addToCart';
+import { shouldBypassImageOptimizer } from '@/lib/images';
 
 type AquzeraProductItemProps = {
 	imageSrc: string;
@@ -37,7 +38,13 @@ export default function AquzeraProductItem({
 				className={`relative h-[200px] sm:h-[260px] md:h-full flex items-center justify-center overflow-hidden bg-[#f4f4f2] order-1 ${
 					imageOnRight ? 'md:order-2' : 'md:order-1'
 				}`}>
-				<Image src={imageSrc} alt={imageAlt} fill className='object-cover' />
+				<Image
+					src={imageSrc}
+					alt={imageAlt}
+					fill
+					unoptimized={shouldBypassImageOptimizer(imageSrc)}
+					className='object-cover'
+				/>
 			</div>
 
 			{/* Content */}

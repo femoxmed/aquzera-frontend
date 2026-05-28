@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-const protectedRoutes = ['/profile', '/cart', '/shipping', '/payment'];
+const protectedRoutes = ['/profile', '/cart', '/shipping', '/payment', '/dashboard'];
 export function proxy(request: NextRequest) {
 	const token = request.cookies.get('accessToken')?.value;
 	const refreshToken = request.cookies.get('refreshToken')?.value;
@@ -19,5 +19,6 @@ export const config = {
 		// '/cart/:path*',
 		'/shipping/:path*',
 		'/payment/:path*',
+		'/dashboard/:path*',
 	],
 };

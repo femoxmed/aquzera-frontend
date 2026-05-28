@@ -1,11 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import AnnouncementBar from '@/components/common/AnnouncementBar';
+import { useAuthStore } from '@/store/authStore';
+import {
+	addCartItem,
+	clearServerCart,
+	getCart,
+	prepareCartCheckout,
+	serverCartToItems,
+	updateCartItem,
+} from '@/lib/cart';
+import { toast } from 'sonner';
+import { shouldBypassImageOptimizer } from '@/lib/images';
 
 const COLORS = [
 	{
@@ -38,18 +49,21 @@ const specSections = [
 
 export default function CartList() {
 	const router = useRouter();
-	const { items, removeItem, addItem, clearCart, total } = useCartStore();
+	const { items, addItem, clearCart, updateQuantity, setItems } = useCartStore();
+	const accessToken = useAuthStore((state) => state.accessToken);
 
 	const [selectedColor, setSelectedColor] = useState('charcoal');
 	const [quantity, setQuantity] = useState(2);
-	const [includeFilter, setIncludeFilter] = useState(true);
 	const [openSection, setOpenSection] = useState('general');
 	const [activeThumb, setActiveThumb] = useState(0);
 
 	const isEmpty = items.length === 0;
 	const mainItem =
 		items.find((i) => i.id === 'aquzera-water-purifier') || items[0];
-	const isNeoSense = mainItem?.id === 'neo-sense-filter';
+	const cartIds = new Set(items.map((item) => item.id));
+	const compatibleAddOns = (mainItem?.addOns || []).filter(
+		(addOn) => !cartIds.has(addOn.productId),
+	);
 
 	const productName = mainItem?.name || 'Aquzera Water Purifier';
 	const productPrice = mainItem?.price || 200000;
@@ -64,6 +78,73 @@ export default function CartList() {
 		(sum, item) => sum + item.price * item.quantity,
 		0,
 	);
+
+	useEffect(() => {
+		if (!accessToken) return;
+
+		getCart()
+			.then((cart) => setItems(serverCartToItems(cart)))
+			.catch(() => undefined);
+	}, [accessToken, setItems]);
+
+	useEffect(() => {
+		setQuantity(mainItem?.quantity || 1);
+	}, [mainItem?.id, mainItem?.quantity]);
+
+	const syncQuantity = async (nextQuantity: number) => {
+		if (!mainItem) return;
+
+		updateQuantity(mainItem.id, nextQuantity);
+		if (!accessToken) return;
+
+		try {
+			const serverCart = await updateCartItem(mainItem.id, nextQuantity);
+			setItems(serverCartToItems(serverCart));
+		} catch (error: any) {
+			toast.error(
+				error?.response?.data?.message ||
+					error?.message ||
+					'Unable to update cart',
+			);
+		}
+	};
+
+	const handleClearCart = async () => {
+		clearCart();
+		if (accessToken) {
+			await clearServerCart().catch(() => undefined);
+		}
+		router.push('/product');
+	};
+
+	const handleProceedToCheckout = async () => {
+		if (mainItem) {
+			await syncQuantity(quantity);
+		}
+
+		if (accessToken) {
+			try {
+				const response = await prepareCartCheckout();
+				sessionStorage.setItem(
+					'aquzera-checkout',
+					JSON.stringify({
+						idempotencyKey: response.idempotencyKey,
+						pricing: response.pricing,
+						order: response.order,
+					}),
+				);
+			} catch (error: any) {
+				toast.error(
+					error?.response?.data?.message ||
+						error?.message ||
+						'Unable to prepare checkout',
+				);
+				return;
+			}
+		}
+
+		router.push('/shipping');
+	};
 
 	if (isEmpty) {
 		return (
@@ -114,6 +195,7 @@ export default function CartList() {
 												src={src}
 												alt=''
 												fill
+												unoptimized={shouldBypassImageOptimizer(src)}
 												className='object-contain p-5'
 											/>
 										</button>
@@ -128,6 +210,9 @@ export default function CartList() {
 											alt={productName}
 											fill
 											priority
+											unoptimized={shouldBypassImageOptimizer(
+												thumbnails[activeThumb],
+											)}
 											className='object-contain'
 										/>
 									</div>
@@ -135,7 +220,7 @@ export default function CartList() {
 							</div>
 
 							{/* Extra Compatible Additions */}
-							{!isNeoSense && includeFilter && (
+							{compatibleAddOns.length > 0 && (
 								<div className='mt-14 border-t border-[#d7d7d7] pt-12'>
 									<h2 className='font-mona text-[30px] font-black leading-none tracking-[-0.04em] text-black'>
 										Extra Compatible Additions
@@ -144,12 +229,15 @@ export default function CartList() {
 										Aquzera purification systems elevate your everyday hydration
 										through advanced filtration and refined engineering.
 									</p>
-									<div className='mt-10 flex max-w-[560px] items-center gap-8'>
+									<div className='mt-10 space-y-8'>
+										{compatibleAddOns.map((addOn) => (
+									<div key={addOn.productId} className='flex max-w-[560px] items-center gap-8'>
 										<div className='relative flex h-[178px] w-[178px] shrink-0 items-center justify-center rounded-[28px] border border-[#1f2529]'>
 											<Image
-												src='/images/neo-sense-filter.png'
-												alt='Neo Sense Filter'
+												src={addOn.image || '/images/product_placeholder.png'}
+												alt={addOn.name}
 												fill
+												unoptimized={shouldBypassImageOptimizer(addOn.image)}
 												className='object-contain p-10'
 											/>
 											<button className='absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-[#a7ff18] text-[13px] font-black text-black'>
@@ -159,28 +247,41 @@ export default function CartList() {
 										<div className='flex-1'>
 											<div className='flex items-start justify-between gap-4'>
 												<h3 className='font-mona text-[34px] font-black leading-[0.9] tracking-[-0.05em] text-black'>
-													Neo Sense
-													<br />
-													Filter
+													{addOn.name}
 												</h3>
 												<button
-													onClick={() => setIncludeFilter(false)}
+													onClick={async () => {
+														const item = {
+															id: addOn.productId,
+															name: addOn.name,
+															price: addOn.price,
+															quantity: 1,
+															image: addOn.image,
+															description: addOn.shortDescription || undefined,
+														};
+														addItem(item);
+														if (accessToken) {
+															const serverCart = await addCartItem(item);
+															setItems(serverCartToItems(serverCart));
+														}
+													}}
 													className='flex h-7 w-7 items-center justify-center rounded-full bg-[#ff676f] text-sm font-black text-white'>
-													×
+													+
 												</button>
 											</div>
 											<p className='mt-4 max-w-[330px] font-montserrat text-[14px] leading-[1.2] text-black/60'>
-												Aquzera purification systems elevate your everyday
-												hydration through advanced filtration and refined
-												engineering.
+												{addOn.shortDescription ||
+													'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.'}
 											</p>
 											<p className='mt-5 font-mona text-[22px] font-black tracking-[-0.02em] text-[#252b31]'>
-												₦85,608{' '}
+												₦{addOn.price.toLocaleString()}{' '}
 												<span className='ml-3 font-montserrat text-[13px] font-medium uppercase tracking-[0.06em] text-black/45'>
 													EXT. TAX
 												</span>
 											</p>
 										</div>
+									</div>
+										))}
 									</div>
 								</div>
 							)}
@@ -193,8 +294,8 @@ export default function CartList() {
 							</h1>
 
 							<p className='mt-7 max-w-[420px] font-montserrat text-[16px] leading-[1.25] text-black/65'>
-								Aquzera purification systems elevate your everyday hydration
-								through advanced filtration and refined engineering.
+								{mainItem?.description ||
+									'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.'}
 							</p>
 
 							<div className='mt-8 flex items-end gap-6'>
@@ -208,7 +309,7 @@ export default function CartList() {
 
 							<div className='my-10 border-t border-[#d7d7d7]' />
 
-							{!isNeoSense && (
+							{true && (
 								<div className='flex flex-wrap items-center gap-8'>
 									{COLORS.map((c) => (
 										<button
@@ -237,7 +338,9 @@ export default function CartList() {
 									Quantity
 								</p>
 								<button
-									onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+									onClick={() =>
+										syncQuantity(Math.max(1, (mainItem?.quantity || quantity) - 1))
+									}
 									className='flex h-[68px] w-[68px] items-center justify-center rounded-full border border-[#1f2529] text-[36px] font-light text-[#252b31]'>
 									−
 								</button>
@@ -245,7 +348,9 @@ export default function CartList() {
 									{quantity}
 								</span>
 								<button
-									onClick={() => setQuantity((q) => q + 1)}
+									onClick={() =>
+										syncQuantity((mainItem?.quantity || quantity) + 1)
+									}
 									className='flex h-[68px] w-[68px] items-center justify-center rounded-full border border-[#1f2529] text-[36px] font-light text-[#252b31]'>
 									+
 								</button>
@@ -255,31 +360,12 @@ export default function CartList() {
 
 							<div className='flex flex-col gap-4 sm:flex-row'>
 								<button
-									onClick={() => {
-										clearCart();
-										router.push('/product');
-									}}
+									onClick={handleClearCart}
 									className='inline-flex h-[66px] min-w-[180px] items-center justify-center border border-[#1f2529] px-6 font-mona text-[14px] font-black uppercase tracking-[0.22em] text-[#252b31] hover:bg-black hover:text-white'>
 									× Exit & Cancel
 								</button>
 								<button
-									onClick={() => {
-										// Update current item quantity
-										if (mainItem) {
-											addItem({ ...mainItem, quantity });
-										}
-										// Add filter if included
-										if (includeFilter && !isNeoSense) {
-											addItem({
-												id: 'neo-sense-filter',
-												name: 'Neo Sense Filter',
-												price: 85608,
-												quantity: 1,
-												image: '/images/neo-sense-filter.png',
-											});
-										}
-										router.push('/shipping');
-									}}
+									onClick={handleProceedToCheckout}
 									className='inline-flex h-[66px] min-w-[250px] items-center justify-center bg-[#1738e6] px-6 font-mona text-[14px] font-black uppercase tracking-[0.22em] text-white hover:opacity-90'>
 									Proceed To Checkout
 								</button>

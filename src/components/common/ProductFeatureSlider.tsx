@@ -11,13 +11,22 @@ import {
 } from '@/components/ui/carousel';
 import ProductFeatureItem from './ProductFeatureItem';
 
-const features = [
+type ProductFeature = {
+	title: string;
+	titleLine2?: string;
+	description: string;
+	imageSrc: string;
+	imageAlt: string;
+	imageClassName?: string;
+};
+
+const features: ProductFeature[] = [
 	{
 		title: 'Smart',
 		titleLine2: 'Display',
 		description:
 			'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering. With a focus on quality, integrity, and modern design, we create water experiences that are as pure as they are precise.',
-		imageSrc: '/images/display-closeup.png',
+		imageSrc: '/images/purifier.png',
 		imageAlt: 'Smart Display',
 	},
 	{
@@ -25,7 +34,7 @@ const features = [
 		titleLine2: 'Dispense',
 		description:
 			'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.',
-		imageSrc: '/images/purifier-lower.png',
+		imageSrc: '/images/hot_cold.png',
 		imageAlt: 'Hot and Cold Dispense',
 		imageClassName: 'object-cover object-top',
 	},
@@ -40,7 +49,13 @@ const features = [
 	},
 ];
 
-export default function ProductFeatureSlider() {
+type ProductFeatureSliderProps = {
+	features?: ProductFeature[];
+};
+
+export default function ProductFeatureSlider({
+	features: productFeatures = features,
+}: ProductFeatureSliderProps) {
 	const [api, setApi] = useState<CarouselApi>();
 	const [current, setCurrent] = useState(0);
 	const [count, setCount] = useState(0);
@@ -62,7 +77,7 @@ export default function ProductFeatureSlider() {
 					opts={{ align: 'start', loop: true }}
 					className='w-full'>
 					<CarouselContent className='-ml-2 md:-ml-4'>
-						{features.map((feature, idx) => (
+						{productFeatures.map((feature, idx) => (
 							<CarouselItem
 								key={idx}
 								className='pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/2'>
@@ -83,7 +98,7 @@ export default function ProductFeatureSlider() {
 					<div className='flex items-center justify-between mt-8 sm:mt-10 md:mt-14'>
 						<CarouselPrevious className='static translate-y-0 bg-white shadow-lg border border-gray-200 w-10 h-10 sm:w-12 sm:h-12 rounded-full' />
 						<div className='flex items-center gap-2'>
-							{Array.from({ length: count }).map((_, idx) => (
+							{Array.from({ length: count || productFeatures.length }).map((_, idx) => (
 								<button
 									key={idx}
 									onClick={() => api?.scrollTo(idx)}

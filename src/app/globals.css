@@ -62,6 +62,14 @@
 
   }
 
+  @media (max-width: 767px) {
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+
   h1,
   h2,
   h3,
@@ -102,5 +110,124 @@
 
   .tracking-brand {
     letter-spacing: 0.15em;
+  }
+}
+
+@layer components {
+  .dashboard-scope {
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  .dashboard-dark {
+    background: #000 !important;
+    color: #f4f4f4;
+  }
+
+  .dashboard-dark header,
+  .dashboard-dark footer,
+  .dashboard-dark [class*="border-[#e7e7e7]"],
+  .dashboard-dark [class*="border-[#dedede]"],
+  .dashboard-dark [class*="border-[#e0e0e0]"],
+  .dashboard-dark [class*="border-[#d9d9d9]"],
+  .dashboard-dark [class*="border-[#dce8ee]"],
+  .dashboard-dark [class*="border-[#e2e2e2]"],
+  .dashboard-dark [class*="border-[#e3e3e3]"],
+  .dashboard-dark [class*="border-[#e8eef2]"] {
+    border-color: #242424 !important;
+  }
+
+  .dashboard-dark [class*="bg-white"],
+  .dashboard-dark [class*="bg-[#fbfdff]"],
+  .dashboard-dark [class*="bg-[#f7f7f7]"] {
+    background-color: #050505 !important;
+  }
+
+  .dashboard-dark input,
+  .dashboard-dark select,
+  .dashboard-dark textarea {
+    background-color: #000 !important;
+    border-color: #2d2d2d !important;
+    color: #f2f2f2 !important;
+  }
+
+  .dashboard-dark input::placeholder,
+  .dashboard-dark textarea::placeholder {
+    color: #686868 !important;
+  }
+
+  .dashboard-dark input:disabled {
+    background-color: #070707 !important;
+    color: #666 !important;
+  }
+
+  .dashboard-dark [class*="text-[#061927]"],
+  .dashboard-dark [class*="text-[#20252c]"],
+  .dashboard-dark [class*="text-[#22262d]"],
+  .dashboard-dark [class*="text-[#2d3036]"],
+  .dashboard-dark [class*="text-black"] {
+    color: #f6f6f6 !important;
+  }
+
+  .dashboard-dark [class*="text-[#3d4148]"],
+  .dashboard-dark [class*="text-[#4d5158]"],
+  .dashboard-dark [class*="text-[#4f545c]"],
+  .dashboard-dark [class*="text-[#5f6268]"],
+  .dashboard-dark [class*="text-[#666a70]"],
+  .dashboard-dark [class*="text-[#696d73]"],
+  .dashboard-dark [class*="text-[#777]"],
+  .dashboard-dark [class*="text-[#888]"],
+  .dashboard-dark [class*="text-[#8b929b]"],
+  .dashboard-dark [class*="text-[#a6a6a6]"] {
+    color: #747474 !important;
+  }
+
+  .dashboard-dark [class*="bg-[#061927]"],
+  .dashboard-dark .bg-black {
+    background-color: #f2f2f2 !important;
+    color: #050505 !important;
+  }
+
+  .dashboard-dark [class*="border-black"] {
+    border-color: #f2f2f2 !important;
+  }
+
+  .dashboard-dark [class*="bg-[#f1f8ff]"],
+  .dashboard-dark [class*="bg-[#eef6ff]"] {
+    background-color: #050505 !important;
+    border-color: #2c2c2c !important;
+    color: #e8e8e8 !important;
+  }
+
+  .dashboard-dark [class*="bg-[#fff8e8]"],
+  .dashboard-dark [class*="bg-[#fff5d9]"],
+  .dashboard-dark [class*="bg-[#fff9ec]"] {
+    background-color: #070604 !important;
+    border-color: #3a321e !important;
+    color: #c5b891 !important;
+  }
+
+  .dashboard-dark [class*="bg-[#f0fff4]"],
+  .dashboard-dark [class*="bg-[#eaffef]"] {
+    background-color: #050705 !important;
+    border-color: #263026 !important;
+    color: #c3d0c3 !important;
+  }
+
+  .dashboard-dark [class*="shadow-"] {
+    box-shadow: none !important;
+  }
+
+  .dashboard-dark [class*="bg-white/80"] {
+    background-color: #080808 !important;
+    color: #f0f0f0 !important;
+  }
+
+  .dashboard-dark [class*="bg-[#8cff00]"] {
+    background-color: #f2f2f2 !important;
+    color: #050505 !important;
+  }
+
+  .dashboard-dark [class*="text-[#ff5a5f]"] {
+    color: #ff777d !important;
   }
 }

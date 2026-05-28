@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { shouldBypassImageOptimizer } from '@/lib/images';
 
 type ProductFeatureItemProps = {
 	title: string;
@@ -39,7 +40,13 @@ export default function ProductFeatureItem({
 
 			<div
 				className={`relative mt-8 sm:mt-10 md:mt-14 h-[260px] sm:h-[320px] md:h-[420px] lg:h-[520px] overflow-hidden rounded-[20px] sm:rounded-[24px] md:rounded-[28px] lg:rounded-[32px] bg-[#f7f7f7] ${imageContainerClassName}`}>
-				<Image src={imageSrc} alt={imageAlt} fill className={imageClassName} />
+				<Image
+					src={imageSrc}
+					alt={imageAlt}
+					fill
+					unoptimized={shouldBypassImageOptimizer(imageSrc)}
+					className={imageClassName}
+				/>
 			</div>
 		</div>
 	);

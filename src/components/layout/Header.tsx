@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { X, Menu } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { LogOut, X, Menu } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { useState } from 'react';
+import { logout as clearAuthSession } from '@/lib/auth';
+import { useAuthStore } from '@/store/authStore';
 
 const navLinks = [
 	{ href: '/', label: 'HOME' },
@@ -16,9 +18,20 @@ const navLinks = [
 
 export default function Header() {
 	const pathname = usePathname();
+	const router = useRouter();
 	const items = useCartStore((s) => s.items);
+	const user = useAuthStore((state) => state.user);
+	const logout = useAuthStore((state) => state.logout);
 	const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 	const [menuOpen, setMenuOpen] = useState(false);
+
+	const handleLogout = () => {
+		clearAuthSession();
+		logout();
+		setMenuOpen(false);
+		router.push('/auth/signin');
+		router.refresh();
+	};
 
 	return (
 		<header className='top-0 z-50 bg-[linear-gradient(180deg,_rgba(0,0,0,0.7125)_0%,_rgba(30,30,30,0.375)_65.75%)] border-b border-gray-100 shadow-sm fixed w-[100%]'>
@@ -75,7 +88,7 @@ export default function Header() {
 						/>
 					</Link>
 					<Link
-						href='/profile'
+						href={user ? '/dashboard' : '/auth/signin'}
 						className='hidden sm:block'
 						aria-label='Account'>
 						<Image
@@ -86,6 +99,15 @@ export default function Header() {
 							className='h-[18px] w-[18px]'
 						/>
 					</Link>
+					{user ? (
+						<button
+							type='button'
+							onClick={handleLogout}
+							className='hidden sm:flex h-8 w-8 items-center justify-center rounded-full text-white hover:bg-white/10'
+							aria-label='Logout'>
+							<LogOut className='h-[18px] w-[18px]' strokeWidth={1.8} />
+						</button>
+					) : null}
 
 					{/* Mobile hamburger */}
 					<button
@@ -175,7 +197,7 @@ export default function Header() {
 							/>
 						</Link>
 						<Link
-							href='/profile'
+							href={user ? '/dashboard' : '/auth/signin'}
 							className='text-white/70 hover:text-white transition-colors'
 							onClick={() => setMenuOpen(false)}
 							aria-label='Account'>
@@ -187,6 +209,15 @@ export default function Header() {
 								className='h-6 w-6'
 							/>
 						</Link>
+						{user ? (
+							<button
+								type='button'
+								className='text-white/70 hover:text-white transition-colors'
+								onClick={handleLogout}
+								aria-label='Logout'>
+								<LogOut className='h-6 w-6' strokeWidth={1.8} />
+							</button>
+						) : null}
 					</div>
 				</div>
 			</div>

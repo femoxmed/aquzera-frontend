@@ -10,7 +10,16 @@ const specs = [
 	['COLOUR *', 'Charcoal Black, White'],
 ];
 
-export default function ProductSpecs() {
+type ProductSpecsProps = {
+	specs?: Array<{ label: string; value: string }>;
+};
+
+export default function ProductSpecs({ specs: productSpecs }: ProductSpecsProps) {
+	const visibleSpecs =
+		productSpecs && productSpecs.length > 0
+			? productSpecs.map((spec) => [spec.label, spec.value])
+			: specs;
+
 	return (
 		<section className='bg-[linear-gradient(180deg,#123ADA_0%,#0A1F74_130.29%)] px-4 sm:px-5 md:px-6 lg:px-8 xl:px-10 py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 text-white'>
 			<div className='mx-auto max-w-[1180px]'>
@@ -25,7 +34,7 @@ export default function ProductSpecs() {
 				</div>
 
 				<div className='grid gap-6 sm:gap-8 md:gap-10 border-b border-white/70 py-10 sm:py-11 md:py-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
-					{specs.map(([label, value]) => (
+					{visibleSpecs.map(([label, value]) => (
 						<div key={label}>
 							<h4 className='font-mona text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] xl:text-[18px] font-black uppercase tracking-[0.22em]'>
 								{label}

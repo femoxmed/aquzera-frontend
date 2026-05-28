@@ -8,10 +8,29 @@ export type CartItem = {
 	quantity: number;
 	image?: string;
 	color?: string;
+	variant?: {
+		id?: string;
+		label?: string;
+		value?: string;
+		imageUrl?: string;
+	};
+	description?: string;
+	type?: 'machine' | 'filter' | 'accessory' | 'service';
+	addOns?: CartAddOn[];
+};
+
+export type CartAddOn = {
+	productId: string;
+	name: string;
+	price: number;
+	image?: string;
+	shortDescription?: string | null;
+	isCompulsory?: boolean;
 };
 
 type CartState = {
 	items: CartItem[];
+	setItems: (items: CartItem[]) => void;
 	addItem: (item: CartItem) => void;
 	removeItem: (id: string) => void;
 	updateQuantity: (id: string, quantity: number) => void;
@@ -23,13 +42,20 @@ export const useCartStore = create<CartState>()(
 	persist(
 		(set, get) => ({
 			items: [],
+			setItems: (items) => set({ items }),
 			addItem: (item) =>
 				set((state) => {
-					const existing = state.items.find((i) => i.id === item.id);
+					const variantKey = item.variant?.id || item.variant?.label || '';
+					const existing = state.items.find(
+						(i) =>
+							i.id === item.id &&
+							(i.variant?.id || i.variant?.label || '') === variantKey,
+					);
 					if (existing) {
 						return {
 							items: state.items.map((i) =>
-								i.id === item.id
+								i.id === item.id &&
+								(i.variant?.id || i.variant?.label || '') === variantKey
 									? { ...i, quantity: i.quantity + item.quantity }
 									: i,
 							),
