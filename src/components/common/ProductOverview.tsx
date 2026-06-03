@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useAddToCart } from '@/lib/addToCart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
+import ColorSwatch from '@/components/common/ColorSwatch';
 
 const COLORS = [
 	{
@@ -45,7 +46,7 @@ export default function ProductOverview({
 }: ProductOverviewProps) {
 	const addToCart = useAddToCart();
 	const [selectedColorId, setSelectedColorId] = useState<string>(
-		colors[0]?.id || '',
+		colors.find((color) => color.imageUrl)?.id || colors[0]?.id || '',
 	);
 
 	const selectedColor = colors.find((c) => c.id === selectedColorId);
@@ -110,9 +111,9 @@ export default function ProductOverview({
 									? 'border-white'
 									: 'border-white/25'
 							}`}>
-							<span
-								className='h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full border border-white/20'
-								style={{ backgroundColor: color.value }}
+							<ColorSwatch
+								value={color.value}
+								className='h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9'
 							/>
 							<span className='font-mona text-[10px] sm:text-[11px] md:text-[12px] font-black uppercase tracking-[0.2em] text-white'>
 								{color.label}

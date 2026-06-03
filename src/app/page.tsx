@@ -1,6 +1,6 @@
 import HeroSection from '@/components/common/HeroSection';
 import LifestyleCarousel from '@/components/common/LifestyleCarousel';
-import ExploreModel from '@/components/common/ExploreModel';
+import HomeFeaturedExploreModel from './HomeFeaturedExploreModel';
 import BlueFeaturesStrip from '@/components/common/BlueFeaturesStrip';
 import BusinessesSection from '@/components/common/BusinessesSection';
 import ProcessingSection from '@/components/common/ProcessingSection';
@@ -26,7 +26,7 @@ export default function HomePage() {
 				</div>
 			</section>
 
-			<ExploreModel />
+			<HomeFeaturedExploreModel />
 			<BlueFeaturesStrip />
 			<BusinessesSection />
 			<ProcessingSection />

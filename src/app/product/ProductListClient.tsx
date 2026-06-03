@@ -16,7 +16,8 @@ export default function ProductListClient() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pageParam = Number(searchParams.get('page') || 1);
-	const page = Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1;
+	const page =
+		Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1;
 	const { data: listing, isLoading, isError } = useProductListing(page, 6);
 	const bannerProduct = listing?.featuredProduct;
 	const listedProducts = listing?.products || [];
@@ -42,14 +43,18 @@ export default function ProductListClient() {
 					id={bannerProduct.id}
 					name={bannerProduct.name}
 					description={
-						bannerProduct.shortDescription || bannerProduct.description || undefined
+						bannerProduct.shortDescription ||
+						bannerProduct.description ||
+						undefined
 					}
 					price={productPrice(bannerProduct)}
-					imageSrc={bannerProduct.bannerImage?.url || productImageUrl(bannerProduct)}
+					imageSrc={
+						bannerProduct.bannerImage?.url || productImageUrl(bannerProduct)
+					}
 					learnHref={`/product/${productSlug(bannerProduct)}`}
 					priceLabel={
 						bannerProduct.startingPriceLabel ||
-						`Starting From ₦${productPrice(bannerProduct).toLocaleString()}*`
+						`Starting From ₦${productPrice(bannerProduct).toLocaleString()}`
 					}
 				/>
 			) : null}

@@ -22,7 +22,7 @@ export default function Footer() {
 
 					<div className='flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-10 lg:gap-14 xl:gap-20 order-3 sm:order-none'>
 						<Link href='/privacy'>Privacy Policy</Link>
-						<Link href='/warranty'>Warranty</Link>
+						<Link href='/shipping-policy'>Shipping Policy</Link>
 						<Link href='/terms'>Terms & Conditions</Link>
 					</div>
 

@@ -12,21 +12,13 @@ import {
 	clearServerCart,
 	getCart,
 	prepareCartCheckout,
+	removeCartItem,
 	serverCartToItems,
 	updateCartItem,
 } from '@/lib/cart';
 import { toast } from 'sonner';
 import { shouldBypassImageOptimizer } from '@/lib/images';
-
-const COLORS = [
-	{
-		id: 'charcoal',
-		label: 'CHARCOAL BLACK',
-		bg: 'bg-[#101818]',
-		border: 'border-[#101818]',
-	},
-	{ id: 'white', label: 'WHITE', bg: 'bg-white', border: 'border-[#2b2f33]' },
-];
+import ColorSwatch from '@/components/common/ColorSwatch';
 
 const specSections = [
 	{
@@ -52,27 +44,32 @@ export default function CartList() {
 	const { items, addItem, clearCart, updateQuantity, setItems } = useCartStore();
 	const accessToken = useAuthStore((state) => state.accessToken);
 
-	const [selectedColor, setSelectedColor] = useState('charcoal');
-	const [quantity, setQuantity] = useState(2);
 	const [openSection, setOpenSection] = useState('general');
 	const [activeThumb, setActiveThumb] = useState(0);
+	const [activeLineKey, setActiveLineKey] = useState('');
 
 	const isEmpty = items.length === 0;
-	const mainItem =
-		items.find((i) => i.id === 'aquzera-water-purifier') || items[0];
+	const cartLineKey = (item: (typeof items)[number]) =>
+		`${item.id}::${item.variant?.id || item.variant?.label || ''}`;
+	const variantKey = (item: (typeof items)[number]) =>
+		item.variant?.id || item.variant?.label || '';
+	const activeItem =
+		items.find((item) => cartLineKey(item) === activeLineKey) || items[0];
 	const cartIds = new Set(items.map((item) => item.id));
-	const compatibleAddOns = (mainItem?.addOns || []).filter(
+	const compatibleAddOns = (activeItem?.addOns || []).filter(
 		(addOn) => !cartIds.has(addOn.productId),
 	);
 
-	const productName = mainItem?.name || 'Aquzera Water Purifier';
-	const productPrice = mainItem?.price || 200000;
+	const productName = activeItem?.name || 'Aquzera Water Purifier';
+	const productPrice = activeItem?.price || 200000;
 	const productImage =
-		mainItem?.image ||
-		(mainItem?.id === 'neo-sense-filter'
+		activeItem?.variant?.imageUrl ||
+		activeItem?.image ||
+		(activeItem?.id === 'neo-sense-filter'
 			? '/images/neo-sense-filter.png'
 			: '/images/purifier-black.png');
-	const thumbnails = [productImage, '/images/purifier-back.png'];
+	const thumbnails = [productImage];
+	const selectedVariant = activeItem?.variant;
 
 	const totalPrice = items.reduce(
 		(sum, item) => sum + item.price * item.quantity,
@@ -88,23 +85,52 @@ export default function CartList() {
 	}, [accessToken, setItems]);
 
 	useEffect(() => {
-		setQuantity(mainItem?.quantity || 1);
-	}, [mainItem?.id, mainItem?.quantity]);
+		if (items.length === 0) {
+			setActiveLineKey('');
+			return;
+		}
 
-	const syncQuantity = async (nextQuantity: number) => {
-		if (!mainItem) return;
+		if (!items.some((item) => cartLineKey(item) === activeLineKey)) {
+			setActiveLineKey(cartLineKey(items[0]));
+		}
+	}, [items, activeLineKey]);
 
-		updateQuantity(mainItem.id, nextQuantity);
+	const syncQuantity = async (
+		item: (typeof items)[number],
+		nextQuantity: number,
+	) => {
+		const next = Math.max(0, nextQuantity);
+		const key = variantKey(item);
+
+		updateQuantity(item.id, next, key);
 		if (!accessToken) return;
 
 		try {
-			const serverCart = await updateCartItem(mainItem.id, nextQuantity);
+			const serverCart = await updateCartItem(item.id, next, key);
 			setItems(serverCartToItems(serverCart));
 		} catch (error: any) {
 			toast.error(
 				error?.response?.data?.message ||
 					error?.message ||
 					'Unable to update cart',
+			);
+		}
+	};
+
+	const handleRemoveLine = async (item: (typeof items)[number]) => {
+		const key = variantKey(item);
+		updateQuantity(item.id, 0, key);
+
+		if (!accessToken) return;
+
+		try {
+			const serverCart = await removeCartItem(item.id, key);
+			setItems(serverCartToItems(serverCart));
+		} catch (error: any) {
+			toast.error(
+				error?.response?.data?.message ||
+					error?.message ||
+					'Unable to remove item',
 			);
 		}
 	};
@@ -118,17 +144,12 @@ export default function CartList() {
 	};
 
 	const handleProceedToCheckout = async () => {
-		if (mainItem) {
-			await syncQuantity(quantity);
-		}
-
 		if (accessToken) {
 			try {
 				const response = await prepareCartCheckout();
 				sessionStorage.setItem(
 					'aquzera-checkout',
 					JSON.stringify({
-						idempotencyKey: response.idempotencyKey,
 						pricing: response.pricing,
 						order: response.order,
 					}),
@@ -144,6 +165,11 @@ export default function CartList() {
 		}
 
 		router.push('/shipping');
+	};
+
+	const selectCartLine = (key: string) => {
+		setActiveLineKey(key);
+		setActiveThumb(0);
 	};
 
 	if (isEmpty) {
@@ -294,7 +320,7 @@ export default function CartList() {
 							</h1>
 
 							<p className='mt-7 max-w-[420px] font-montserrat text-[16px] leading-[1.25] text-black/65'>
-								{mainItem?.description ||
+								{activeItem?.description ||
 									'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.'}
 							</p>
 
@@ -309,52 +335,126 @@ export default function CartList() {
 
 							<div className='my-10 border-t border-[#d7d7d7]' />
 
-							{true && (
-								<div className='flex flex-wrap items-center gap-8'>
-									{COLORS.map((c) => (
-										<button
-											key={c.id}
-											onClick={() => setSelectedColor(c.id)}
-											className={`flex h-[66px] items-center gap-5 rounded-[14px] border px-5 transition ${
-												selectedColor === c.id
-													? 'border-[#1f2529]'
-													: 'border-[#d7d7d7]'
-											}`}>
-											<span
-												className={`h-11 w-11 rounded-full border ${c.bg} ${c.border}`}
-											/>
-											<span className='font-mona text-[14px] font-black uppercase tracking-[0.22em] text-[#252b31]'>
-												{c.label}
-											</span>
-										</button>
-									))}
+							<div>
+								<h2 className='font-mona text-[16px] font-black uppercase tracking-[0.22em] text-[#252b31]'>
+									Cart Items
+								</h2>
+								<div className='mt-5 space-y-4'>
+									{items.map((item) => {
+										const key = cartLineKey(item);
+										const image =
+											item.variant?.imageUrl ||
+											item.image ||
+											'/images/product_placeholder.png';
+										const isActive = key === cartLineKey(activeItem);
+
+										return (
+											<div
+												key={key}
+												role='button'
+												tabIndex={0}
+												aria-pressed={isActive}
+												onClick={() => selectCartLine(key)}
+												onKeyDown={(event) => {
+													if (event.key === 'Enter' || event.key === ' ') {
+														event.preventDefault();
+														selectCartLine(key);
+													}
+												}}
+												className={`flex cursor-pointer gap-4 rounded-[8px] border p-4 text-left transition focus:outline-none focus:ring-2 focus:ring-[#1738e6] focus:ring-offset-2 ${
+													isActive
+														? 'border-[#1f2529] bg-white'
+														: 'border-[#d7d7d7] bg-[#fafafa] hover:border-[#1f2529]'
+												}`}>
+												<div className='relative h-24 w-24 shrink-0 bg-white'>
+													<Image
+														src={image}
+														alt={item.name}
+														fill
+														unoptimized={shouldBypassImageOptimizer(image)}
+														className='object-contain p-3'
+													/>
+												</div>
+												<div className='min-w-0 flex-1'>
+													<div className='flex items-start justify-between gap-4'>
+														<div>
+															<h3 className='font-mona text-[20px] font-black leading-none tracking-[-0.04em] text-black'>
+																{item.name}
+															</h3>
+															{item.variant ? (
+																<div className='mt-3 flex items-center gap-3'>
+																	<ColorSwatch
+																		value={item.variant.value}
+																		className='h-7 w-7'
+																	/>
+																	<span className='font-mona text-[11px] font-black uppercase tracking-[0.22em] text-[#252b31]'>
+																		{item.variant.label ||
+																			item.variant.id ||
+																			'Selected color'}
+																	</span>
+																</div>
+															) : null}
+														</div>
+														<button
+															type='button'
+															onClick={(event) => {
+																event.stopPropagation();
+																handleRemoveLine(item);
+															}}
+															className='font-mona text-[18px] font-black text-[#252b31]'>
+															×
+														</button>
+													</div>
+													<div className='mt-5 flex flex-wrap items-center justify-between gap-4'>
+														<div className='flex items-center gap-4'>
+															<button
+																type='button'
+																onClick={(event) => {
+																	event.stopPropagation();
+																	syncQuantity(item, item.quantity - 1);
+																}}
+																className='flex h-10 w-10 items-center justify-center rounded-full border border-[#1f2529] text-[24px] font-light text-[#252b31]'>
+																−
+															</button>
+															<span className='w-6 text-center font-mona text-[18px] font-black text-[#252b31]'>
+																{item.quantity}
+															</span>
+															<button
+																type='button'
+																onClick={(event) => {
+																	event.stopPropagation();
+																	syncQuantity(item, item.quantity + 1);
+																}}
+																className='flex h-10 w-10 items-center justify-center rounded-full border border-[#1f2529] text-[24px] font-light text-[#252b31]'>
+																+
+															</button>
+														</div>
+														<p className='font-mona text-[20px] font-black text-[#252b31]'>
+															₦{(item.price * item.quantity).toLocaleString()}
+														</p>
+													</div>
+												</div>
+											</div>
+										);
+									})}
 								</div>
-							)}
+							</div>
 
 							<div className='my-10 border-t border-[#d7d7d7]' />
 
-							<div className='flex flex-wrap items-center gap-7'>
-								<p className='font-mona text-[14px] font-black uppercase tracking-[0.22em] text-[#252b31]'>
-									Quantity
-								</p>
-								<button
-									onClick={() =>
-										syncQuantity(Math.max(1, (mainItem?.quantity || quantity) - 1))
-									}
-									className='flex h-[68px] w-[68px] items-center justify-center rounded-full border border-[#1f2529] text-[36px] font-light text-[#252b31]'>
-									−
-								</button>
-								<span className='w-8 text-center font-mona text-[26px] font-black text-[#252b31]'>
-									{quantity}
-								</span>
-								<button
-									onClick={() =>
-										syncQuantity((mainItem?.quantity || quantity) + 1)
-									}
-									className='flex h-[68px] w-[68px] items-center justify-center rounded-full border border-[#1f2529] text-[36px] font-light text-[#252b31]'>
-									+
-								</button>
-							</div>
+							{selectedVariant ? (
+								<div className='flex flex-wrap items-center gap-8'>
+									<div className='flex h-[66px] items-center gap-5 rounded-[14px] border border-[#1f2529] px-5'>
+										<ColorSwatch
+											value={selectedVariant.value}
+											className='h-11 w-11'
+										/>
+										<span className='font-mona text-[14px] font-black uppercase tracking-[0.22em] text-[#252b31]'>
+											{selectedVariant.label || selectedVariant.id || 'Selected color'}
+										</span>
+									</div>
+								</div>
+							) : null}
 
 							<div className='my-10 border-t border-[#d7d7d7]' />
 

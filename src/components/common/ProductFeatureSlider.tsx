@@ -64,10 +64,27 @@ export default function ProductFeatureSlider({
 		if (!api) return;
 		setCount(api.scrollSnapList().length);
 		setCurrent(api.selectedScrollSnap() + 1);
-		api.on('select', () => {
+
+		const onSelect = () => {
 			setCurrent(api.selectedScrollSnap() + 1);
-		});
+		};
+
+		api.on('select', onSelect);
+
+		return () => {
+			api.off('select', onSelect);
+		};
 	}, [api]);
+
+	useEffect(() => {
+		if (!api || productFeatures.length <= 1) return;
+
+		const interval = window.setInterval(() => {
+			api.scrollNext();
+		}, 4500);
+
+		return () => window.clearInterval(interval);
+	}, [api, productFeatures.length]);
 
 	return (
 		<section className='bg-white px-5 py-14 sm:py-16 md:py-20 lg:py-28'>
@@ -88,7 +105,7 @@ export default function ProductFeatureSlider({
 									imageSrc={feature.imageSrc}
 									imageAlt={feature.imageAlt}
 									imageClassName={
-										feature.imageClassName || 'object-cover object-center'
+										feature.imageClassName || 'object-contain p-8 sm:p-10 md:p-12'
 									}
 								/>
 							</CarouselItem>

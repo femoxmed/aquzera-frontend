@@ -35,7 +35,7 @@ export default function AquzeraProductItem({
 		<section className='grid grid-cols-1 md:grid-cols-2'>
 			{/* Image */}
 			<div
-				className={`relative h-[200px] sm:h-[260px] md:h-full flex items-center justify-center overflow-hidden bg-[#f4f4f2] order-1 ${
+				className={`relative flex h-[320px] items-center justify-center overflow-hidden bg-[#f4f4f2] p-8 order-1 sm:h-[420px] md:h-[560px] lg:h-[640px] ${
 					imageOnRight ? 'md:order-2' : 'md:order-1'
 				}`}>
 				<Image
@@ -43,7 +43,7 @@ export default function AquzeraProductItem({
 					alt={imageAlt}
 					fill
 					unoptimized={shouldBypassImageOptimizer(imageSrc)}
-					className='object-cover'
+					className='object-contain p-8 sm:p-12 lg:p-16'
 				/>
 			</div>
 

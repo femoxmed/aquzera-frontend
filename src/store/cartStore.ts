@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 
 export type CartItem = {
 	id: string;
+	slug?: string;
 	name: string;
 	price: number;
 	quantity: number;
@@ -32,11 +33,21 @@ type CartState = {
 	items: CartItem[];
 	setItems: (items: CartItem[]) => void;
 	addItem: (item: CartItem) => void;
-	removeItem: (id: string) => void;
-	updateQuantity: (id: string, quantity: number) => void;
+	removeItem: (id: string, variantKey?: string) => void;
+	updateQuantity: (id: string, quantity: number, variantKey?: string) => void;
 	clearCart: () => void;
 	total: () => number;
 };
+
+function cartVariantKey(item: Pick<CartItem, 'variant'>) {
+	return item.variant?.id || item.variant?.label || '';
+}
+
+function matchesCartLine(item: CartItem, id: string, variantKey?: string) {
+	if (item.id !== id) return false;
+	if (variantKey === undefined) return true;
+	return cartVariantKey(item) === variantKey;
+}
 
 export const useCartStore = create<CartState>()(
 	persist(
@@ -45,17 +56,14 @@ export const useCartStore = create<CartState>()(
 			setItems: (items) => set({ items }),
 			addItem: (item) =>
 				set((state) => {
-					const variantKey = item.variant?.id || item.variant?.label || '';
+					const variantKey = cartVariantKey(item);
 					const existing = state.items.find(
-						(i) =>
-							i.id === item.id &&
-							(i.variant?.id || i.variant?.label || '') === variantKey,
+						(i) => matchesCartLine(i, item.id, variantKey),
 					);
 					if (existing) {
 						return {
 							items: state.items.map((i) =>
-								i.id === item.id &&
-								(i.variant?.id || i.variant?.label || '') === variantKey
+								matchesCartLine(i, item.id, variantKey)
 									? { ...i, quantity: i.quantity + item.quantity }
 									: i,
 							),
@@ -63,15 +71,21 @@ export const useCartStore = create<CartState>()(
 					}
 					return { items: [...state.items, item] };
 				}),
-			removeItem: (id) =>
+			removeItem: (id, variantKey) =>
 				set((state) => ({
-					items: state.items.filter((item) => item.id !== id),
-				})),
-			updateQuantity: (id, quantity) =>
-				set((state) => ({
-					items: state.items.map((item) =>
-						item.id === id ? { ...item, quantity } : item,
+					items: state.items.filter(
+						(item) => !matchesCartLine(item, id, variantKey),
 					),
+				})),
+			updateQuantity: (id, quantity, variantKey) =>
+				set((state) => ({
+					items: state.items
+						.map((item) =>
+							matchesCartLine(item, id, variantKey)
+								? { ...item, quantity }
+								: item,
+						)
+						.filter((item) => item.quantity > 0),
 				})),
 			clearCart: () => set({ items: [] }),
 			total: () =>

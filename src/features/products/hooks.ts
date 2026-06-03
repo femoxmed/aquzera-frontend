@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import {
 	getLatestFeaturedProduct,
+	getLatestFeaturedProductItem,
 	getProductListing,
 	getPublicProduct,
 	getPublicProducts,
@@ -34,5 +35,12 @@ export function useLatestFeaturedProduct() {
 	return useQuery({
 		queryKey: ['public-products', 'featured', 'latest'],
 		queryFn: getLatestFeaturedProduct,
+	});
+}
+
+export function useLatestFeaturedProductItem() {
+	return useQuery({
+		queryKey: ['public-products', 'featured', 'latest-item'],
+		queryFn: getLatestFeaturedProductItem,
 	});
 }

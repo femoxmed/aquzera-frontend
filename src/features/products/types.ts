@@ -4,6 +4,12 @@ export type ProductImage = {
 	url?: string;
 	path?: string;
 	originalName?: string;
+	variants?: Array<{
+		name?: string;
+		url?: string;
+		width?: number;
+		height?: number;
+	}>;
 };
 
 export type ProductColor = {

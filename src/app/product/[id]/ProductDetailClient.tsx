@@ -5,7 +5,11 @@ import ProductDetailHero from '@/components/common/ProductDetailHero';
 import ProductFeatureSlider from '@/components/common/ProductFeatureSlider';
 import ProductOverview from '@/components/common/ProductOverview';
 import ProductSpecs from '@/components/common/ProductSpecs';
-import { productImageUrl, productPrice } from '@/features/products/api';
+import {
+	productImageUrl,
+	productPrice,
+	productVariantImageUrl,
+} from '@/features/products/api';
 import { useProduct } from '@/features/products/hooks';
 
 type ProductDetailClientProps = {
@@ -39,6 +43,12 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 		);
 	}
 
+	const colors = product.colors?.map((color) => ({
+		id: color.id,
+		label: color.label,
+		value: color.value,
+		imageUrl: productVariantImageUrl(color),
+	}));
 	const imageSrc = productImageUrl(product);
 	const description =
 		product.description ||
@@ -61,7 +71,7 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 				price={productPrice(product)}
 				description={description}
 				imageSrc={imageSrc}
-				colors={product.colors || undefined}
+				colors={colors || undefined}
 			/>
 			<ProductFeatureSlider
 				features={
@@ -71,7 +81,8 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 							description: feature.description || description,
 							imageSrc: feature.image?.url || feature.imageUrl || imageSrc,
 							imageAlt: feature.imageAlt || feature.title,
-							imageClassName: feature.imageClassName,
+							imageClassName:
+								feature.imageClassName || 'object-contain p-8 sm:p-10 md:p-12',
 						})) || undefined
 				}
 			/>

@@ -132,13 +132,15 @@
   .dashboard-dark [class*="border-[#dce8ee]"],
   .dashboard-dark [class*="border-[#e2e2e2]"],
   .dashboard-dark [class*="border-[#e3e3e3]"],
+  .dashboard-dark [class*="border-[#e8e8e8]"],
   .dashboard-dark [class*="border-[#e8eef2]"] {
     border-color: #242424 !important;
   }
 
   .dashboard-dark [class*="bg-white"],
   .dashboard-dark [class*="bg-[#fbfdff]"],
-  .dashboard-dark [class*="bg-[#f7f7f7]"] {
+  .dashboard-dark [class*="bg-[#f7f7f7]"],
+  .dashboard-dark [class*="bg-[#fafafa]"] {
     background-color: #050505 !important;
   }
 

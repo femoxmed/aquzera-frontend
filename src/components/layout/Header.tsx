@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { LogOut, X, Menu } from 'lucide-react';
+import { CircleHelp, LogOut, Menu, ShoppingBag, UserCircle, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { useState } from 'react';
@@ -24,6 +23,20 @@ export default function Header() {
 	const logout = useAuthStore((state) => state.logout);
 	const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 	const [menuOpen, setMenuOpen] = useState(false);
+	const usesLightHeader =
+		pathname === '/contact' ||
+		pathname === '/faq' ||
+		pathname === '/terms' ||
+		pathname === '/privacy' ||
+		pathname === '/shipping-policy';
+	const usesWhiteIcons =
+		pathname === '/' ||
+		pathname === '/about' ||
+		pathname === '/cart' ||
+		pathname === '/shipping' ||
+		pathname === '/product' ||
+		pathname?.startsWith('/product/');
+	const iconColorClass = usesWhiteIcons ? 'text-white' : 'text-black';
 
 	const handleLogout = () => {
 		clearAuthSession();
@@ -34,16 +47,26 @@ export default function Header() {
 	};
 
 	return (
-		<header className='top-0 z-50 bg-[linear-gradient(180deg,_rgba(0,0,0,0.7125)_0%,_rgba(30,30,30,0.375)_65.75%)] border-b border-gray-100 shadow-sm fixed w-[100%]'>
+		<header
+			className={`top-0 z-50 fixed w-[100%] border-b shadow-sm ${
+				usesLightHeader
+					? 'border-[#7F7F7F]/45 bg-white'
+					: 'border-[#7F7F7F]/45 bg-[linear-gradient(180deg,_rgba(0,0,0,0.7125)_0%,_rgba(30,30,30,0.375)_65.75%)]'
+			}`}>
 			<div className='container flex h-[100px] items-center justify-between'>
 				{/* Logo */}
 				<Link href='/' className='flex flex-col leading-none select-none'>
 					<span
-						className='font-mona text-[17px] font-black tracking-[0.18em] text-white'
+						className={`font-mona text-[17px] font-black tracking-[0.18em] ${
+							usesLightHeader ? 'text-[#061927]' : 'text-white'
+						}`}
 						style={{ fontStretch: 'expanded' }}>
 						AQUZERA
 					</span>
-					<span className='text-[7px] font-semibold tracking-[0.25em] text-gray-400 uppercase mt-[1px]'>
+					<span
+						className={`text-[7px] font-semibold tracking-[0.25em] uppercase mt-[1px] ${
+							usesLightHeader ? 'text-[#061927]/65' : 'text-gray-400'
+						}`}>
 						WATER SOLUTIONS
 					</span>
 				</Link>
@@ -55,7 +78,7 @@ export default function Header() {
 							key={href}
 							href={href}
 							className={`font-mona text-[20px] font-semibold tracking-[0.15em] leading-[50px] transition-colors hover:text-primary ${
-								pathname === href ? 'text-white' : 'text-white'
+								usesLightHeader ? 'text-black' : 'text-white'
 							}`}>
 							{label}
 						</Link>
@@ -65,13 +88,7 @@ export default function Header() {
 				{/* Right icons */}
 				<div className='flex items-center gap-5'>
 					<Link href='/cart' className='relative' aria-label='Cart'>
-						<Image
-							src='/icons/shopping_cart.svg'
-							alt='Cart'
-							width={18}
-							height={18}
-							className='h-[18px] w-[18px]'
-						/>
+						<ShoppingBag className={`h-[18px] w-[18px] ${iconColorClass}`} strokeWidth={1.8} />
 						{cartCount > 0 && (
 							<span className='absolute -top-2 -right-2 h-4 w-4 rounded-full bg-primary text-white text-[9px] flex items-center justify-center font-bold'>
 								{cartCount}
@@ -79,31 +96,23 @@ export default function Header() {
 						)}
 					</Link>
 					<Link href='/faq' className='hidden sm:block' aria-label='Help'>
-						<Image
-							src='/icons/question.svg'
-							alt='Help'
-							width={18}
-							height={18}
-							className='h-[18px] w-[18px]'
-						/>
+						<CircleHelp className={`h-[18px] w-[18px] ${iconColorClass}`} strokeWidth={1.8} />
 					</Link>
 					<Link
 						href={user ? '/dashboard' : '/auth/signin'}
 						className='hidden sm:block'
 						aria-label='Account'>
-						<Image
-							src='/icons/profile-circle.svg'
-							alt='Account'
-							width={18}
-							height={18}
-							className='h-[18px] w-[18px]'
-						/>
+						<UserCircle className={`h-[18px] w-[18px] ${iconColorClass}`} strokeWidth={1.8} />
 					</Link>
 					{user ? (
 						<button
 							type='button'
 							onClick={handleLogout}
-							className='hidden sm:flex h-8 w-8 items-center justify-center rounded-full text-white hover:bg-white/10'
+							className={`hidden sm:flex h-8 w-8 items-center justify-center rounded-full ${
+								usesLightHeader
+									? 'text-black hover:bg-black/5'
+									: 'text-white hover:bg-white/10'
+							}`}
 							aria-label='Logout'>
 							<LogOut className='h-[18px] w-[18px]' strokeWidth={1.8} />
 						</button>
@@ -111,7 +120,11 @@ export default function Header() {
 
 					{/* Mobile hamburger */}
 					<button
-						className='md:hidden flex items-center justify-center w-9 h-9 rounded-full text-white hover:bg-white/10 transition-colors'
+						className={`md:hidden flex items-center justify-center w-9 h-9 rounded-full transition-colors ${
+							usesLightHeader
+								? 'text-black hover:bg-black/5'
+								: 'text-white hover:bg-white/10'
+						}`}
 						onClick={() => setMenuOpen(true)}
 						aria-label='Open menu'>
 						<Menu className='h-6 w-6' strokeWidth={1.8} />
@@ -170,13 +183,7 @@ export default function Header() {
 							className='relative text-white/70 hover:text-white transition-colors'
 							onClick={() => setMenuOpen(false)}
 							aria-label='Cart'>
-							<Image
-								src='/icons/shopping_cart.svg'
-								alt='Cart'
-								width={24}
-								height={24}
-								className='h-6 w-6'
-							/>
+							<ShoppingBag className='h-6 w-6' strokeWidth={1.8} />
 							{cartCount > 0 && (
 								<span className='absolute -top-2 -right-2 h-4 w-4 rounded-full bg-primary text-white text-[9px] flex items-center justify-center font-bold'>
 									{cartCount}
@@ -188,26 +195,14 @@ export default function Header() {
 							className='text-white/70 hover:text-white transition-colors'
 							onClick={() => setMenuOpen(false)}
 							aria-label='Help'>
-							<Image
-								src='/icons/question.svg'
-								alt='Help'
-								width={24}
-								height={24}
-								className='h-6 w-6'
-							/>
+							<CircleHelp className='h-6 w-6' strokeWidth={1.8} />
 						</Link>
 						<Link
 							href={user ? '/dashboard' : '/auth/signin'}
 							className='text-white/70 hover:text-white transition-colors'
 							onClick={() => setMenuOpen(false)}
 							aria-label='Account'>
-							<Image
-								src='/icons/profile-circle.svg'
-								alt='Account'
-								width={24}
-								height={24}
-								className='h-6 w-6'
-							/>
+							<UserCircle className='h-6 w-6' strokeWidth={1.8} />
 						</Link>
 						{user ? (
 							<button

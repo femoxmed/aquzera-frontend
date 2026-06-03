@@ -10,7 +10,7 @@ type ProductDetailHeroProps = {
 export default function ProductDetailHero({
 	imageSrc = '/images/product_page_bg.png',
 	imageAlt = 'Aquzera Water Purifier',
-	priceLabel = 'Starting From ₦200,000*',
+	priceLabel = 'Starting From ₦200,000',
 }: ProductDetailHeroProps) {
 	return (
 		<section className='relative h-[300px] sm:h-[380px] md:h-[450px] lg:h-[520px] xl:h-[640px] overflow-hidden bg-black'>

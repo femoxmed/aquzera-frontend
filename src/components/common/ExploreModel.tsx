@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useAddToCart } from '@/lib/addToCart';
+import { shouldBypassImageOptimizer } from '@/lib/images';
+import ColorSwatch from '@/components/common/ColorSwatch';
 import type {
 	ProductColor,
 	ProductSpecification,
@@ -21,6 +24,7 @@ const defaultColors: ProductColor[] = [
 
 type ExploreModelProps = {
 	id?: string;
+	slug?: string;
 	name?: string;
 	price?: number;
 	priceLabel?: string;
@@ -31,16 +35,19 @@ type ExploreModelProps = {
 
 export default function ExploreModel({
 	id = 'aquzera-water-purifier',
+	slug,
 	name = 'Aquzera Water Purifier',
 	price = 200000,
-	priceLabel = 'Starting From ₦200,000*',
+	priceLabel = 'Starting From ₦200,000',
 	colors = defaultColors,
 	specifications,
 	mainImage = '/images/purifier.png',
 }: ExploreModelProps) {
 	const addToCart = useAddToCart();
 	const [selectedColor, setSelectedColor] = useState<string>(
-		colors[0]?.id || 'charcoal',
+		colors.find((color) => color.image?.url || color.imageUrl)?.id ||
+			colors[0]?.id ||
+			'charcoal',
 	);
 
 	const displaySpecs =
@@ -49,6 +56,7 @@ export default function ExploreModel({
 	const selectedColorData = colors.find((c) => c.id === selectedColor);
 	const displayImage =
 		selectedColorData?.image?.url || selectedColorData?.imageUrl || mainImage;
+	const productHref = `/product/${slug || id}`;
 
 	return (
 		<section className='bg-white px-4 py-14 sm:px-6 md:py-20 lg:py-24'>
@@ -66,6 +74,7 @@ export default function ExploreModel({
 							alt={name}
 							fill
 							priority
+							unoptimized={shouldBypassImageOptimizer(displayImage)}
 							className='object-contain'
 						/>
 					</div>
@@ -80,13 +89,13 @@ export default function ExploreModel({
 										? 'border border-[#25282d]'
 										: 'border border-[#d7d7d7]'
 								}`}>
-								<span
-									className={`h-11 w-11 rounded-full ${
+								<ColorSwatch
+									value={color.value}
+									className={`h-11 w-11 ${
 										selectedColor === color.id
 											? 'ring-2 ring-black ring-offset-4'
 											: ''
 									}`}
-									style={{ backgroundColor: color.value }}
 								/>
 								<span className='font-mona text-[12px] font-black uppercase tracking-[0.22em] text-[#25282d]'>
 									{color.label}
@@ -97,19 +106,19 @@ export default function ExploreModel({
 				</div>
 
 				{/* Specs */}
-				<div className='mx-auto mt-20 grid max-w-[920px] grid-cols-3 text-center'>
+				<div className='mx-auto mt-20 grid max-w-[1040px] grid-cols-1 text-center sm:grid-cols-2 lg:grid-cols-4'>
 					{displaySpecs.map((spec) => {
 						const value = 'value' in spec ? spec.value : '';
 						const label = 'label' in spec ? spec.label : '';
 						return (
 							<div
 								key={value || label}
-								className='flex min-h-[120px] flex-col items-center justify-center border-r border-[#25282d]/70 px-4 last:border-r-0 sm:min-h-[150px]'>
-								<p className='font-mona-wide text-[38px] font-black leading-none tracking-[-0.05em] text-[#25282d] sm:text-[54px] md:text-[68px]'>
-									{value}
-								</p>
-								<p className='mt-4 whitespace-pre-line font-montserrat text-[16px] leading-[1.1] tracking-[-0.03em] text-black sm:text-[22px] md:text-[26px]'>
+								className='flex min-h-[120px] flex-col items-center justify-center border-b border-[#25282d]/25 px-4 py-6 last:border-b-0 sm:min-h-[150px] sm:border-r sm:last:border-r-0 sm:[&:nth-last-child(-n+2)]:border-b-0 lg:border-b-0'>
+								<p className='font-mona-wide text-[22px] font-black leading-tight text-[#25282d] sm:text-[26px] md:text-[30px]'>
 									{label}
+								</p>
+								<p className='mt-4 max-w-[220px] whitespace-pre-line font-montserrat text-[13px] leading-snug text-black/70 sm:text-[14px]'>
+									{value}
 								</p>
 							</div>
 						);
@@ -117,11 +126,12 @@ export default function ExploreModel({
 				</div>
 
 				{/* CTA */}
-				<div className='mt-14 flex justify-center'>
+				<div className='mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row'>
 					<button
 						onClick={() =>
 							addToCart({
 								id,
+								slug,
 								name,
 								price,
 								image: displayImage,
@@ -138,6 +148,11 @@ export default function ExploreModel({
 						className='inline-flex h-[58px] min-w-[175px] items-center justify-center bg-[#1738e6] px-8 font-mona text-[13px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 sm:h-[64px] sm:min-w-[205px]'>
 						BUY NOW <span className='ml-3 text-[24px] leading-none'>→</span>
 					</button>
+					<Link
+						href={productHref}
+						className='inline-flex h-[58px] min-w-[175px] items-center justify-center border border-[#25282d] px-8 font-mona text-[13px] font-black uppercase tracking-[0.22em] text-[#25282d] transition-colors hover:bg-[#25282d] hover:text-white sm:h-[64px] sm:min-w-[205px]'>
+						View Details
+					</Link>
 				</div>
 
 				{/* Lifestyle image */}

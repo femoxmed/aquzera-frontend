@@ -63,7 +63,7 @@ export default function ProductDetailClient({
 		description: f.description,
 		imageSrc: f.image?.url || f.imageUrl || '/images/product_placeholder.png',
 		imageAlt: f.imageAlt || f.title,
-		imageClassName: f.imageClassName,
+		imageClassName: f.imageClassName || 'object-contain p-8 sm:p-10 md:p-12',
 	}));
 
 	const specs = (product.specifications || []).map((s) => ({

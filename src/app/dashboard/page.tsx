@@ -28,6 +28,7 @@ import {
 	createMyPaymentIntent,
 	createMyTicket,
 	getMyTicketMessages,
+	getOrderItems,
 	getMe,
 	getMyInvoices,
 	getMyOrders,
@@ -36,6 +37,7 @@ import {
 	getMyTickets,
 	updateMe,
 	type DashboardOrder,
+	type DashboardOrderItem,
 	type Invoice,
 	type PurchasedDevice,
 	type ServiceBooking,
@@ -43,6 +45,7 @@ import {
 } from '@/lib/dashboard';
 import { useAuthStore } from '@/store/authStore';
 import { useDashboardThemeStore } from '@/store/dashboardThemeStore';
+import ColorSwatch from '@/components/common/ColorSwatch';
 
 type Tab = 'products' | 'account' | 'orders' | 'schedules' | 'tickets';
 
@@ -96,6 +99,8 @@ function addMonths(value: string | undefined, months: number) {
 function deviceImage(device: PurchasedDevice) {
 	return (
 		device.variant?.imageUrl ||
+		device.product?.colors?.[0]?.image?.url ||
+		device.product?.colors?.[0]?.imageUrl ||
 		device.product?.mainImage?.url ||
 		device.product?.bannerImage?.url ||
 		device.product?.galleryImages?.[0]?.url ||
@@ -103,8 +108,24 @@ function deviceImage(device: PurchasedDevice) {
 	);
 }
 
+function orderItemImage(item: DashboardOrderItem) {
+	return (
+		item.variant?.imageUrl ||
+		item.product?.colors?.[0]?.image?.url ||
+		item.product?.colors?.[0]?.imageUrl ||
+		item.product?.mainImage?.url ||
+		item.product?.bannerImage?.url ||
+		item.product?.galleryImages?.[0]?.url ||
+		'/images/product_placeholder.png'
+	);
+}
+
+function orderItemColour(item: DashboardOrderItem) {
+	return item.variant?.value || item.product?.colors?.[0]?.value || '#101818';
+}
+
 function deviceColour(device: PurchasedDevice) {
-	return device.variant?.value || '#101818';
+	return device.variant?.value || device.product?.colors?.[0]?.value || '#101818';
 }
 
 function productName(device: PurchasedDevice) {
@@ -248,9 +269,9 @@ function ProductDetail({
 			<div className='grid gap-16 xl:grid-cols-[280px_1fr]'>
 				<div>
 					<ProductCard device={device} onOpen={() => undefined} />
-					<span
-						className='ml-8 mt-8 block h-11 w-11 rounded-full border border-black'
-						style={{ backgroundColor: deviceColour(device) }}
+					<ColorSwatch
+						value={deviceColour(device)}
+						className='ml-8 mt-8 h-11 w-11'
 					/>
 				</div>
 				<div className='max-w-[680px] pt-2'>
@@ -408,6 +429,7 @@ export default function DashboardPage() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 	const [orders, setOrders] = useState<DashboardOrder[]>([]);
+	const [orderItemsByOrderId, setOrderItemsByOrderId] = useState<Record<string, DashboardOrderItem[]>>({});
 	const [products, setProducts] = useState<PurchasedDevice[]>([]);
 	const [selectedProduct, setSelectedProduct] = useState<PurchasedDevice | null>(null);
 	const [bookings, setBookings] = useState<ServiceBooking[]>([]);
@@ -473,7 +495,16 @@ export default function DashboardPage() {
 				const currentAccessToken = useAuthStore.getState().accessToken;
 				if (currentAccessToken) setAuth(me, currentAccessToken);
 				setAccountForm({ fullName: me.fullName || '', phone: me.phone || '' });
+				const orderItems = await Promise.all(
+					orderRows.map((order) =>
+						getOrderItems(order.id)
+							.then((items) => [order.id, items] as const)
+							.catch(() => [order.id, order.items ?? []] as const),
+					),
+				);
+				if (!isMounted) return;
 				setOrders(orderRows);
+				setOrderItemsByOrderId(Object.fromEntries(orderItems));
 				setProducts(productRows);
 				setBookings(bookingRows);
 				setInvoices(invoiceRows);
@@ -749,7 +780,9 @@ export default function DashboardPage() {
 
 							{activeTab === 'orders' && (
 								<div className='mt-10 space-y-5'>
-									{orders.length ? orders.map((order) => (
+									{orders.length ? orders.map((order) => {
+										const items = orderItemsByOrderId[order.id] ?? order.items ?? [];
+										return (
 										<div key={order.id} className='border border-[#e0e0e0] p-5'>
 											<div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
 												<div>
@@ -758,9 +791,41 @@ export default function DashboardPage() {
 												</div>
 												<p className='font-mona text-[22px] font-black text-black'>{currency(order.total)}</p>
 											</div>
-											<p className='mt-4 text-sm text-[#666a70]'>{order.items?.length || 0} item(s)</p>
+											<p className='mt-4 text-sm text-[#666a70]'>{items.length} unit(s)</p>
+											{items.length ? (
+												<div className='mt-4 grid gap-3 md:grid-cols-2'>
+													{items.map((item, index) => (
+														<div key={item.id} className='flex gap-4 border border-[#e8e8e8] bg-[#fafafa] p-3 text-sm text-[#4f545c]'>
+															<img
+																src={orderItemImage(item)}
+																alt={item.product?.name || 'Aquzera Product'}
+																className='h-20 w-20 shrink-0 bg-white object-contain p-2'
+															/>
+															<div className='min-w-0 pt-1'>
+																<p className='font-mona text-[14px] font-black text-black'>
+																	Unit {index + 1} · {item.product?.name || 'Aquzera Product'}
+																</p>
+																<p className='mt-2 text-xs text-[#777b82]'>
+																	Order #{(item.orderId || order.id).slice(0, 8)} · Product #{(item.productId || item.product?.id || '').slice(0, 8) || '—'}
+																</p>
+																{item.variant ? (
+																	<p className='mt-2 flex items-center gap-2 text-xs text-[#777b82]'>
+																		<ColorSwatch
+																			value={orderItemColour(item)}
+																			className='h-3 w-3'
+																		/>
+																		{item.variant.label || item.variant.id || 'Selected color'}
+																	</p>
+																) : null}
+																<p className='mt-1 text-xs text-[#777b82]'>Item #{item.id.slice(0, 8)}</p>
+															</div>
+														</div>
+													))}
+												</div>
+											) : null}
 										</div>
-									)) : <EmptyState title='No orders yet' body='Completed checkout orders will appear here.' />}
+										);
+									}) : <EmptyState title='No orders yet' body='Completed checkout orders will appear here.' />}
 									{invoices.length > 0 ? (
 										<div className='pt-6'>
 											<h2 className='font-mona text-[22px] font-black text-black'>Invoices</h2>

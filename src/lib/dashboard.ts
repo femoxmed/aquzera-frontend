@@ -10,6 +10,7 @@ export type DashboardProduct = Pick<
 	| 'price'
 	| 'stock'
 	| 'shortDescription'
+	| 'colors'
 	| 'mainImage'
 	| 'bannerImage'
 	| 'galleryImages'
@@ -24,11 +25,21 @@ export type DashboardOrder = {
 	createdAt: string;
 	items?: Array<{
 		id: string;
+		orderId?: string;
+		productId?: string;
 		qty: number;
 		unitPrice: number | string;
+		variant?: {
+			id?: string;
+			label?: string;
+			value?: string;
+			imageUrl?: string;
+		} | null;
 		product?: DashboardProduct;
 	}>;
 };
+
+export type DashboardOrderItem = NonNullable<DashboardOrder['items']>[number];
 
 export type DashboardInstallation = {
 	id: string;
@@ -42,6 +53,7 @@ export type PurchasedDevice = {
 	id: string;
 	orderItemId?: string;
 	orderId: string;
+	productId?: string;
 	orderDate: string;
 	paidAt?: string;
 	qty: number;
@@ -154,6 +166,12 @@ export function updateMe(payload: { fullName: string; phone?: string }) {
 export function getMyOrders() {
 	return api
 		.get<DashboardOrder[]>('/orders/me/history')
+		.then((response) => response.data);
+}
+
+export function getOrderItems(orderId: string) {
+	return api
+		.get<DashboardOrderItem[]>(`/orders/${orderId}/items`)
 		.then((response) => response.data);
 }
 

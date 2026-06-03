@@ -19,6 +19,7 @@ import {
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore, type CartItem } from '@/store/cartStore';
+import { getMe } from '@/lib/dashboard';
 
 function currency(value: number) {
 	return `N ${Math.round(value).toLocaleString()}`;
@@ -60,16 +61,18 @@ function SummaryItem({
 	onRemove,
 }: {
 	item: CartItem;
-	onRemove: (id: string) => void;
+	onRemove: (item: CartItem) => void;
 }) {
+	const image = item.variant?.imageUrl || item.image || '/images/product_placeholder.png';
+
 	return (
 		<div className='grid grid-cols-[178px_1fr_24px] gap-9 border-b border-[#d6d6d6] pb-10'>
 			<div className='relative h-44.5 overflow-hidden rounded-[28px] border border-[#d3d3d3] bg-white'>
 				<Image
-					src={item.image || '/images/product_placeholder.png'}
+					src={image}
 					alt={item.name}
 					fill
-					unoptimized={shouldBypassImageOptimizer(item.image)}
+					unoptimized={shouldBypassImageOptimizer(image)}
 					className='object-contain p-9'
 				/>
 				<span className='absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-full bg-[#a7ff18] text-sm font-black text-black'>
@@ -93,7 +96,7 @@ function SummaryItem({
 			</div>
 			<button
 				type='button'
-				onClick={() => onRemove(item.id)}
+				onClick={() => onRemove(item)}
 				className='mt-4 flex h-7 w-7 items-center justify-center rounded-full bg-[#ff676f] text-white'
 				aria-label='Remove item'>
 				<X className='h-4 w-4' strokeWidth={3} />
@@ -106,6 +109,7 @@ export default function ShippingPage() {
 	const router = useRouter();
 	const user = useAuthStore((state) => state.user);
 	const accessToken = useAuthStore((state) => state.accessToken);
+	const setAuth = useAuthStore((state) => state.setAuth);
 	const items = useCartStore((state) => state.items);
 	const setItems = useCartStore((state) => state.setItems);
 	const clearCart = useCartStore((state) => state.clearCart);
@@ -113,7 +117,6 @@ export default function ShippingPage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [consent, setConsent] = useState(false);
 	const [pricing, setPricing] = useState<CheckoutPricing | null>(null);
-	const [idempotencyKey, setIdempotencyKey] = useState('');
 	const [preparedOrder, setPreparedOrder] =
 		useState<CheckoutOrderResponse['order'] | null>(null);
 	const [form, setForm] = useState({
@@ -142,6 +145,7 @@ export default function ShippingPage() {
 		return preparedOrder.items.map((item) => {
 			const product = item.product;
 			const image =
+				item.variant?.imageUrl ||
 				product?.mainImage?.url ||
 				product?.bannerImage?.url ||
 				product?.galleryImages?.[0]?.url;
@@ -153,6 +157,7 @@ export default function ShippingPage() {
 				price: unitPrice,
 				quantity: item.qty,
 				image,
+				variant: item.variant || undefined,
 				description: product?.shortDescription || undefined,
 			};
 		});
@@ -174,8 +179,25 @@ export default function ShippingPage() {
 			...current,
 			fullName: user.fullName || current.fullName,
 			email: user.email || current.email,
+			phone: user.phone || current.phone,
 		}));
 	}, [user]);
+
+	useEffect(() => {
+		if (!accessToken) return;
+
+		getMe()
+			.then((me) => {
+				setAuth(me, accessToken);
+				setForm((current) => ({
+					...current,
+					fullName: me.fullName || current.fullName,
+					email: me.email || current.email,
+					phone: me.phone || current.phone,
+				}));
+			})
+			.catch(() => undefined);
+	}, [accessToken, setAuth]);
 
 	useEffect(() => {
 		if (!accessToken) return;
@@ -184,11 +206,9 @@ export default function ShippingPage() {
 		if (storedCheckout) {
 			try {
 				const parsed = JSON.parse(storedCheckout) as {
-					idempotencyKey?: string;
 					pricing?: CheckoutPricing;
 					order?: CheckoutOrderResponse['order'];
 				};
-				if (parsed.idempotencyKey) setIdempotencyKey(parsed.idempotencyKey);
 				if (parsed.pricing) setPricing(parsed.pricing);
 				if (parsed.order?.id) {
 					setPreparedOrder(parsed.order);
@@ -204,13 +224,11 @@ export default function ShippingPage() {
 
 		prepareCartCheckout()
 			.then((response) => {
-				setIdempotencyKey(response.idempotencyKey);
 				setPricing(response.pricing);
 				setPreparedOrder(response.order);
 				sessionStorage.setItem(
 					'aquzera-checkout',
 					JSON.stringify({
-						idempotencyKey: response.idempotencyKey,
 						pricing: response.pricing,
 						order: response.order,
 					}),
@@ -253,7 +271,6 @@ export default function ShippingPage() {
 				postalCode: form.postalCode,
 				address: form.address,
 				consent,
-				idempotencyKey,
 			});
 			clearCart();
 			sessionStorage.removeItem('aquzera-checkout');
@@ -278,11 +295,12 @@ export default function ShippingPage() {
 		}
 	};
 
-	const handleRemoveItem = async (id: string) => {
-		removeItem(id);
+	const handleRemoveItem = async (item: CartItem) => {
+		const key = item.variant?.id || item.variant?.label || '';
+		removeItem(item.id, key);
 		if (!accessToken) return;
 		try {
-			const cart = await removeCartItem(id);
+			const cart = await removeCartItem(item.id, key);
 			setItems(serverCartToItems(cart));
 		} catch {
 			toast.error('Unable to remove item');
@@ -401,7 +419,7 @@ export default function ShippingPage() {
 							<div className='mt-10 space-y-12'>
 								{additionalItems.map((item) => (
 									<SummaryItem
-										key={item.id}
+										key={`${item.id}::${item.variant?.id || item.variant?.label || ''}`}
 										item={item}
 										onRemove={handleRemoveItem}
 									/>
