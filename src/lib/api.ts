@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useAuthStore, type AuthUser } from '@/store/authStore';
+import { API_BASE_URL, normalizeMediaUrls } from '@/lib/media-url';
 
 export const api = axios.create({
-	baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api',
+	baseURL: API_BASE_URL,
 	withCredentials: true,
 });
 
@@ -19,7 +20,10 @@ api.interceptors.request.use((config) => {
 let refreshPromise: Promise<string | null> | null = null;
 
 api.interceptors.response.use(
-	(response) => response,
+	(response) => {
+		response.data = normalizeMediaUrls(response.data);
+		return response;
+	},
 	async (error) => {
 		const originalRequest = error.config;
 		const status = error.response?.status;

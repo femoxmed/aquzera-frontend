@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
 				protocol: 'https',
 				hostname: 'cdn.jsdelivr.net',
 			},
+			{
+				protocol: 'https',
+				hostname: 'aquzera-api.eu-west-2.elasticbeanstalk.com',
+				pathname: '/uploads/**',
+			},
 		],
 	},
 };
