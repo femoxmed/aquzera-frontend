@@ -20,10 +20,8 @@ import { shouldBypassImageOptimizer } from '@/lib/images';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore, type CartItem } from '@/store/cartStore';
 import { getMe } from '@/lib/dashboard';
+import { formatCurrency } from '@/lib/utils';
 
-function currency(value: number) {
-	return `N ${Math.round(value).toLocaleString()}`;
-}
 
 function CheckoutInput({
 	label,
@@ -88,7 +86,7 @@ function SummaryItem({
 						'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.'}
 				</p>
 				<p className='mt-5 font-mona text-[22px] font-black tracking-[-0.02em] text-black'>
-					{currency(item.price * item.quantity)}{' '}
+					{formatCurrency(item.price * item.quantity)}{' '}
 					<span className='ml-4 font-montserrat text-[13px] font-medium uppercase tracking-[0.06em] text-black/50'>
 						EXT. TAX
 					</span>
@@ -439,7 +437,7 @@ export default function ShippingPage() {
 								</p>
 							</div>
 							<p className='font-mona text-[22px] font-black text-black'>
-								{currency(totals.tax)}
+								{formatCurrency(totals.tax)}
 							</p>
 
 							<div>
@@ -453,7 +451,7 @@ export default function ShippingPage() {
 								</p>
 							</div>
 							<p className='font-mona text-[22px] font-black text-black'>
-								{currency(totals.deliveryFee)}
+								{formatCurrency(totals.deliveryFee)}
 							</p>
 						</div>
 					</div>
@@ -468,7 +466,7 @@ export default function ShippingPage() {
 							</p>
 						</div>
 						<p className='font-mona text-[22px] font-black text-black'>
-							{currency(totals.total)}
+							{formatCurrency(totals.total)}
 						</p>
 					</div>
 

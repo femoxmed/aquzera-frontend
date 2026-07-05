@@ -2,8 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useLatestFeaturedProductItem } from '@/features/products/hooks';
+import { formatStartingPrice } from '@/lib/utils';
 
 export default function HeroSection() {
+	const { data: featuredProduct } = useLatestFeaturedProductItem();
+	const priceLabel = formatStartingPrice(featuredProduct?.price ?? 200000);
+
 	return (
 		<section className='relative overflow-hidden h-[500px] sm:h-[600px] md:h-[700px] lg:h-[824px] min-h-[400px] sm:min-h-[450px] md:min-h-[500px] lg:min-h-[520px]'>
 			<Image
@@ -36,8 +41,7 @@ export default function HeroSection() {
 
 			<div className='absolute flex flex-col bottom-0 left-0 right-0 items-center justify-center gap-2 sm:gap-3 py-2 sm:py-3'>
 				<span className='font-mona text-white font-semibold text-[14px] sm:text-[18px] md:text-[22px] lg:text-[25px] leading-[110%] tracking-[0.12em] sm:tracking-[0.15em]'>
-					{' '}
-					STARTING FROM ₦200,000
+					{priceLabel}
 				</span>
 				<svg
 					width='16'

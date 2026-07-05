@@ -18,6 +18,7 @@ export type FeaturedProductItem = {
 	slug?: string;
 	price: number;
 	priceLabel?: string;
+	startingPriceLabel?: string | null;
 	mainImage?: string | null;
 	colors: Array<{
 		id: string;

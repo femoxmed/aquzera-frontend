@@ -2,6 +2,7 @@
 
 import ExploreModel from '@/components/common/ExploreModel';
 import { useLatestFeaturedProductItem } from '@/features/products/hooks';
+import { formatStartingPrice } from '@/lib/utils';
 
 export default function HomeFeaturedExploreModel() {
 	const { data: product } = useLatestFeaturedProductItem();
@@ -16,6 +17,7 @@ export default function HomeFeaturedExploreModel() {
 		value: color.value,
 		imageUrl: color.imageUrl || undefined,
 	}));
+	const priceLabel = formatStartingPrice(product.price);
 
 	return (
 		<ExploreModel
@@ -23,7 +25,7 @@ export default function HomeFeaturedExploreModel() {
 			slug={product.slug}
 			name={product.name}
 			price={product.price}
-			priceLabel={product.priceLabel}
+			priceLabel={priceLabel}
 			colors={colors || undefined}
 			specifications={product.specifications || undefined}
 			mainImage={product.mainImage || undefined}

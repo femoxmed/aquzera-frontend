@@ -12,6 +12,7 @@ const navLinks = [
 	{ href: '/', label: 'HOME' },
 	{ href: '/product', label: 'PRODUCTS' },
 	{ href: '/about', label: 'ABOUT' },
+	{ href: '/blog', label: 'BLOG' },
 	{ href: '/contact', label: 'CONTACT' },
 ];
 
@@ -28,6 +29,8 @@ export default function Header() {
 		pathname === '/faq' ||
 		pathname === '/terms' ||
 		pathname === '/privacy' ||
+		pathname === '/blog' ||
+		pathname?.startsWith('/blog/') ||
 		pathname === '/shipping-policy';
 	const usesWhiteIcons =
 		pathname === '/' ||

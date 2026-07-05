@@ -8,6 +8,7 @@ import ProductFeatureSlider from '@/components/common/ProductFeatureSlider';
 import ProductSpecs from '@/components/common/ProductSpecs';
 import InsideTheBox from '@/components/common/InsideTheBox';
 import ExploreModel from '@/components/common/ExploreModel';
+import { formatStartingPrice } from '@/lib/utils';
 
 type ProductDetailClientProps = {
 	slug: string;
@@ -48,7 +49,7 @@ export default function ProductDetailClient({
 		product.mainImage?.url || product.galleryImages?.[0]?.url || '';
 	const priceLabel =
 		product.startingPriceLabel ||
-		`Starting From ₦${productPrice(product).toLocaleString()}*`;
+		`${formatStartingPrice(productPrice(product))}*`;
 
 	const colors = (product.colors || []).map((c) => ({
 		id: c.id,

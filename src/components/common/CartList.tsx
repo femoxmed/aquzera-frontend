@@ -19,6 +19,7 @@ import {
 import { toast } from 'sonner';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import ColorSwatch from '@/components/common/ColorSwatch';
+import { formatCurrency } from '@/lib/utils';
 
 const specSections = [
 	{
@@ -300,7 +301,7 @@ export default function CartList() {
 													'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.'}
 											</p>
 											<p className='mt-5 font-mona text-[22px] font-black tracking-[-0.02em] text-[#252b31]'>
-												₦{addOn.price.toLocaleString()}{' '}
+												{formatCurrency(addOn.price)}{' '}
 												<span className='ml-3 font-montserrat text-[13px] font-medium uppercase tracking-[0.06em] text-black/45'>
 													EXT. TAX
 												</span>
@@ -326,7 +327,7 @@ export default function CartList() {
 
 							<div className='mt-8 flex items-end gap-6'>
 								<p className='font-mona text-[34px] font-black tracking-[-0.02em] text-[#252b31]'>
-									₦ {productPrice.toLocaleString()}
+									{formatCurrency(productPrice)}
 								</p>
 								<p className='pb-2 font-montserrat text-[13px] uppercase tracking-[0.06em] text-black/45'>
 									EXT. TAX
@@ -430,7 +431,7 @@ export default function CartList() {
 															</button>
 														</div>
 														<p className='font-mona text-[20px] font-black text-[#252b31]'>
-															₦{(item.price * item.quantity).toLocaleString()}
+															{formatCurrency(item.price * item.quantity)}
 														</p>
 													</div>
 												</div>
@@ -477,7 +478,7 @@ export default function CartList() {
 									Total
 								</span>
 								<span className='font-mona text-[34px] font-black tracking-[-0.02em] text-[#252b31]'>
-									₦{totalPrice.toLocaleString()}
+									{formatCurrency(totalPrice)}
 								</span>
 							</div>
 						</div>

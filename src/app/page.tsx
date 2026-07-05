@@ -4,6 +4,7 @@ import HomeFeaturedExploreModel from './HomeFeaturedExploreModel';
 import BlueFeaturesStrip from '@/components/common/BlueFeaturesStrip';
 import BusinessesSection from '@/components/common/BusinessesSection';
 import ProcessingSection from '@/components/common/ProcessingSection';
+import FeaturedBlogs from '@/components/blog/FeaturedBlogs';
 
 export default function HomePage() {
 	return (
@@ -29,6 +30,7 @@ export default function HomePage() {
 			<HomeFeaturedExploreModel />
 			<BlueFeaturesStrip />
 			<BusinessesSection />
+			<FeaturedBlogs />
 			<ProcessingSection />
 		</>
 	);

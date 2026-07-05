@@ -11,6 +11,7 @@ import {
 } from '@/features/products/api';
 import { useProductListing } from '@/features/products/hooks';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { formatStartingPrice } from '@/lib/utils';
 
 export default function ProductListClient() {
 	const router = useRouter();
@@ -54,7 +55,7 @@ export default function ProductListClient() {
 					learnHref={`/product/${productSlug(bannerProduct)}`}
 					priceLabel={
 						bannerProduct.startingPriceLabel ||
-						`Starting From ₦${productPrice(bannerProduct).toLocaleString()}`
+						formatStartingPrice(productPrice(bannerProduct))
 					}
 				/>
 			) : null}

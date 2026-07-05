@@ -21,6 +21,7 @@ import {
 	Ticket,
 	X,
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 import { toast } from 'sonner';
 import { logout as clearAuthSession } from '@/lib/auth';
 import {
@@ -71,10 +72,6 @@ function tabFromPath(pathname: string | null): Tab {
 		return segment;
 	}
 	return 'products';
-}
-
-function currency(value: number | string | undefined) {
-	return `N ${Math.round(Number(value ?? 0)).toLocaleString()}`;
 }
 
 function shortDate(value?: string) {
@@ -789,7 +786,7 @@ export default function DashboardPage() {
 													<p className='font-mona text-[18px] font-black text-black'>Order #{order.id.slice(0, 8)}</p>
 													<p className='mt-2 text-sm text-[#666a70]'>{shortDate(order.createdAt)} • {order.status}</p>
 												</div>
-												<p className='font-mona text-[22px] font-black text-black'>{currency(order.total)}</p>
+												<p className='font-mona text-[22px] font-black text-black'>{formatCurrency(order.total)}</p>
 											</div>
 											<p className='mt-4 text-sm text-[#666a70]'>{items.length} unit(s)</p>
 											{items.length ? (
@@ -833,7 +830,7 @@ export default function DashboardPage() {
 												{invoices.map((invoice) => (
 													<div key={invoice.id} className='flex justify-between border border-[#e0e0e0] p-4 text-sm text-[#666a70]'>
 														<span>{invoice.invoiceNumber} • {invoice.status}</span>
-														<span>{currency(invoice.total)}</span>
+														<span>{formatCurrency(invoice.total)}</span>
 													</div>
 												))}
 											</div>
@@ -865,7 +862,7 @@ export default function DashboardPage() {
 															<div className='flex flex-wrap items-center justify-between gap-3'>
 																<div>
 																	<p className='font-mona text-[15px] font-black text-black'>Service payment due</p>
-																	<p className='mt-1 text-sm text-[#7a5a13]'>{booking.invoice.invoiceNumber} • {currency(booking.invoice.total)}</p>
+																	<p className='mt-1 text-sm text-[#7a5a13]'>{booking.invoice.invoiceNumber} • {formatCurrency(booking.invoice.total)}</p>
 																</div>
 																<button type='button' onClick={() => payInvoice(booking.invoice!.id)} className='h-10 bg-black px-4 font-mona text-[12px] font-black uppercase tracking-[0.18em] text-white'>Pay Now</button>
 															</div>

@@ -4,6 +4,7 @@ import InsideTheBox from '@/components/common/InsideTheBox';
 import ProductDetailHero from '@/components/common/ProductDetailHero';
 import ProductFeatureSlider from '@/components/common/ProductFeatureSlider';
 import ProductOverview from '@/components/common/ProductOverview';
+import { formatStartingPrice } from '@/lib/utils';
 import ProductSpecs from '@/components/common/ProductSpecs';
 import {
 	productImageUrl,
@@ -62,7 +63,7 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 				imageAlt={product.name}
 				priceLabel={
 					product.startingPriceLabel ||
-					`Starting From ₦${productPrice(product).toLocaleString()}*`
+					`${formatStartingPrice(productPrice(product))}*`
 				}
 			/>
 			<ProductOverview
