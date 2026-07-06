@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { toast } from 'sonner';
-import { Eye } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { signinSchema } from '@/lib/validators';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cartItemsToLoginPayload, signIn } from '@/lib/auth';
@@ -15,6 +16,7 @@ export default function SignInPage() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const returnTo = searchParams.get('returnTo') || '/dashboard';
+	const [showPassword, setShowPassword] = useState(false);
 	const setAuth = useAuthStore((state) => state.setAuth);
 	const cartItems = useCartStore((state) => state.items);
 	const setCartItems = useCartStore((state) => state.setItems);
@@ -80,12 +82,22 @@ export default function SignInPage() {
 										Password ***
 									</label>
 
-									<Eye className='h-4 w-4 text-white/80' />
+									<button
+										type='button'
+										aria-label={showPassword ? 'Hide password' : 'Show password'}
+										onClick={() => setShowPassword((current) => !current)}
+										className='text-white/80 transition hover:text-white'>
+										{showPassword ? (
+											<EyeOff className='h-4 w-4' />
+										) : (
+											<Eye className='h-4 w-4' />
+										)}
+									</button>
 								</div>
 
 								<Field
 									name='password'
-									type='password'
+									type={showPassword ? 'text' : 'password'}
 									className='h-[49px] w-full border border-white/35 bg-transparent px-4 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:text-[13px]'
 								/>
 

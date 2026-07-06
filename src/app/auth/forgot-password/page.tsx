@@ -3,79 +3,69 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { CircleHelp, Loader2, UserCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { CircleHelp, Loader2, MailCheck, UserCircle } from 'lucide-react';
+import { forgotPassword } from '@/lib/auth';
 
 export default function ForgotPasswordPage() {
-	const router = useRouter();
+	const [email, setEmail] = useState('');
+	const [emailSent, setEmailSent] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const [showOtp, setShowOtp] = useState(false);
-	const [otp, setOtp] = useState(['', '', '', '', '', '']);
+	async function handleSendResetEmail() {
+		if (!email.trim()) {
+			toast.error('Please enter your email address');
+			return;
+		}
 
-	// ───────────────── OTP SCREEN ─────────────────
-	if (showOtp) {
+		setIsSubmitting(true);
+
+		try {
+			const response = await forgotPassword(email.trim());
+			toast.success(response.message || 'Password reset email sent');
+			setEmailSent(true);
+		} catch (error) {
+			toast.error(
+				error instanceof Error
+					? error.message
+					: 'Unable to send password reset email',
+			);
+		} finally {
+			setIsSubmitting(false);
+		}
+	}
+
+	// ───────────────── EMAIL SENT SCREEN ─────────────────
+	if (emailSent) {
 		return (
 			<section className='px-4 py-10 sm:px-6 sm:py-12 md:py-14 lg:py-16'>
 				<div className='mx-auto w-full max-w-[330px] sm:max-w-[390px] md:max-w-[430px] lg:max-w-[470px]'>
 					<h1 className='font-mona text-[32px] font-black leading-none tracking-[-0.05em] text-white sm:text-[38px] md:text-[44px]'>
-						OTP Verification
+						Check Your Email
 					</h1>
 
 					<p className='mt-4 font-montserrat text-[12px] leading-[1.3] text-white/45 sm:text-[13px]'>
-						Enter the 6 digit OTP Code that was sent to{' '}
+						We sent a password reset link to{' '}
 						<span className='text-[#a7ff18] underline underline-offset-2'>
-							ajasa@gmail.com
+							{email}
 						</span>
 					</p>
 
-					<div className='mt-8'>
-						<label className='mb-4 block font-mona text-[11px] font-black uppercase tracking-[0.24em] text-white sm:text-[12px]'>
-							Enter Code
-						</label>
-
-						<div className='grid grid-cols-6 gap-2 sm:gap-4'>
-							{otp.map((value, index) => (
-								<input
-									key={index}
-									value={value}
-									maxLength={1}
-									onChange={(e) => {
-										const next = [...otp];
-										next[index] = e.target.value.slice(-1);
-										setOtp(next);
-									}}
-									className='h-[50px] w-full border border-white/35 bg-transparent text-center font-mona text-[18px] font-black text-white outline-none focus:border-white sm:h-[62px]'
-								/>
-							))}
-						</div>
+					<div className='mt-8 flex h-[90px] w-[90px] items-center justify-center rounded-full bg-[#1738e6] text-white'>
+						<MailCheck className='h-10 w-10' />
 					</div>
-
-					<div className='mt-6 flex items-center justify-between font-montserrat text-[12px] text-white/45 sm:text-[13px]'>
-						<p>
-							<span className='text-[#a7ff18]'>OTP</span> code Expires in about
-							6 mins
-						</p>
-
-						<p className='text-[#a7ff18]'>6:53</p>
-					</div>
-
-					<button
-						onClick={() => {
-							toast.success('OTP verified');
-							router.push('/auth/reset-password');
-						}}
-						className='mt-8 flex h-[50px] w-full items-center justify-center gap-3 bg-[#1738e6] font-mona text-[12px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 sm:h-[58px] sm:text-[13px]'>
-						<Loader2 className='h-4 w-4 animate-spin' />
-						Awaiting Verification..
-					</button>
 
 					<p className='mt-9 font-montserrat text-[12px] text-white/45 sm:text-[13px]'>
-						I did not receive any OTP code in my Mail box
+						I did not receive any reset link in my mail box
 					</p>
 
 					<div className='mt-6 flex flex-col gap-3 sm:flex-row'>
-						<button className='h-[48px] border border-white/70 px-5 font-mona text-[11px] font-black uppercase tracking-[0.22em] text-white transition hover:bg-white hover:text-black sm:h-[52px] sm:text-[12px]'>
-							Resend OTP
+						<button
+							type='button'
+							disabled={isSubmitting}
+							onClick={handleSendResetEmail}
+							className='flex h-[48px] items-center justify-center gap-3 border border-white/70 px-5 font-mona text-[11px] font-black uppercase tracking-[0.22em] text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-60 sm:h-[52px] sm:text-[12px]'>
+							{isSubmitting && <Loader2 className='h-4 w-4 animate-spin' />}
+							Resend Link
 						</button>
 
 						<Link
@@ -109,10 +99,12 @@ export default function ForgotPasswordPage() {
 
 					<div className='relative'>
 						<input
-							type='email'
-							placeholder='example@domain.com'
-							className='h-[49px] w-full border border-white/35 bg-transparent px-4 pr-14 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:pr-16 sm:text-[13px]'
-						/>
+						type='email'
+						placeholder='example@domain.com'
+						value={email}
+						onChange={(event) => setEmail(event.target.value)}
+						className='h-[49px] w-full border border-white/35 bg-transparent px-4 pr-14 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:pr-16 sm:text-[13px]'
+					/>
 
 						<div className='absolute right-4 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-[#1fa7ff] text-white'>
 							<UserCircle className='h-5 w-5' />
@@ -120,18 +112,18 @@ export default function ForgotPasswordPage() {
 					</div>
 
 					<p className='mt-4 font-montserrat text-[11px] leading-[1.25] text-white/45 sm:text-[12px]'>
-						Enter your email address, we would send a 6 digit{' '}
-						<span className='text-[#a7ff18]'>OTP</span> code
+						Enter your email address, we would send a secure{' '}
+						<span className='text-[#a7ff18]'>reset link</span>
 					</p>
 				</div>
 
 				<button
-					onClick={() => {
-						toast.success('OTP sent successfully');
-						setShowOtp(true);
-					}}
-					className='mt-8 h-[48px] w-full bg-[#1738e6] font-mona text-[12px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 sm:h-[54px] sm:text-[13px]'>
-					Recover Password
+					type='button'
+					disabled={isSubmitting}
+					onClick={handleSendResetEmail}
+					className='mt-8 flex h-[48px] w-full items-center justify-center gap-3 bg-[#1738e6] font-mona text-[12px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:h-[54px] sm:text-[13px]'>
+					{isSubmitting && <Loader2 className='h-4 w-4 animate-spin' />}
+					{isSubmitting ? 'Sending...' : 'Recover Password'}
 				</button>
 
 				<div className='pt-8 sm:pt-10'>

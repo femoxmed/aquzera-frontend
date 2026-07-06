@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { toast } from 'sonner';
-import { Eye } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { signupSchema } from '@/lib/validators';
 import { useRouter } from 'next/navigation';
 import { register } from '@/lib/auth';
@@ -11,6 +12,7 @@ import { useAuthStore } from '@/store/authStore';
 
 export default function SignUpPage() {
 	const router = useRouter();
+	const [showPassword, setShowPassword] = useState(false);
 	const setPendingVerificationEmail = useAuthStore(
 		(state) => state.setPendingVerificationEmail,
 	);
@@ -111,12 +113,22 @@ export default function SignUpPage() {
 									Password ***
 								</label>
 
-								<Eye className='h-4 w-4 text-white/80' />
+								<button
+									type='button'
+									aria-label={showPassword ? 'Hide password' : 'Show password'}
+									onClick={() => setShowPassword((current) => !current)}
+									className='text-white/80 transition hover:text-white'>
+									{showPassword ? (
+										<EyeOff className='h-4 w-4' />
+									) : (
+										<Eye className='h-4 w-4' />
+									)}
+								</button>
 							</div>
 
 							<Field
 								name='password'
-								type='password'
+								type={showPassword ? 'text' : 'password'}
 								className='h-[49px] w-full border border-white/35 bg-transparent px-4 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:text-[13px]'
 							/>
 

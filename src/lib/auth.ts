@@ -2,6 +2,7 @@ import { api } from '@/lib/api';
 import type { ServerCart } from '@/lib/cart';
 import type { CartItem } from '@/store/cartStore';
 import type { AuthUser } from '@/store/authStore';
+import { API_BASE_URL } from '@/lib/media-url';
 
 type AuthResponse = {
 	accessToken: string;
@@ -64,6 +65,16 @@ export async function resendVerification(email: string) {
 	});
 }
 
+export async function forgotPassword(email: string) {
+	return postAuthJson<{ message: string }>('/auth/forgot-password', {
+		email,
+	});
+}
+
+export async function resetPassword(payload: { token: string; password: string }) {
+	return postAuthJson<{ message: string }>('/auth/reset-password', payload);
+}
+
 export function logout() {
 	clearAuthCookies();
 }
@@ -102,8 +113,7 @@ function isUuid(value: string) {
 }
 
 async function postAuthJson<T>(path: string, body: unknown) {
-	const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
-	const response = await fetch(`${baseUrl}${path}`, {
+	const response = await fetch(`${API_BASE_URL}${path}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		credentials: 'include',

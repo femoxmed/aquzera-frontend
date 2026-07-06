@@ -1,9 +1,50 @@
 'use client';
 
+import { useState } from 'react';
 import { toast } from 'sonner';
-import { EyeOff } from 'lucide-react';
+import { EyeOff, Loader2 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { resetPassword } from '@/lib/auth';
 
 export default function ResetPasswordPage() {
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const token = searchParams.get('token') || '';
+	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	async function handleResetPassword() {
+		if (!token) {
+			toast.error('Reset link is missing or invalid');
+			return;
+		}
+
+		if (password.length < 6) {
+			toast.error('Password must be at least 6 characters');
+			return;
+		}
+
+		if (password !== confirmPassword) {
+			toast.error('Passwords do not match');
+			return;
+		}
+
+		setIsSubmitting(true);
+
+		try {
+			const response = await resetPassword({ token, password });
+			toast.success(response.message || 'Password reset successfully');
+			router.push('/auth/signin');
+		} catch (error) {
+			toast.error(
+				error instanceof Error ? error.message : 'Unable to reset password',
+			);
+		} finally {
+			setIsSubmitting(false);
+		}
+	}
+
 	return (
 		<section className='px-4 py-10 sm:px-6 sm:py-12 md:py-14 lg:py-16'>
 			<div className='mx-auto w-full max-w-[330px] sm:max-w-[360px] md:max-w-[390px] lg:max-w-[410px]'>
@@ -27,6 +68,8 @@ export default function ResetPasswordPage() {
 
 						<input
 							type='password'
+							value={password}
+							onChange={(event) => setPassword(event.target.value)}
 							className='h-[49px] w-full border border-white/35 bg-transparent px-4 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:text-[13px]'
 						/>
 
@@ -48,14 +91,19 @@ export default function ResetPasswordPage() {
 
 						<input
 							type='password'
+							value={confirmPassword}
+							onChange={(event) => setConfirmPassword(event.target.value)}
 							className='h-[49px] w-full border border-white/35 bg-transparent px-4 font-montserrat text-[12px] text-white outline-none placeholder:text-white/35 focus:border-white sm:h-[54px] sm:px-5 sm:text-[13px]'
 						/>
 					</div>
 
 					<button
-						onClick={() => toast.success('Password reset successfully')}
-						className='h-[48px] w-full bg-[#1738e6] font-mona text-[12px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 sm:h-[54px] sm:text-[13px]'>
-						Save New Password
+						type='button'
+						disabled={isSubmitting}
+						onClick={handleResetPassword}
+						className='flex h-[48px] w-full items-center justify-center gap-3 bg-[#1738e6] font-mona text-[12px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:h-[54px] sm:text-[13px]'>
+						{isSubmitting && <Loader2 className='h-4 w-4 animate-spin' />}
+						{isSubmitting ? 'Saving...' : 'Save New Password'}
 					</button>
 				</div>
 			</div>
