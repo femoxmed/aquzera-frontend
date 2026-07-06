@@ -12,7 +12,7 @@ type DashboardThemeState = {
 export const useDashboardThemeStore = create<DashboardThemeState>()(
 	persist(
 		(set) => ({
-			isDarkMode: false,
+			isDarkMode: true,
 			hasHydrated: false,
 			setDarkMode: (value) => set({ isDarkMode: value }),
 			toggleDarkMode: () =>

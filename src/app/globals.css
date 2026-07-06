@@ -232,4 +232,9 @@
   .dashboard-dark [class*="text-[#ff5a5f]"] {
     color: #ff777d !important;
   }
+
+  .dashboard-force-black,
+  .dashboard-dark .dashboard-force-black {
+    color: #000 !important;
+  }
 }

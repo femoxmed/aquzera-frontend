@@ -23,6 +23,24 @@ export type DashboardOrder = {
 	tax?: number | string;
 	deliveryFee?: number | string;
 	createdAt: string;
+	paymentExpiresAt?: string | null;
+	paymentExpiresInSeconds?: number;
+	canPay?: boolean;
+	canCancel?: boolean;
+	invoice?: {
+		id: string;
+		invoiceNumber: string;
+		status: string;
+		total: number | string;
+	} | null;
+	paymentIntent?: {
+		id: string;
+		status: string;
+		providerStatus?: string | null;
+		providerReference?: string | null;
+		authorizationUrl?: string | null;
+		paidAt?: string | null;
+	} | null;
 	items?: Array<{
 		id: string;
 		orderId?: string;
@@ -219,6 +237,21 @@ export function createMyPaymentIntent(invoiceId: string) {
 			invoiceId,
 			idempotencyKey: `invoice:${invoiceId}`,
 		})
+		.then((response) => response.data);
+}
+
+export function createMyOrderPaymentIntent(orderId: string) {
+	return api
+		.post<PaymentIntent>('/payments/me/intents', {
+			orderId,
+			idempotencyKey: `order:${orderId}`,
+		})
+		.then((response) => response.data);
+}
+
+export function cancelMyPendingOrder(orderId: string) {
+	return api
+		.post<DashboardOrder>(`/orders/${orderId}/cancel`)
 		.then((response) => response.data);
 }
 

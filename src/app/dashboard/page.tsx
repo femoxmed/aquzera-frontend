@@ -9,6 +9,7 @@ import {
 	Check,
 	CircleHelp,
 	CircleUserRound,
+	Clock,
 	LogOut,
 	Menu,
 	MessageSquareText,
@@ -26,6 +27,8 @@ import { toast } from 'sonner';
 import { logout as clearAuthSession } from '@/lib/auth';
 import {
 	addMyTicketMessage,
+	cancelMyPendingOrder,
+	createMyOrderPaymentIntent,
 	createMyPaymentIntent,
 	createMyTicket,
 	getMyTicketMessages,
@@ -83,6 +86,28 @@ function shortDate(value?: string) {
 		month: 'short',
 		year: '2-digit',
 	}).format(date);
+}
+
+function formatCountdown(totalSeconds: number) {
+	const seconds = Math.max(0, Math.floor(totalSeconds));
+	const hours = Math.floor(seconds / 3600);
+	const minutes = Math.floor((seconds % 3600) / 60);
+	const remainingSeconds = seconds % 60;
+	return [hours, minutes, remainingSeconds]
+		.map((part) => String(part).padStart(2, '0'))
+		.join(':');
+}
+
+function pendingOrderSecondsRemaining(order: DashboardOrder, now: number) {
+	if (order.status !== 'pending') return 0;
+	const fallbackExpiresAt = new Date(order.createdAt).getTime() + 6 * 60 * 60 * 1000;
+	const expiresAt = order.paymentExpiresAt
+		? new Date(order.paymentExpiresAt).getTime()
+		: fallbackExpiresAt;
+	if (Number.isNaN(expiresAt)) {
+		return Math.max(0, Number(order.paymentExpiresInSeconds ?? 0));
+	}
+	return Math.max(0, Math.floor((expiresAt - now) / 1000));
 }
 
 function addMonths(value: string | undefined, months: number) {
@@ -425,6 +450,8 @@ export default function DashboardPage() {
 	const [mobileNavOpen, setMobileNavOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
+	const [now, setNow] = useState(() => Date.now());
+	const [orderActionId, setOrderActionId] = useState<string | null>(null);
 	const [orders, setOrders] = useState<DashboardOrder[]>([]);
 	const [orderItemsByOrderId, setOrderItemsByOrderId] = useState<Record<string, DashboardOrderItem[]>>({});
 	const [products, setProducts] = useState<PurchasedDevice[]>([]);
@@ -462,6 +489,11 @@ export default function DashboardPage() {
 			),
 		[tickets],
 	);
+
+	useEffect(() => {
+		const timer = window.setInterval(() => setNow(Date.now()), 1000);
+		return () => window.clearInterval(timer);
+	}, []);
 
 	useEffect(() => {
 		if (!hasHydrated) return;
@@ -611,6 +643,56 @@ export default function DashboardPage() {
 		}
 	};
 
+	const refreshOrders = async () => {
+		const orderRows = await getMyOrders();
+		const orderItems = await Promise.all(
+			orderRows.map((order) =>
+				getOrderItems(order.id)
+					.then((items) => [order.id, items] as const)
+					.catch(() => [order.id, order.items ?? []] as const),
+			),
+		);
+		setOrders(orderRows);
+		setOrderItemsByOrderId(Object.fromEntries(orderItems));
+	};
+
+	const payPendingOrder = async (order: DashboardOrder) => {
+		setOrderActionId(order.id);
+		try {
+			const intent = await createMyOrderPaymentIntent(order.id);
+			if (intent.authorizationUrl) {
+				window.location.href = intent.authorizationUrl;
+				return;
+			}
+			toast.success('Order is already paid');
+			await refreshOrders();
+		} catch (error: any) {
+			toast.error(error?.response?.data?.message || 'Unable to start payment');
+			await refreshOrders().catch(() => undefined);
+		} finally {
+			setOrderActionId(null);
+		}
+	};
+
+	const cancelPendingOrder = async (order: DashboardOrder) => {
+		const confirmed = window.confirm(
+			'Cancel this pending order? You will not be able to pay for it afterwards.',
+		);
+		if (!confirmed) return;
+
+		setOrderActionId(order.id);
+		try {
+			await cancelMyPendingOrder(order.id);
+			toast.success('Order cancelled');
+			await refreshOrders();
+		} catch (error: any) {
+			toast.error(error?.response?.data?.message || 'Unable to cancel order');
+			await refreshOrders().catch(() => undefined);
+		} finally {
+			setOrderActionId(null);
+		}
+	};
+
 	return (
 		<main className={`dashboard-scope min-h-screen bg-white text-[#2d3036] ${isDarkMode ? 'dashboard-dark' : ''}`}>
 			<header className='border-b border-[#e7e7e7] px-6 md:px-16 lg:px-28'>
@@ -639,13 +721,34 @@ export default function DashboardPage() {
 							<CircleHelp className='h-[18px] w-[18px]' strokeWidth={1.8} />
 						</Link>
 					</div>
-					<button
-						type='button'
-						onClick={() => setMobileNavOpen((value) => !value)}
-						className='flex h-9 w-9 items-center justify-center rounded-full border border-[#d9d9d9] md:hidden'
-						aria-label='Toggle dashboard menu'>
-						{mobileNavOpen ? <X className='h-6 w-6' strokeWidth={1.8} /> : <Menu className='h-6 w-6' strokeWidth={1.8} />}
-					</button>
+					<div className='flex items-center gap-3 md:hidden'>
+						<button
+							type='button'
+							onClick={toggleDarkMode}
+							className={`flex h-9 w-9 items-center justify-center rounded-full border ${
+								isDarkMode
+									? 'border-white text-white'
+									: 'border-[#d9d9d9] text-[#22262d]'
+							}`}
+							aria-label='Toggle dark mode'>
+							{isDarkMode ? (
+								<Sun className='h-5 w-5' strokeWidth={1.8} />
+							) : (
+								<Moon className='h-5 w-5' strokeWidth={1.8} />
+							)}
+						</button>
+						<button
+							type='button'
+							onClick={() => setMobileNavOpen((value) => !value)}
+							className={`flex h-9 w-9 items-center justify-center rounded-full border ${
+								isDarkMode
+									? 'border-white text-white'
+									: 'border-[#d9d9d9] text-[#22262d]'
+							}`}
+							aria-label='Toggle dashboard menu'>
+							{mobileNavOpen ? <X className='h-6 w-6' strokeWidth={1.8} /> : <Menu className='h-6 w-6' strokeWidth={1.8} />}
+						</button>
+					</div>
 				</div>
 			</header>
 
@@ -779,6 +882,12 @@ export default function DashboardPage() {
 								<div className='mt-10 space-y-5'>
 									{orders.length ? orders.map((order) => {
 										const items = orderItemsByOrderId[order.id] ?? order.items ?? [];
+										const secondsRemaining = pendingOrderSecondsRemaining(order, now);
+										const isPending = order.status === 'pending';
+										const isExpiredPending = isPending && secondsRemaining <= 0;
+										const canPay = isPending && secondsRemaining > 0;
+										const canCancel = Boolean(order.canCancel) && isPending && !isExpiredPending;
+										const isOrderBusy = orderActionId === order.id;
 										return (
 										<div key={order.id} className='border border-[#e0e0e0] p-5'>
 											<div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
@@ -788,6 +897,47 @@ export default function DashboardPage() {
 												</div>
 												<p className='font-mona text-[22px] font-black text-black'>{formatCurrency(order.total)}</p>
 											</div>
+											{isPending ? (
+												<div className='mt-4 border border-[#dfe5ff] bg-[#f7f9ff] p-4'>
+													<div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
+														<div className='flex items-start gap-3'>
+															<Clock className='mt-0.5 h-5 w-5 shrink-0 text-[#1738e6]' />
+															<div>
+																<p className='dashboard-force-black font-mona text-[14px] font-black uppercase tracking-[0.16em]'>
+																	{isExpiredPending ? 'Payment cancelled' : 'Payment pending'}
+																</p>
+																<p className='mt-2 font-montserrat text-sm leading-[1.35] text-[#555b64]'>
+																	{!isExpiredPending
+																		? `Complete payment within ${formatCountdown(secondsRemaining)} or this order will be cancelled automatically.`
+																		: 'This order payment window has expired.'}
+																</p>
+															</div>
+														</div>
+														{canPay || canCancel ? (
+															<div className='flex flex-col gap-2 sm:flex-row'>
+																{canPay ? (
+																	<button
+																		type='button'
+																		disabled={isOrderBusy}
+																		onClick={() => payPendingOrder(order)}
+																		className='inline-flex h-11 items-center justify-center bg-[#1738e6] px-5 font-mona text-[12px] font-black uppercase tracking-[0.16em] text-white disabled:cursor-not-allowed disabled:opacity-50'>
+																		{isOrderBusy ? 'Please wait...' : 'Pay Now'}
+																	</button>
+																) : null}
+																{canCancel ? (
+																	<button
+																		type='button'
+																		disabled={isOrderBusy}
+																		onClick={() => cancelPendingOrder(order)}
+																		className='inline-flex h-11 items-center justify-center border border-black px-5 font-mona text-[12px] font-black uppercase tracking-[0.16em] text-black disabled:cursor-not-allowed disabled:opacity-50'>
+																		Cancel Order
+																	</button>
+																) : null}
+															</div>
+														) : null}
+													</div>
+												</div>
+											) : null}
 											<p className='mt-4 text-sm text-[#666a70]'>{items.length} unit(s)</p>
 											{items.length ? (
 												<div className='mt-4 grid gap-3 md:grid-cols-2'>
