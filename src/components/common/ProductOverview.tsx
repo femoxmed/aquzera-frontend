@@ -66,30 +66,6 @@ export default function ProductOverview({
 					{description}
 				</p>
 
-				<button
-					onClick={() =>
-						addToCart({
-							id,
-							name,
-							price,
-							image: displayImage,
-							variant: selectedColor
-								? {
-										id: selectedColor.id,
-										label: selectedColor.label,
-										value: selectedColor.value,
-										imageUrl: displayImage,
-									}
-								: undefined,
-						})
-					}
-					className='mt-8 sm:mt-9 md:mt-10 inline-flex h-[48px] sm:h-[52px] md:h-[58px] lg:h-[64px] xl:h-[64px] min-w-[150px] sm:min-w-[165px] md:min-w-[180px] lg:min-w-[190px] xl:min-w-[190px] items-center justify-center bg-[#1738e6] px-5 sm:px-6 md:px-7 lg:px-8 xl:px-8 font-mona text-[11px] sm:text-[12px] md:text-[13px] lg:text-[13px] xl:text-[13px] font-black uppercase tracking-[0.24em] text-white hover:opacity-90 cursor-pointer'>
-					Buy Now{' '}
-					<span className='ml-2 sm:ml-3 text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] xl:text-[24px]'>
-						→
-					</span>
-				</button>
-
 				<div className='relative mt-10 sm:mt-12 md:mt-14 h-[320px] sm:h-[380px] md:h-[470px] lg:h-[520px] xl:h-[560px] w-full max-w-[280px] sm:max-w-[340px] md:max-w-[430px] lg:max-w-[450px] xl:max-w-[450px]'>
 					<Image
 						key={displayImage}
@@ -121,6 +97,30 @@ export default function ProductOverview({
 						</button>
 					))}
 				</div>
+
+				<button
+					onClick={() =>
+						addToCart({
+							id,
+							name,
+							price,
+							image: displayImage,
+							variant: selectedColor
+								? {
+										id: selectedColor.id,
+										label: selectedColor.label,
+										value: selectedColor.value,
+										imageUrl: displayImage,
+									}
+								: undefined,
+						})
+					}
+					className='mt-7 sm:mt-8 md:mt-9 inline-flex h-[48px] sm:h-[52px] md:h-[58px] lg:h-[64px] xl:h-[64px] min-w-[150px] sm:min-w-[165px] md:min-w-[180px] lg:min-w-[190px] xl:min-w-[190px] items-center justify-center bg-[#1738e6] px-5 sm:px-6 md:px-7 lg:px-8 xl:px-8 font-mona text-[11px] sm:text-[12px] md:text-[13px] lg:text-[13px] xl:text-[13px] font-black uppercase tracking-[0.24em] text-white hover:opacity-90 cursor-pointer'>
+					Buy Now{' '}
+					<span className='ml-2 sm:ml-3 text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] xl:text-[24px]'>
+						→
+					</span>
+				</button>
 			</div>
 		</section>
 	);

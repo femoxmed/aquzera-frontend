@@ -57,6 +57,7 @@ export default function ProductListClient() {
 						bannerProduct.startingPriceLabel ||
 						formatStartingPrice(productPrice(bannerProduct))
 					}
+					variations={bannerProduct.colors}
 				/>
 			) : null}
 			{listedProducts.length > 0 ? (
@@ -70,6 +71,7 @@ export default function ProductListClient() {
 						cartId={product.id}
 						cartName={product.name}
 						cartPrice={productPrice(product)}
+						variations={product.colors}
 						learnHref={`/product/${productSlug(product)}`}
 						imageOnRight={index % 2 === 1}
 					/>
