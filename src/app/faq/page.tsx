@@ -1,27 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Plus, X } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { getPublicFaqs, type Faq } from '@/features/faqs/api';
 
-const topics = [
+type FaqTopic = Pick<Faq, 'id' | 'question' | 'answer'>;
+
+const fallbackTopics: FaqTopic[] = [
 	{
+		id: 'warranty',
 		question: 'How many months warranty do I get with Aquzera?',
 		answer:
 			'Aquzera provides water purification systems, installation, maintenance, and related support services. Warranty terms may vary by product and installation package.',
 	},
 	{
+		id: 'installation',
 		question: 'How do I request installation support?',
 		answer:
 			'Sign in to your dashboard and open a support ticket. Our team will review your request and follow up with next steps.',
 	},
 	{
+		id: 'damaged-item',
 		question: 'Can I report a damaged or incorrect item?',
 		answer:
 			'Yes. Report damaged or incorrect items as soon as they are delivered so the support team can review and resolve the issue.',
 	},
 	{
+		id: 'filter-changes',
 		question: 'How do filter changes work?',
 		answer:
 			'Filter change timing depends on your product and usage. Your dashboard can help you track service requests and maintenance support.',
@@ -35,7 +42,16 @@ function useSupportTicketHref() {
 
 export default function FAQPage() {
 	const [openIndex, setOpenIndex] = useState(0);
+	const [topics, setTopics] = useState<FaqTopic[]>(fallbackTopics);
 	const supportHref = useSupportTicketHref();
+
+	useEffect(() => {
+		getPublicFaqs()
+			.then((items) => {
+				if (items.length) setTopics(items);
+			})
+			.catch(() => undefined);
+	}, []);
 
 	return (
 		<div className='bg-white pt-[100px]'>
@@ -62,7 +78,7 @@ export default function FAQPage() {
 						{topics.map((topic, index) => {
 							const isOpen = openIndex === index;
 							return (
-								<div key={topic.question} className='border-b border-[#d7d7d7] py-8'>
+								<div key={topic.id} className='border-b border-[#d7d7d7] py-8'>
 									<button
 										type='button'
 										onClick={() => setOpenIndex(isOpen ? -1 : index)}
