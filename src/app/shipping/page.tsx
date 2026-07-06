@@ -9,12 +9,10 @@ import { toast } from 'sonner';
 import {
 	checkoutCart,
 	getCart,
-	getOrderDetail,
 	prepareCartCheckout,
 	removeCartItem,
 	serverCartToItems,
 	type CheckoutPricing,
-	type CheckoutOrderResponse,
 } from '@/lib/cart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import { useAuthStore } from '@/store/authStore';
@@ -57,9 +55,11 @@ function CheckoutInput({
 function SummaryItem({
 	item,
 	onRemove,
+	isRemoving,
 }: {
 	item: CartItem;
 	onRemove: (item: CartItem) => void;
+	isRemoving?: boolean;
 }) {
 	const image = item.variant?.imageUrl || item.image || '/images/product_placeholder.png';
 
@@ -95,7 +95,8 @@ function SummaryItem({
 			<button
 				type='button'
 				onClick={() => onRemove(item)}
-				className='mt-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#ff676f] text-white sm:mt-4 sm:h-7 sm:w-7'
+				disabled={isRemoving}
+				className='mt-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#ff676f] text-white disabled:cursor-not-allowed disabled:opacity-50 sm:mt-4 sm:h-7 sm:w-7'
 				aria-label='Remove item'>
 				<X className='h-4 w-4' strokeWidth={3} />
 			</button>
@@ -113,10 +114,9 @@ export default function ShippingPage() {
 	const clearCart = useCartStore((state) => state.clearCart);
 	const removeItem = useCartStore((state) => state.removeItem);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [removingLineKey, setRemovingLineKey] = useState<string | null>(null);
 	const [consent, setConsent] = useState(false);
 	const [pricing, setPricing] = useState<CheckoutPricing | null>(null);
-	const [preparedOrder, setPreparedOrder] =
-		useState<CheckoutOrderResponse['order'] | null>(null);
 	const [form, setForm] = useState({
 		fullName: user?.fullName || '',
 		email: user?.email || '',
@@ -137,32 +137,11 @@ export default function ShippingPage() {
 		deliveryFee: 0,
 		total: fallbackSubtotal,
 	};
-	const orderItems = useMemo<CartItem[]>(() => {
-		if (!preparedOrder?.items?.length) return [];
-
-		return preparedOrder.items.map((item) => {
-			const product = item.product;
-			const image =
-				item.variant?.imageUrl ||
-				product?.mainImage?.url ||
-				product?.bannerImage?.url ||
-				product?.galleryImages?.[0]?.url;
-			const unitPrice = Number(item.unitPrice ?? product?.price ?? 0);
-
-			return {
-				id: product?.id || item.id,
-				name: product?.name || 'Unknown product',
-				price: unitPrice,
-				quantity: item.qty,
-				image,
-				variant: item.variant || undefined,
-				description: product?.shortDescription || undefined,
-			};
-		});
-	}, [preparedOrder]);
-	const summaryItems = orderItems.length > 0 ? orderItems : items;
+	const summaryItems = items;
 	const primaryItem = summaryItems[0];
 	const additionalItems = summaryItems.slice(1);
+	const cartLineKey = (item: CartItem) =>
+		`${item.id}::${item.variant?.id || item.variant?.label || ''}`;
 
 	useEffect(() => {
 		if (!accessToken) return;
@@ -200,40 +179,12 @@ export default function ShippingPage() {
 	useEffect(() => {
 		if (!accessToken) return;
 
-		const storedCheckout = sessionStorage.getItem('aquzera-checkout');
-		if (storedCheckout) {
-			try {
-				const parsed = JSON.parse(storedCheckout) as {
-					pricing?: CheckoutPricing;
-					order?: CheckoutOrderResponse['order'];
-				};
-				if (parsed.pricing) setPricing(parsed.pricing);
-				if (parsed.order?.id) {
-					setPreparedOrder(parsed.order);
-					getOrderDetail(parsed.order.id)
-						.then(setPreparedOrder)
-						.catch(() => undefined);
-				}
-				return;
-			} catch {
-				sessionStorage.removeItem('aquzera-checkout');
-			}
-		}
-
 		prepareCartCheckout()
 			.then((response) => {
 				setPricing(response.pricing);
-				setPreparedOrder(response.order);
-				sessionStorage.setItem(
-					'aquzera-checkout',
-					JSON.stringify({
-						pricing: response.pricing,
-						order: response.order,
-					}),
-				);
 			})
-			.catch(() => undefined);
-	}, [accessToken]);
+			.catch(() => setPricing(null));
+	}, [accessToken, items.length]);
 
 	const updateForm = (key: keyof typeof form, value: string) => {
 		setForm((current) => ({ ...current, [key]: value }));
@@ -271,7 +222,6 @@ export default function ShippingPage() {
 				consent,
 			});
 			clearCart();
-			sessionStorage.removeItem('aquzera-checkout');
 
 			const authorizationUrl =
 				response.authorizationUrl || response.paymentIntent?.authorizationUrl;
@@ -295,13 +245,40 @@ export default function ShippingPage() {
 
 	const handleRemoveItem = async (item: CartItem) => {
 		const key = item.variant?.id || item.variant?.label || '';
+		const lineKey = cartLineKey(item);
+		setRemovingLineKey(lineKey);
 		removeItem(item.id, key);
-		if (!accessToken) return;
+
 		try {
-			const cart = await removeCartItem(item.id, key);
-			setItems(serverCartToItems(cart));
-		} catch {
-			toast.error('Unable to remove item');
+			if (accessToken) {
+				const cart = await removeCartItem(item.id, key);
+				setItems(serverCartToItems(cart));
+				if (cart.items.length === 0) {
+					setPricing(null);
+					router.push('/cart');
+					return;
+				}
+			} else if (items.length <= 1) {
+				setPricing(null);
+				router.push('/cart');
+				return;
+			}
+			const response = await prepareCartCheckout();
+			setPricing(response.pricing);
+		} catch (error: any) {
+			if (accessToken) {
+				getCart()
+					.then((cart) => setItems(serverCartToItems(cart)))
+					.catch(() => undefined);
+			}
+			setPricing(null);
+			toast.error(
+				error?.response?.data?.message ||
+					error?.message ||
+					'Unable to remove item',
+			);
+		} finally {
+			setRemovingLineKey(null);
 		}
 	};
 
@@ -406,7 +383,11 @@ export default function ShippingPage() {
 
 				<aside className='min-w-0 pt-0 lg:pt-3'>
 					{primaryItem ? (
-						<SummaryItem item={primaryItem} onRemove={handleRemoveItem} />
+						<SummaryItem
+							item={primaryItem}
+							onRemove={handleRemoveItem}
+							isRemoving={removingLineKey === cartLineKey(primaryItem)}
+						/>
 					) : null}
 
 					{additionalItems.length > 0 ? (
@@ -420,6 +401,7 @@ export default function ShippingPage() {
 										key={`${item.id}::${item.variant?.id || item.variant?.label || ''}`}
 										item={item}
 										onRemove={handleRemoveItem}
+										isRemoving={removingLineKey === cartLineKey(item)}
 									/>
 								))}
 							</div>

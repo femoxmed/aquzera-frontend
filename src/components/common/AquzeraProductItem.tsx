@@ -37,6 +37,7 @@ export default function AquzeraProductItem({
 }: AquzeraProductItemProps) {
 	const addToCart = useAddToCart();
 	const [isVariationModalOpen, setIsVariationModalOpen] = useState(false);
+	const [selectedVariationId, setSelectedVariationId] = useState('');
 	const selectableVariations = useMemo(
 		() =>
 			(variations || []).filter(
@@ -46,6 +47,10 @@ export default function AquzeraProductItem({
 	);
 	const hasMultipleVariations = selectableVariations.length > 1;
 	const defaultVariation = selectableVariations[0];
+	const selectedVariation = selectableVariations.find(
+		(variation) =>
+			(variation.id || variation.label || variation.value) === selectedVariationId,
+	);
 
 	const addProductToCart = (variation?: ProductColor | null) => {
 		addToCart({
@@ -66,6 +71,7 @@ export default function AquzeraProductItem({
 
 	const handleBuyNow = () => {
 		if (hasMultipleVariations) {
+			setSelectedVariationId('');
 			setIsVariationModalOpen(true);
 			return;
 		}
@@ -142,7 +148,10 @@ export default function AquzeraProductItem({
 							</div>
 							<button
 								type='button'
-								onClick={() => setIsVariationModalOpen(false)}
+								onClick={() => {
+									setIsVariationModalOpen(false);
+									setSelectedVariationId('');
+								}}
 								className='flex h-10 w-10 shrink-0 items-center justify-center border border-black text-black'
 								aria-label='Close variation chooser'>
 								<X className='h-5 w-5' strokeWidth={2} />
@@ -157,8 +166,17 @@ export default function AquzeraProductItem({
 									<button
 										key={`${variation.id || variation.label || variation.value}`}
 										type='button'
-										onClick={() => addProductToCart(variation)}
-										className='flex min-h-[116px] items-center gap-4 border border-[#d8d8d8] bg-white p-3 text-left transition hover:border-[#1738e6] hover:bg-[#f6f8ff]'>
+										onClick={() =>
+											setSelectedVariationId(
+												variation.id || variation.label || variation.value,
+											)
+										}
+										className={`flex min-h-[116px] items-center gap-4 border bg-white p-3 text-left transition hover:border-[#1738e6] hover:bg-[#f6f8ff] ${
+											selectedVariationId ===
+											(variation.id || variation.label || variation.value)
+												? 'border-[#1738e6] bg-[#f6f8ff]'
+												: 'border-[#d8d8d8]'
+										}`}>
 										<div className='relative h-20 w-20 shrink-0 overflow-hidden bg-[#f4f4f2]'>
 											<Image
 												src={variationImage}
@@ -178,14 +196,21 @@ export default function AquzeraProductItem({
 													{variation.label || 'Selected variation'}
 												</p>
 											</div>
-											<p className='mt-2 font-montserrat text-[13px] text-black/60'>
-												{variation.value || 'Choose this option'}
-											</p>
 										</div>
 									</button>
 								);
 							})}
 						</div>
+						{selectedVariation ? (
+							<div className='border-t border-[#dedede] px-5 py-5 sm:px-7'>
+								<button
+									type='button'
+									onClick={() => addProductToCart(selectedVariation)}
+									className='inline-flex h-12 w-full items-center justify-center bg-[#1738e6] px-5 font-mona text-[12px] font-black uppercase tracking-[0.18em] text-white transition hover:opacity-90'>
+									Proceed
+								</button>
+							</div>
+						) : null}
 					</div>
 				</div>
 			) : null}

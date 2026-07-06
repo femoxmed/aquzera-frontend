@@ -75,7 +75,7 @@ export type CheckoutOrderResponse = {
 				galleryImages?: Array<{ url?: string }>;
 			};
 		}>;
-	};
+	} | null;
 	pricing: CheckoutPricing;
 	idempotencyKey?: string;
 	paymentIntent?: { authorizationUrl?: string | null };
