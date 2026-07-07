@@ -86,15 +86,16 @@ export default function AquzeraProductItem({
 			<section className='grid grid-cols-1 md:grid-cols-2'>
 				{/* Image */}
 				<div
-					className={`relative flex h-[320px] items-center justify-center overflow-hidden bg-[#f4f4f2] p-8 order-1 sm:h-[420px] md:h-[560px] lg:h-[640px] ${
+					className={`flex h-[320px] items-center justify-center overflow-hidden bg-[#f4f4f2] px-10 py-12 order-1 sm:h-[420px] sm:px-14 sm:py-16 md:h-[560px] lg:h-[640px] lg:px-20 lg:py-24 ${
 						imageOnRight ? 'md:order-2' : 'md:order-1'
 					}`}>
 					<Image
 						src={imageSrc}
 						alt={imageAlt}
-						fill
+						width={720}
+						height={720}
 						unoptimized={shouldBypassImageOptimizer(imageSrc)}
-						className='object-contain p-8 sm:p-12 lg:p-16'
+						className='max-h-full w-auto max-w-full object-contain object-center'
 					/>
 				</div>
 

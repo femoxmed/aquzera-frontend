@@ -50,7 +50,9 @@ export default function ProductListClient() {
 						undefined
 					}
 					price={productPrice(bannerProduct)}
-					imageSrc={productImageUrl(bannerProduct)}
+					imageSrc={
+						bannerProduct.bannerImage?.url || productImageUrl(bannerProduct)
+					}
 					learnHref={`/product/${productSlug(bannerProduct)}`}
 					priceLabel={
 						bannerProduct.startingPriceLabel ||

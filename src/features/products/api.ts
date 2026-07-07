@@ -73,8 +73,6 @@ export function productImageUrl(product?: Product | null) {
 		(color) => color.image?.url || color.imageUrl,
 	);
 	const firstVariantImage =
-		firstVariant?.image?.variants?.find((variant) => variant.name === 'medium')
-			?.url ||
 		firstVariant?.image?.url ||
 		firstVariant?.imageUrl ||
 		'';
