@@ -7,6 +7,7 @@ import ProductOverview from '@/components/common/ProductOverview';
 import { formatStartingPrice } from '@/lib/utils';
 import ProductSpecs from '@/components/common/ProductSpecs';
 import {
+	activeProductColors,
 	productImageUrl,
 	productPrice,
 	productVariantImageUrl,
@@ -44,10 +45,12 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 		);
 	}
 
-	const colors = product.colors?.map((color) => ({
+	const activeColors = activeProductColors(product);
+	const colors = activeColors.map((color) => ({
 		id: color.id,
 		label: color.label,
 		value: color.value,
+		status: color.status || 'active',
 		imageUrl: productVariantImageUrl(color),
 	}));
 	const imageSrc = productImageUrl(product);

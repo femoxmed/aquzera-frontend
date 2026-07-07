@@ -63,18 +63,30 @@ export async function getPublicProduct(slug: string) {
 	return response.data;
 }
 
+export function activeProductColors(product?: Product | null) {
+	return (product?.colors || []).filter((color) => color.status !== 'inactive');
+}
+
 export function productImageUrl(product?: Product | null) {
-	const firstVariant = product?.colors?.find(
+	const activeColors = activeProductColors(product);
+	const firstVariant = activeColors.find(
 		(color) => color.image?.url || color.imageUrl,
 	);
-
-	return (
-		product?.mainImage?.url ||
+	const firstVariantImage =
 		firstVariant?.image?.variants?.find((variant) => variant.name === 'medium')
 			?.url ||
 		firstVariant?.image?.url ||
 		firstVariant?.imageUrl ||
+		'';
+
+	if (activeColors.length === 1 && firstVariantImage) {
+		return firstVariantImage;
+	}
+
+	return (
+		product?.mainImage?.url ||
 		product?.galleryImages?.[0]?.url ||
+		firstVariantImage ||
 		product?.bannerImage?.url ||
 		'/images/product_placeholder.png'
 	);

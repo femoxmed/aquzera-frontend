@@ -1,7 +1,7 @@
 'use client';
 
 import { useProduct } from '@/features/products/hooks';
-import { productPrice } from '@/features/products/api';
+import { activeProductColors, productPrice } from '@/features/products/api';
 import ProductDetailHero from '@/components/common/ProductDetailHero';
 import ProductOverview from '@/components/common/ProductOverview';
 import ProductFeatureSlider from '@/components/common/ProductFeatureSlider';
@@ -51,10 +51,12 @@ export default function ProductDetailClient({
 		product.startingPriceLabel ||
 		`${formatStartingPrice(productPrice(product))}*`;
 
-	const colors = (product.colors || []).map((c) => ({
+	const activeColors = activeProductColors(product);
+	const colors = activeColors.map((c) => ({
 		id: c.id,
 		label: c.label,
 		value: c.value,
+		status: c.status || 'active',
 		imageUrl: c.image?.url || c.imageUrl || undefined,
 	}));
 
@@ -119,7 +121,7 @@ export default function ProductDetailClient({
 				name={product.name}
 				price={productPrice(product)}
 				priceLabel={priceLabel}
-				colors={product.colors || undefined}
+				colors={activeColors || undefined}
 				specifications={product.specifications || undefined}
 				mainImage={mainImage}
 			/>

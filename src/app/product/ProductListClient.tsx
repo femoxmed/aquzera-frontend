@@ -5,6 +5,7 @@ import BlueFeaturesStrip from '@/components/common/BlueFeaturesStrip';
 import Pagination from '@/components/common/Pagination';
 import ProductHero from '@/components/common/ProductHero';
 import {
+	activeProductColors,
 	productImageUrl,
 	productPrice,
 	productSlug,
@@ -49,15 +50,13 @@ export default function ProductListClient() {
 						undefined
 					}
 					price={productPrice(bannerProduct)}
-					imageSrc={
-						bannerProduct.bannerImage?.url || productImageUrl(bannerProduct)
-					}
+					imageSrc={productImageUrl(bannerProduct)}
 					learnHref={`/product/${productSlug(bannerProduct)}`}
 					priceLabel={
 						bannerProduct.startingPriceLabel ||
 						formatStartingPrice(productPrice(bannerProduct))
 					}
-					variations={bannerProduct.colors}
+					variations={activeProductColors(bannerProduct)}
 				/>
 			) : null}
 			{listedProducts.length > 0 ? (
@@ -71,7 +70,7 @@ export default function ProductListClient() {
 						cartId={product.id}
 						cartName={product.name}
 						cartPrice={productPrice(product)}
-						variations={product.colors}
+						variations={activeProductColors(product)}
 						learnHref={`/product/${productSlug(product)}`}
 						imageOnRight={index % 2 === 1}
 					/>

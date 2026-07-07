@@ -35,7 +35,9 @@ export default function ProductHero({
 	const selectableVariations = useMemo(
 		() =>
 			(variations || []).filter(
-				(variation) => variation.id || variation.label || variation.value,
+				(variation) =>
+					variation.status !== 'inactive' &&
+					(variation.id || variation.label || variation.value),
 			),
 		[variations],
 	);

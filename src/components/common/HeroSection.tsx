@@ -17,7 +17,9 @@ export default function HeroSection() {
 	const variations = useMemo(
 		() =>
 			(featuredProduct?.colors || []).filter(
-				(variation) => variation.id || variation.label || variation.value,
+				(variation) =>
+					variation.status !== 'inactive' &&
+					(variation.id || variation.label || variation.value),
 			),
 		[featuredProduct?.colors],
 	);
@@ -28,6 +30,7 @@ export default function HeroSection() {
 			(variation.id || variation.label || variation.value) === selectedVariationId,
 	);
 	const productImage =
+		(variations.length === 1 ? defaultVariation?.imageUrl : '') ||
 		featuredProduct?.mainImage ||
 		defaultVariation?.imageUrl ||
 		'/images/product_placeholder.png';

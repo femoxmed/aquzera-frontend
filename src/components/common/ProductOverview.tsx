@@ -20,6 +20,7 @@ type ProductColorInput = {
 	id: string;
 	label: string;
 	value: string;
+	status?: 'active' | 'inactive';
 	imageUrl?: string;
 };
 
@@ -45,11 +46,14 @@ export default function ProductOverview({
 	})),
 }: ProductOverviewProps) {
 	const addToCart = useAddToCart();
+	const selectableColors = colors.filter((color) => color.status !== 'inactive');
 	const [selectedColorId, setSelectedColorId] = useState<string>(
-		colors.find((color) => color.imageUrl)?.id || colors[0]?.id || '',
+		selectableColors.find((color) => color.imageUrl)?.id ||
+			selectableColors[0]?.id ||
+			'',
 	);
 
-	const selectedColor = colors.find((c) => c.id === selectedColorId);
+	const selectedColor = selectableColors.find((c) => c.id === selectedColorId);
 	const displayImage = selectedColor?.imageUrl || imageSrc;
 
 	return (
@@ -78,7 +82,7 @@ export default function ProductOverview({
 				</div>
 
 				<div className='mt-6 sm:mt-7 md:mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8'>
-					{colors.map((color) => (
+					{selectableColors.map((color) => (
 						<button
 							key={color.id}
 							onClick={() => setSelectedColorId(color.id)}

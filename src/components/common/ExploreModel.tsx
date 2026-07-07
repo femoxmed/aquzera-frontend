@@ -44,16 +44,17 @@ export default function ExploreModel({
 	mainImage = '/images/purifier.png',
 }: ExploreModelProps) {
 	const addToCart = useAddToCart();
+	const selectableColors = colors.filter((color) => color.status !== 'inactive');
 	const [selectedColor, setSelectedColor] = useState<string>(
-		colors.find((color) => color.image?.url || color.imageUrl)?.id ||
-			colors[0]?.id ||
+		selectableColors.find((color) => color.image?.url || color.imageUrl)?.id ||
+			selectableColors[0]?.id ||
 			'charcoal',
 	);
 
 	const displaySpecs =
 		specifications && specifications.length > 0 ? specifications : defaultSpecs;
 
-	const selectedColorData = colors.find((c) => c.id === selectedColor);
+	const selectedColorData = selectableColors.find((c) => c.id === selectedColor);
 	const displayImage =
 		selectedColorData?.image?.url || selectedColorData?.imageUrl || mainImage;
 	const productHref = `/product/${slug || id}`;
@@ -80,7 +81,7 @@ export default function ExploreModel({
 					</div>
 
 					<div className='flex flex-row gap-5 md:mt-10 md:flex-col md:gap-7'>
-						{colors.map((color) => (
+						{selectableColors.map((color) => (
 							<button
 								key={color.id}
 								onClick={() => setSelectedColor(color.id)}
