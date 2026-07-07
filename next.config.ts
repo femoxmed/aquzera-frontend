@@ -25,6 +25,14 @@ const nextConfig: NextConfig = {
 				hostname: 'aquzera-api.eu-west-2.elasticbeanstalk.com',
 				pathname: '/uploads/**',
 			},
+			{
+				protocol: 'https',
+				hostname: '*.s3.eu-west-2.amazonaws.com',
+			},
+			{
+				protocol: 'https',
+				hostname: '*.s3.amazonaws.com',
+			},
 		],
 	},
 };
