@@ -12,7 +12,9 @@ const contactSchema = Yup.object({
 	fullName: Yup.string().required('Full name is required'),
 	email: Yup.string().email('Invalid email').required('Email is required'),
 	phone: Yup.string().required('Mobile number is required'),
-	message: Yup.string().min(10, 'Minimum 10 characters').required('Message is required'),
+	message: Yup.string()
+		.min(10, 'Minimum 10 characters')
+		.required('Message is required'),
 });
 
 function SupportTicketLink({
@@ -36,68 +38,66 @@ function SupportTicketLink({
 
 function ContactInfoGrid() {
 	const contactItems = [
-	{
-		title: 'Email Us',
-		content: (
-			<p>
-				Write to us at{' '}
+		{
+			title: 'Email Us',
+			content: (
+				<p>
+					Write to us at{' '}
+					<a
+						href='mailto:aquzerawatersolutions@gmail.com'
+						className='font-semibold text-[#0b43ff] underline underline-offset-2'>
+						aquzerawatersolutions@gmail.com
+					</a>
+				</p>
+			),
+		},
+		{
+			title: 'Visit Us At',
+			content: <p>Dankama close, Abuja, Nigeria</p>,
+		},
+		{
+			title: 'Service & Warranty',
+			content: (
+				<p>
+					For Service and Warranty purposes, open a ticket{' '}
+					<SupportTicketLink className='font-semibold text-[#0b43ff] underline underline-offset-2'>
+						Here
+					</SupportTicketLink>
+				</p>
+			),
+		},
+		{
+			title: 'Hot Line',
+			content: (
 				<a
-					href='mailto:aquzerawatersolutions@gmail.com'
+					href='tel:+2349062024004'
 					className='font-semibold text-[#0b43ff] underline underline-offset-2'>
-					aquzerawatersolutions@gmail.com
+					(+234) 9062024004
 				</a>
-			</p>
-		),
-	},
-	{
-		title: 'Visit Us At',
-		content: <p>Dankama close, Abuja, Nigeria</p>,
-	},
-	{
-		title: 'Service & Warranty',
-		content: (
-			<p>
-				For Service and Warranty purposes, open a ticket{' '}
-				<SupportTicketLink
-					className='font-semibold text-[#0b43ff] underline underline-offset-2'>
-					Here
+			),
+		},
+		{
+			title: 'Instagram',
+			content: (
+				<a
+					href='https://instagram.com/aquzeranigeria'
+					target='_blank'
+					rel='noreferrer'
+					className='font-semibold text-[#0b43ff]'>
+					@aquzeranigeria
+				</a>
+			),
+		},
+		{
+			title: 'Submit A Ticket',
+			content: (
+				<SupportTicketLink className='inline-flex h-[54px] items-center gap-3 rounded-[4px] border border-[#2f3338] px-6 font-mona text-[14px] font-black uppercase tracking-[0.22em] text-[#2f3338] transition hover:bg-[#2f3338] hover:text-white'>
+					<CircleHelp className='h-5 w-5' strokeWidth={1.8} />
+					Get Help
 				</SupportTicketLink>
-			</p>
-		),
-	},
-	{
-		title: 'Hot Line',
-		content: (
-			<a
-				href='tel:+23409032664160'
-				className='font-semibold text-[#0b43ff] underline underline-offset-2'>
-				(+234) 09032664160
-			</a>
-		),
-	},
-	{
-		title: 'Instagram',
-		content: (
-			<a
-				href='https://instagram.com/aquzeranigeria'
-				target='_blank'
-				rel='noreferrer'
-				className='font-semibold text-[#0b43ff]'>
-				@aquzeranigeria
-			</a>
-		),
-	},
-	{
-		title: 'Submit A Ticket',
-		content: (
-			<SupportTicketLink
-				className='inline-flex h-[54px] items-center gap-3 rounded-[4px] border border-[#2f3338] px-6 font-mona text-[14px] font-black uppercase tracking-[0.22em] text-[#2f3338] transition hover:bg-[#2f3338] hover:text-white'>
-				<CircleHelp className='h-5 w-5' strokeWidth={1.8} />
-				Get Help
-			</SupportTicketLink>
-		),
-	},
-];
+			),
+		},
+	];
 
 	return (
 		<div className='mt-16 grid gap-x-24 gap-y-12 md:grid-cols-2'>
@@ -125,7 +125,7 @@ export default function ContactPage() {
 							Contact us
 						</h1>
 						<a
-							href='https://wa.me/2349032664160'
+							href='https://wa.me/2349062024004'
 							target='_blank'
 							rel='noreferrer'
 							className='inline-flex h-[50px] items-center justify-center rounded-[4px] border border-[#2f3338] px-7 font-mona text-[13px] font-black uppercase tracking-[0.22em] text-[#2f3338] transition hover:bg-[#2f3338] hover:text-white'>
@@ -173,75 +173,75 @@ export default function ContactPage() {
 							}
 						}}>
 						{({ isSubmitting }) => (
-						<Form className='mt-20 space-y-12'>
-							<div>
-								<label className='mb-5 block font-mona text-[14px] font-black uppercase tracking-[0.24em] text-white'>
-									Full Name
-								</label>
-								<Field
-									name='fullName'
-									placeholder='Write your Full name'
-									className='h-[76px] w-full rounded-[4px] border border-white/80 bg-transparent px-8 font-montserrat text-[15px] text-white outline-none placeholder:text-white/75 focus:border-white'
-								/>
-								<p className='mt-2 text-sm text-white'>
-									<ErrorMessage name='fullName' />
-								</p>
-							</div>
-
-							<div className='grid gap-10 md:grid-cols-2'>
+							<Form className='mt-20 space-y-12'>
 								<div>
 									<label className='mb-5 block font-mona text-[14px] font-black uppercase tracking-[0.24em] text-white'>
-										Email Address
+										Full Name
 									</label>
 									<Field
-										name='email'
-										placeholder='example@domain.com'
+										name='fullName'
+										placeholder='Write your Full name'
 										className='h-[76px] w-full rounded-[4px] border border-white/80 bg-transparent px-8 font-montserrat text-[15px] text-white outline-none placeholder:text-white/75 focus:border-white'
 									/>
 									<p className='mt-2 text-sm text-white'>
-										<ErrorMessage name='email' />
+										<ErrorMessage name='fullName' />
 									</p>
+								</div>
+
+								<div className='grid gap-10 md:grid-cols-2'>
+									<div>
+										<label className='mb-5 block font-mona text-[14px] font-black uppercase tracking-[0.24em] text-white'>
+											Email Address
+										</label>
+										<Field
+											name='email'
+											placeholder='example@domain.com'
+											className='h-[76px] w-full rounded-[4px] border border-white/80 bg-transparent px-8 font-montserrat text-[15px] text-white outline-none placeholder:text-white/75 focus:border-white'
+										/>
+										<p className='mt-2 text-sm text-white'>
+											<ErrorMessage name='email' />
+										</p>
+									</div>
+
+									<div>
+										<label className='mb-5 block font-mona text-[14px] font-black uppercase tracking-[0.24em] text-white'>
+											Mobile Number
+										</label>
+										<Field
+											name='phone'
+											placeholder='+234'
+											className='h-[76px] w-full rounded-[4px] border border-white/80 bg-transparent px-8 font-montserrat text-[15px] text-white outline-none placeholder:text-white/75 focus:border-white'
+										/>
+										<p className='mt-2 text-sm text-white'>
+											<ErrorMessage name='phone' />
+										</p>
+									</div>
 								</div>
 
 								<div>
 									<label className='mb-5 block font-mona text-[14px] font-black uppercase tracking-[0.24em] text-white'>
-										Mobile Number
+										Your Message
 									</label>
 									<Field
-										name='phone'
-										placeholder='+234'
-										className='h-[76px] w-full rounded-[4px] border border-white/80 bg-transparent px-8 font-montserrat text-[15px] text-white outline-none placeholder:text-white/75 focus:border-white'
+										as='textarea'
+										name='message'
+										placeholder='Tell Us Anything'
+										className='min-h-[250px] w-full resize-none rounded-[4px] border border-white/80 bg-transparent px-8 py-8 font-montserrat text-[15px] text-white outline-none placeholder:text-white/75 focus:border-white'
 									/>
 									<p className='mt-2 text-sm text-white'>
-										<ErrorMessage name='phone' />
+										<ErrorMessage name='message' />
 									</p>
 								</div>
-							</div>
 
-							<div>
-								<label className='mb-5 block font-mona text-[14px] font-black uppercase tracking-[0.24em] text-white'>
-									Your Message
-								</label>
-								<Field
-									as='textarea'
-									name='message'
-									placeholder='Tell Us Anything'
-									className='min-h-[250px] w-full resize-none rounded-[4px] border border-white/80 bg-transparent px-8 py-8 font-montserrat text-[15px] text-white outline-none placeholder:text-white/75 focus:border-white'
-								/>
-								<p className='mt-2 text-sm text-white'>
-									<ErrorMessage name='message' />
-								</p>
-							</div>
-
-							<div className='flex justify-end'>
-								<button
-									type='submit'
-									disabled={isSubmitting}
-									className='inline-flex h-[74px] min-w-[210px] items-center justify-center rounded-[4px] border border-white/85 px-8 font-mona text-[14px] font-black uppercase tracking-[0.24em] text-white transition hover:bg-white hover:text-[#1738e6]'>
-									{isSubmitting ? 'Sending...' : 'Send Message'}
-								</button>
-							</div>
-						</Form>
+								<div className='flex justify-end'>
+									<button
+										type='submit'
+										disabled={isSubmitting}
+										className='inline-flex h-[74px] min-w-[210px] items-center justify-center rounded-[4px] border border-white/85 px-8 font-mona text-[14px] font-black uppercase tracking-[0.24em] text-white transition hover:bg-white hover:text-[#1738e6]'>
+										{isSubmitting ? 'Sending...' : 'Send Message'}
+									</button>
+								</div>
+							</Form>
 						)}
 					</Formik>
 				</div>
