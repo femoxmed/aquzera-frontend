@@ -12,6 +12,12 @@ type AuthResponse = {
 	message?: string;
 };
 
+type EmailVerificationRequiredResponse = {
+	requiresEmailVerification: true;
+	email: string;
+	message?: string;
+};
+
 type RegisterResponse = {
 	accessToken?: string;
 	refreshToken?: string;
@@ -36,7 +42,12 @@ type SignInPayload = {
 };
 
 export async function signIn(payload: SignInPayload) {
-	const { data } = await api.post<AuthResponse>('/auth/login', payload);
+	const { data } = await api.post<
+		AuthResponse | EmailVerificationRequiredResponse
+	>('/auth/login', payload);
+	if ('requiresEmailVerification' in data) {
+		return data;
+	}
 	setAuthCookies(data.accessToken, data.refreshToken);
 	return data;
 }

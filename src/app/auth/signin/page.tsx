@@ -43,6 +43,22 @@ export default function SignInPage() {
 								guestCartItems: cartItemsToLoginPayload(cartItems),
 							});
 
+							if ('requiresEmailVerification' in response) {
+								useAuthStore
+									.getState()
+									.setPendingVerificationEmail(response.email || values.email);
+								toast.info(
+									response.message ||
+										'Please verify your email to continue.',
+								);
+								router.push(
+									`/auth/verification?email=${encodeURIComponent(
+										response.email || values.email,
+									)}&returnTo=${encodeURIComponent(returnTo)}`,
+								);
+								return;
+							}
+
 							setAuth(response.user, response.accessToken, response.refreshToken);
 							if (response.cart) {
 								setCartItems(serverCartToItems(response.cart));

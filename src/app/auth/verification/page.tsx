@@ -23,6 +23,7 @@ export default function VerificationPage() {
 		(state) => state.setPendingVerificationEmail,
 	);
 	const email = searchParams.get('email') || pendingVerificationEmail || '';
+	const returnTo = searchParams.get('returnTo') || '/dashboard';
 	const verificationCode = code.join('');
 
 	useEffect(() => {
@@ -58,7 +59,7 @@ export default function VerificationPage() {
 				setPendingVerificationEmail(null);
 			}
 			toast.success('Account verified');
-			router.push('/dashboard');
+			router.push(returnTo);
 			router.refresh();
 		} catch (error: any) {
 			console.error('Verify account failed', error);
