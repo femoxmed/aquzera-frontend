@@ -24,6 +24,7 @@ export type FeaturedProductItem = {
 		id: string;
 		label: string;
 		value: string;
+		status?: 'active' | 'inactive';
 		imageUrl?: string | null;
 	}>;
 	specifications: Array<{
