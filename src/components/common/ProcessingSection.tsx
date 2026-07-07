@@ -32,11 +32,11 @@ export default function ProcessingSection() {
 						</div>
 						<div className='max-w-[400px] sm:max-w-[450px] md:max-w-[480px] lg:max-w-[500px] xl:max-w-[520px] mx-auto md:mx-0'>
 							<h3 className='font-mona font-black uppercase tracking-[0.28em] text-[14px] sm:text-[16px] md:text-[18px] lg:text-[19px] xl:text-[20px]'>
-								Efficient,Fast Delivery
+								Seamless Delivery
 							</h3>
 							<p className='mt-3 sm:mt-4 md:mt-5 font-montserrat leading-[1.35] text-white/50 text-[13px] sm:text-[14px] md:text-[14px] lg:text-[15px] xl:text-[16px]'>
-								Aquzera purification systems elevate your everyday hydration
-								through advanced filtration and refined engineering.
+								From order to arrival, every Aquzera system is delivered with
+								precision, care, and efficiency.
 							</p>
 						</div>
 					</div>
@@ -44,11 +44,11 @@ export default function ProcessingSection() {
 					<div className='flex flex-col md:grid md:grid-cols-[1fr_230px] items-center gap-6 sm:gap-8 md:gap-10 md:pr-0 lg:pr-12 xl:pr-20 text-center md:text-left'>
 						<div className='max-w-[400px] sm:max-w-[450px] md:max-w-[480px] lg:max-w-[500px] xl:max-w-[520px] mx-auto md:mx-0 md:ml-0 lg:ml-[100px] xl:ml-[190px] order-1 md:order-none'>
 							<h3 className='font-mona font-black uppercase tracking-[0.28em] text-[14px] sm:text-[16px] md:text-[18px] lg:text-[19px] xl:text-[20px]'>
-								Qualified Installation
+								Precision Installation
 							</h3>
 							<p className='mt-3 sm:mt-4 md:mt-5 font-montserrat leading-[1.35] text-white/50 text-[13px] sm:text-[14px] md:text-[14px] lg:text-[15px] xl:text-[16px]'>
-								Aquzera purification systems elevate your everyday hydration
-								through advanced filtration and refined engineering.
+								Expertly installed by certified professionals to ensure
+								exceptional performance from day one.
 							</p>
 						</div>
 						<div className='flex h-[100px] w-[100px] sm:h-[120px] sm:w-[120px] md:h-[140px] md:w-[140px] lg:h-[150px] lg:w-[150px] xl:h-[165px] xl:w-[165px] items-center justify-center rounded-full border border-white/35 order-0 md:order-none'>
@@ -62,11 +62,12 @@ export default function ProcessingSection() {
 						</div>
 						<div className='max-w-[400px] sm:max-w-[450px] md:max-w-[480px] lg:max-w-[500px] xl:max-w-[520px] mx-auto md:mx-0'>
 							<h3 className='font-mona font-black uppercase tracking-[0.28em] text-[14px] sm:text-[16px] md:text-[18px] lg:text-[19px] xl:text-[20px]'>
-								After Installation Services
+								Dedicated Aftercare
 							</h3>
 							<p className='mt-3 sm:mt-4 md:mt-5 font-montserrat leading-[1.35] text-white/50 text-[13px] sm:text-[14px] md:text-[14px] lg:text-[15px] xl:text-[16px]'>
-								Aquzera purification systems elevate your everyday hydration
-								through advanced filtration and refined engineering.
+								Our commitment extends beyond installation with ongoing
+								maintenance, filter replacements, and dedicated customer
+								support.
 							</p>
 						</div>
 					</div>
