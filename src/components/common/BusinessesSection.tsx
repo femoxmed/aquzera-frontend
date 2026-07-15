@@ -25,11 +25,10 @@ export default function BusinessesSection() {
 				</div>
 
 				<p className='mx-auto mt-8 sm:mt-10 md:mt-12 lg:mt-14 xl:mt-16 max-w-[300px] sm:max-w-[450px] md:max-w-[600px] lg:max-w-[750px] xl:max-w-[860px] font-montserrat leading-[1.15] tracking-[-0.02em] text-black/70 text-[13px] sm:text-[14px] md:text-[16px] lg:text-[18px] xl:text-[22px]'>
-					Learn why thousands of businesses and offices are opting for Aquzera
-					water purifiers. Most people are at work for at least one third of the
-					day. Make sure to keep a healthy environment for yourself, your
-					employees, and your customers with Aquzera and our regular filter
-					changes through our rental program.
+					Clean drinking water is essential to a productive workplace. Aquzera
+					delivers advanced purification solutions for offices, hotels,
+					healthcare facilities, schools and commercial spaces ensuring every
+					drop meets the highest standards of quality and care.
 				</p>
 
 				<div className='mt-6 sm:mt-7 md:mt-8 lg:mt-9 xl:mt-10 flex justify-center'>

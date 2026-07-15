@@ -53,7 +53,7 @@ function ContactInfoGrid() {
 		},
 		{
 			title: 'Visit Us At',
-			content: <p>Dankama close, Abuja, Nigeria</p>,
+			content: <p>Block 1, flat 5 Dankama close area 2, garki Abuja</p>,
 		},
 		{
 			title: 'Service & Warranty',

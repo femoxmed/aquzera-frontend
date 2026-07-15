@@ -6,22 +6,19 @@ export default function ProcessingSection() {
 			<div className='mx-auto max-w-[1040px]'>
 				<div className='grid gap-6 sm:gap-7 md:gap-8 border-b border-white/15 pb-8 sm:pb-10 md:pb-12 lg:pb-14 xl:pb-16 md:grid-cols-[420px_1fr] md:items-start'>
 					<h2 className='font-mona-wide font-bold leading-[0.9] tracking-[-0.05em] text-[26px] sm:text-[32px] md:text-[40px] lg:text-[48px] xl:text-[58px]'>
-						Quick and
+						Advanced
 						<br />
-						Efficient
+						Purification
 						<br />
-						Processing
+						Technology
 					</h2>
 
 					<div className='space-y-4 sm:space-y-5 md:space-y-6 pt-0 sm:pt-1 md:pt-2 font-montserrat leading-[1.35] text-white/55 text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px]'>
-						<p>
-							Aquzera purification systems elevate your everyday hydration
-							through advanced filtration and refined engineering.
-						</p>
-						<p>
-							Aquzera purification systems elevate your everyday hydration
-							through advanced filtration and refined engineering.
-						</p>
+						<p>✔ Multi-stage filtration</p>
+						<p>✔ Reverse Osmosis (RO) purification </p>
+						<p>✔ Professional installation</p>
+						<p>✔ Low maintenance</p>
+						<p>✔ Reliable after-sales support</p>
 					</div>
 				</div>
 
