@@ -20,6 +20,69 @@ import { useCartStore, type CartItem } from '@/store/cartStore';
 import { getMe } from '@/lib/dashboard';
 import { formatCurrency } from '@/lib/utils';
 
+const NIGERIAN_STATE_CITIES: Record<string, string[]> = {
+	Abia: ['Aba', 'Umuahia', 'Ohafia', 'Arochukwu'],
+	Adamawa: ['Yola', 'Mubi', 'Numan', 'Ganye'],
+	'Akwa Ibom': ['Uyo', 'Eket', 'Ikot Ekpene', 'Oron'],
+	Anambra: ['Awka', 'Onitsha', 'Nnewi', 'Ekwulobia'],
+	Bauchi: ['Bauchi', 'Azare', 'Misau', 'Jamaare'],
+	Bayelsa: ['Yenagoa', 'Brass', 'Ogbia', 'Sagbama'],
+	Benue: ['Makurdi', 'Gboko', 'Otukpo', 'Katsina-Ala'],
+	Borno: ['Maiduguri', 'Biu', 'Bama', 'Monguno'],
+	'Cross River': ['Calabar', 'Ikom', 'Ogoja', 'Ugep'],
+	Delta: ['Asaba', 'Warri', 'Sapele', 'Ughelli'],
+	Ebonyi: ['Abakaliki', 'Afikpo', 'Onueke', 'Ezza'],
+	Edo: ['Benin City', 'Auchi', 'Ekpoma', 'Uromi'],
+	Ekiti: ['Ado Ekiti', 'Ikere Ekiti', 'Iyin Ekiti', 'Ikole'],
+	Enugu: ['Enugu', 'Nsukka', 'Agbani', 'Udi'],
+	FCT: ['Abuja', 'Gwagwalada', 'Kubwa', 'Kuje', 'Maitama', 'Wuse'],
+	Gombe: ['Gombe', 'Kaltungo', 'Billiri', 'Dukku'],
+	Imo: ['Owerri', 'Orlu', 'Okigwe', 'Mbaise'],
+	Jigawa: ['Dutse', 'Hadejia', 'Gumel', 'Kazaure'],
+	Kaduna: ['Kaduna', 'Zaria', 'Kafanchan', 'Kagoro'],
+	Kano: ['Kano', 'Wudil', 'Gwarzo', 'Rano'],
+	Katsina: ['Katsina', 'Daura', 'Funtua', 'Malumfashi'],
+	Kebbi: ['Birnin Kebbi', 'Argungu', 'Yauri', 'Zuru'],
+	Kogi: ['Lokoja', 'Okene', 'Kabba', 'Idah'],
+	Kwara: ['Ilorin', 'Offa', 'Omu-Aran', 'Lafiagi'],
+	Lagos: ['Ikeja', 'Lekki', 'Victoria Island', 'Ikoyi', 'Surulere', 'Yaba', 'Ajah', 'Epe', 'Badagry'],
+	Nasarawa: ['Lafia', 'Keffi', 'Akwanga', 'Karu'],
+	Niger: ['Minna', 'Suleja', 'Bida', 'Kontagora'],
+	Ogun: ['Abeokuta', 'Ijebu Ode', 'Sagamu', 'Ota'],
+	Ondo: ['Akure', 'Ondo', 'Owo', 'Ikare'],
+	Osun: ['Osogbo', 'Ile-Ife', 'Ilesa', 'Ede'],
+	Oyo: ['Ibadan', 'Ogbomoso', 'Oyo', 'Iseyin'],
+	Plateau: ['Jos', 'Bukuru', 'Pankshin', 'Shendam'],
+	Rivers: ['Port Harcourt', 'Bonny', 'Omoku', 'Ahoada'],
+	Sokoto: ['Sokoto', 'Tambuwal', 'Gwadabawa', 'Wurno'],
+	Taraba: ['Jalingo', 'Wukari', 'Bali', 'Takum'],
+	Yobe: ['Damaturu', 'Potiskum', 'Gashua', 'Nguru'],
+	Zamfara: ['Gusau', 'Kaura Namoda', 'Talata Mafara', 'Anka'],
+};
+
+const NIGERIAN_STATES = Object.keys(NIGERIAN_STATE_CITIES);
+
+function CheckoutLabel({
+	label,
+	required,
+	optional,
+}: {
+	label: string;
+	required?: boolean;
+	optional?: boolean;
+}) {
+	return (
+		<span className='font-mona text-[11px] font-black uppercase tracking-[0.18em] text-black sm:text-[14px] sm:tracking-[0.22em]'>
+			{label}
+			{required ? <span className='text-[#ff3b45]'> *</span> : null}
+			{optional ? (
+				<span className='ml-2 font-montserrat text-[10px] font-semibold normal-case tracking-[0.04em] text-black/45 sm:text-[12px]'>
+					(optional)
+				</span>
+			) : null}
+		</span>
+	);
+}
 
 function CheckoutInput({
 	label,
@@ -28,6 +91,8 @@ function CheckoutInput({
 	placeholder,
 	type = 'text',
 	className = '',
+	required,
+	optional,
 }: {
 	label: string;
 	value: string;
@@ -35,19 +100,59 @@ function CheckoutInput({
 	placeholder?: string;
 	type?: string;
 	className?: string;
+	required?: boolean;
+	optional?: boolean;
 }) {
 	return (
 		<label className={`block ${className}`}>
-			<span className='font-mona text-[11px] font-black uppercase tracking-[0.18em] text-black sm:text-[14px] sm:tracking-[0.22em]'>
-				{label}
-			</span>
+			<CheckoutLabel label={label} required={required} optional={optional} />
 			<input
 				type={type}
 				value={value}
 				onChange={(event) => onChange(event.target.value)}
 				placeholder={placeholder}
+				required={required}
 				className='mt-3 h-14 w-full border border-[#b9b9b9] bg-white px-4 font-montserrat text-[16px] text-black outline-none placeholder:text-black/55 focus:border-black sm:mt-5 sm:h-18.5 sm:px-7 sm:text-[15px]'
 			/>
+		</label>
+	);
+}
+
+function CheckoutSelect({
+	label,
+	value,
+	onChange,
+	options,
+	placeholder,
+	className = '',
+	required,
+	disabled,
+}: {
+	label: string;
+	value: string;
+	onChange: (value: string) => void;
+	options: string[];
+	placeholder: string;
+	className?: string;
+	required?: boolean;
+	disabled?: boolean;
+}) {
+	return (
+		<label className={`block ${className}`}>
+			<CheckoutLabel label={label} required={required} />
+			<select
+				value={value}
+				onChange={(event) => onChange(event.target.value)}
+				required={required}
+				disabled={disabled}
+				className='mt-3 h-14 w-full border border-[#b9b9b9] bg-white px-4 font-montserrat text-[16px] text-black outline-none focus:border-black disabled:cursor-not-allowed disabled:bg-[#f3f3f3] disabled:text-black/45 sm:mt-5 sm:h-18.5 sm:px-7 sm:text-[15px]'>
+				<option value=''>{placeholder}</option>
+				{options.map((option) => (
+					<option key={option} value={option}>
+						{option}
+					</option>
+				))}
+			</select>
 		</label>
 	);
 }
@@ -140,6 +245,7 @@ export default function ShippingPage() {
 	const summaryItems = items;
 	const primaryItem = summaryItems[0];
 	const additionalItems = summaryItems.slice(1);
+	const cityOptions = form.state ? NIGERIAN_STATE_CITIES[form.state] || [] : [];
 	const cartLineKey = (item: CartItem) =>
 		`${item.id}::${item.variant?.id || item.variant?.label || ''}`;
 
@@ -187,7 +293,13 @@ export default function ShippingPage() {
 	}, [accessToken, items.length]);
 
 	const updateForm = (key: keyof typeof form, value: string) => {
-		setForm((current) => ({ ...current, [key]: value }));
+		setForm((current) => {
+			if (key === 'state') {
+				return { ...current, state: value, city: '' };
+			}
+
+			return { ...current, [key]: value };
+		});
 	};
 
 	const handleSubmit = async (event: FormEvent) => {
@@ -201,6 +313,16 @@ export default function ShippingPage() {
 		if (summaryItems.length === 0) {
 			toast.error('Your cart is empty');
 			router.push('/cart');
+			return;
+		}
+
+		if (
+			!form.phone.trim() ||
+			!form.state ||
+			!form.city ||
+			!form.address.trim()
+		) {
+			toast.error('Please complete all required delivery fields');
 			return;
 		}
 
@@ -331,6 +453,7 @@ export default function ShippingPage() {
 							value={form.phone}
 							onChange={(value) => updateForm('phone', value)}
 							placeholder='+234'
+							required
 						/>
 					</div>
 
@@ -344,26 +467,36 @@ export default function ShippingPage() {
 					</div>
 
 					<div className='mt-8 grid gap-6 sm:mt-12 sm:grid-cols-2 sm:gap-9'>
-						<CheckoutInput
+						<CheckoutSelect
 							label='State'
 							value={form.state}
 							onChange={(value) => updateForm('state', value)}
+							options={NIGERIAN_STATES}
+							placeholder='Select state'
+							required
 						/>
-						<CheckoutInput
+						<CheckoutSelect
 							label='City'
 							value={form.city}
 							onChange={(value) => updateForm('city', value)}
+							options={cityOptions}
+							placeholder={form.state ? 'Select city' : 'Select state first'}
+							disabled={!form.state}
+							required
 						/>
 						<CheckoutInput
 							label='Zip/Postal Code'
 							value={form.postalCode}
 							onChange={(value) => updateForm('postalCode', value)}
+							placeholder='Optional'
+							optional
 							className='sm:col-span-2'
 						/>
 						<CheckoutInput
 							label='Fill In Address'
 							value={form.address}
 							onChange={(value) => updateForm('address', value)}
+							required
 							className='sm:col-span-2'
 						/>
 					</div>

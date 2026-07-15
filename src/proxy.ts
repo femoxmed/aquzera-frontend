@@ -9,7 +9,12 @@ export function proxy(request: NextRequest) {
 		pathname.startsWith(route),
 	);
 	if (isProtected && !token && !refreshToken) {
-		return NextResponse.redirect(new URL('/auth/signin', request.url));
+		const signInUrl = new URL('/auth/signin', request.url);
+		signInUrl.searchParams.set(
+			'returnTo',
+			`${request.nextUrl.pathname}${request.nextUrl.search}`,
+		);
+		return NextResponse.redirect(signInUrl);
 	}
 	return NextResponse.next();
 }

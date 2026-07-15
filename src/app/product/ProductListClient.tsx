@@ -54,10 +54,7 @@ export default function ProductListClient() {
 						bannerProduct.bannerImage?.url || productImageUrl(bannerProduct)
 					}
 					learnHref={`/product/${productSlug(bannerProduct)}`}
-					priceLabel={
-						bannerProduct.startingPriceLabel ||
-						formatStartingPrice(productPrice(bannerProduct))
-					}
+					priceLabel={formatStartingPrice(productPrice(bannerProduct))}
 					variations={activeProductColors(bannerProduct)}
 				/>
 			) : null}

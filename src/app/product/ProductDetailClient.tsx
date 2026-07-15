@@ -47,9 +47,7 @@ export default function ProductDetailClient({
 	const heroImage = product.bannerImage?.url || product.mainImage?.url || '';
 	const mainImage =
 		product.mainImage?.url || product.galleryImages?.[0]?.url || '';
-	const priceLabel =
-		product.startingPriceLabel ||
-		`${formatStartingPrice(productPrice(product))}*`;
+	const priceLabel = `${formatStartingPrice(productPrice(product))}*`;
 
 	const activeColors = activeProductColors(product);
 	const colors = activeColors.map((c) => ({

@@ -6,12 +6,15 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
 import { signupSchema } from '@/lib/validators';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { register } from '@/lib/auth';
 import { useAuthStore } from '@/store/authStore';
 
 export default function SignUpPage() {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const returnTo = searchParams.get('returnTo') || '/dashboard';
+	const signInHref = `/auth/signin?returnTo=${encodeURIComponent(returnTo)}`;
 	const [showPassword, setShowPassword] = useState(false);
 	const setPendingVerificationEmail = useAuthStore(
 		(state) => state.setPendingVerificationEmail,
@@ -60,14 +63,14 @@ export default function SignUpPage() {
 							router.push(
 								`/auth/verification?email=${encodeURIComponent(
 									verificationEmail,
-								)}`,
+								)}&returnTo=${encodeURIComponent(returnTo)}`,
 							);
 						} catch (error) {
 							console.error('Unable to continue to verification', error);
 							router.push(
 								`/auth/verification?email=${encodeURIComponent(
 									verificationEmail,
-								)}`,
+								)}&returnTo=${encodeURIComponent(returnTo)}`,
 							);
 						} finally {
 							setSubmitting(false);
@@ -155,7 +158,7 @@ export default function SignUpPage() {
 						</p>
 
 						<Link
-							href='/auth/signin'
+							href={signInHref}
 							className='flex h-[48px] w-full items-center justify-center border border-white/70 font-mona text-[11px] font-black uppercase tracking-[0.22em] text-white transition hover:bg-white hover:text-black sm:h-[54px] sm:text-[12px]'>
 							Go To Sign In
 						</Link>

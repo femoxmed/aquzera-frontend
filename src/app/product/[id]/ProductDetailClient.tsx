@@ -64,10 +64,7 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 			<ProductDetailHero
 				imageSrc={product.bannerImage?.url || imageSrc}
 				imageAlt={product.name}
-				priceLabel={
-					product.startingPriceLabel ||
-					`${formatStartingPrice(productPrice(product))}*`
-				}
+				priceLabel={`${formatStartingPrice(productPrice(product))}*`}
 			/>
 			<ProductOverview
 				id={product.id}
