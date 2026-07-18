@@ -22,11 +22,11 @@ function generateNonce() {
 	return btoa(value);
 }
 
-function buildContentSecurityPolicy(nonce: string) {
-	const scriptPolicy = isDevelopment
+function buildContentSecurityPolicy(nonce: string, allowDevelopmentRuntime: boolean) {
+	const scriptPolicy = allowDevelopmentRuntime
 		? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://js.paystack.co`
 		: `script-src 'self' 'nonce-${nonce}' https://js.paystack.co`;
-	const styleElementPolicy = isDevelopment
+	const styleElementPolicy = allowDevelopmentRuntime
 		? "style-src-elem 'self' 'unsafe-inline'"
 		: `style-src-elem 'self' 'nonce-${nonce}'`;
 	const connectSources = [
@@ -35,7 +35,7 @@ function buildContentSecurityPolicy(nonce: string) {
 		'https://aquzera-api.eu-west-2.elasticbeanstalk.com',
 	];
 
-	if (isDevelopment) {
+	if (allowDevelopmentRuntime) {
 		connectSources.push('http://localhost:4000', 'http://127.0.0.1:4000');
 	}
 
@@ -51,6 +51,7 @@ function buildContentSecurityPolicy(nonce: string) {
 		"img-src 'self' data: blob: https:",
 		"font-src 'self' data:",
 		`connect-src ${connectSources.join(' ')}`,
+		"manifest-src 'self'",
 		"frame-src https://checkout.paystack.com https://js.paystack.co",
 		"form-action 'self' https://checkout.paystack.com",
 		"upgrade-insecure-requests",
@@ -82,7 +83,13 @@ function applySecurityHeaders(
 
 export function proxy(request: NextRequest) {
 	const nonce = generateNonce();
-	const csp = buildContentSecurityPolicy(nonce);
+	const isLocalRequest =
+		request.nextUrl.hostname === 'localhost' ||
+		request.nextUrl.hostname === '127.0.0.1';
+	const csp = buildContentSecurityPolicy(
+		nonce,
+		isDevelopment || isLocalRequest,
+	);
 	const requestHeaders = new Headers(request.headers);
 	requestHeaders.set('x-nonce', nonce);
 	requestHeaders.set('Content-Security-Policy', csp);
@@ -114,6 +121,6 @@ export function proxy(request: NextRequest) {
 }
 export const config = {
 	matcher: [
-		'/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
+		'/((?!_next/static|_next/image|favicon.ico|images/|icons/|mona-sans/).*)',
 	],
 };

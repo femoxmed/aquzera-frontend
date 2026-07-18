@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+	poweredByHeader: false,
 	images: {
 		// allow local /public images (default) + external CDNs if needed
 		remotePatterns: [
