@@ -21,46 +21,92 @@ import { getMe } from '@/lib/dashboard';
 import { formatCurrency } from '@/lib/utils';
 
 const NIGERIAN_STATE_CITIES: Record<string, string[]> = {
-	Abia: ['Aba', 'Umuahia', 'Ohafia', 'Arochukwu'],
-	Adamawa: ['Yola', 'Mubi', 'Numan', 'Ganye'],
+	'Abia': ['Aba', 'Umuahia', 'Ohafia', 'Arochukwu'],
+	'Adamawa': ['Yola', 'Mubi', 'Numan', 'Ganye'],
 	'Akwa Ibom': ['Uyo', 'Eket', 'Ikot Ekpene', 'Oron'],
-	Anambra: ['Awka', 'Onitsha', 'Nnewi', 'Ekwulobia'],
-	Bauchi: ['Bauchi', 'Azare', 'Misau', 'Jamaare'],
-	Bayelsa: ['Yenagoa', 'Brass', 'Ogbia', 'Sagbama'],
-	Benue: ['Makurdi', 'Gboko', 'Otukpo', 'Katsina-Ala'],
-	Borno: ['Maiduguri', 'Biu', 'Bama', 'Monguno'],
+	'Anambra': ['Awka', 'Onitsha', 'Nnewi', 'Ekwulobia'],
+	'Bauchi': ['Bauchi', 'Azare', 'Misau', 'Jamaare'],
+	'Bayelsa': ['Yenagoa', 'Brass', 'Ogbia', 'Sagbama'],
+	'Benue': ['Makurdi', 'Gboko', 'Otukpo', 'Katsina-Ala'],
+	'Borno': ['Maiduguri', 'Biu', 'Bama', 'Monguno'],
 	'Cross River': ['Calabar', 'Ikom', 'Ogoja', 'Ugep'],
-	Delta: ['Asaba', 'Warri', 'Sapele', 'Ughelli'],
-	Ebonyi: ['Abakaliki', 'Afikpo', 'Onueke', 'Ezza'],
-	Edo: ['Benin City', 'Auchi', 'Ekpoma', 'Uromi'],
-	Ekiti: ['Ado Ekiti', 'Ikere Ekiti', 'Iyin Ekiti', 'Ikole'],
-	Enugu: ['Enugu', 'Nsukka', 'Agbani', 'Udi'],
-	FCT: ['Abuja', 'Gwagwalada', 'Kubwa', 'Kuje', 'Maitama', 'Wuse'],
-	Gombe: ['Gombe', 'Kaltungo', 'Billiri', 'Dukku'],
-	Imo: ['Owerri', 'Orlu', 'Okigwe', 'Mbaise'],
-	Jigawa: ['Dutse', 'Hadejia', 'Gumel', 'Kazaure'],
-	Kaduna: ['Kaduna', 'Zaria', 'Kafanchan', 'Kagoro'],
-	Kano: ['Kano', 'Wudil', 'Gwarzo', 'Rano'],
-	Katsina: ['Katsina', 'Daura', 'Funtua', 'Malumfashi'],
-	Kebbi: ['Birnin Kebbi', 'Argungu', 'Yauri', 'Zuru'],
-	Kogi: ['Lokoja', 'Okene', 'Kabba', 'Idah'],
-	Kwara: ['Ilorin', 'Offa', 'Omu-Aran', 'Lafiagi'],
-	Lagos: ['Ikeja', 'Lekki', 'Victoria Island', 'Ikoyi', 'Surulere', 'Yaba', 'Ajah', 'Epe', 'Badagry'],
-	Nasarawa: ['Lafia', 'Keffi', 'Akwanga', 'Karu'],
-	Niger: ['Minna', 'Suleja', 'Bida', 'Kontagora'],
-	Ogun: ['Abeokuta', 'Ijebu Ode', 'Sagamu', 'Ota'],
-	Ondo: ['Akure', 'Ondo', 'Owo', 'Ikare'],
-	Osun: ['Osogbo', 'Ile-Ife', 'Ilesa', 'Ede'],
-	Oyo: ['Ibadan', 'Ogbomoso', 'Oyo', 'Iseyin'],
-	Plateau: ['Jos', 'Bukuru', 'Pankshin', 'Shendam'],
-	Rivers: ['Port Harcourt', 'Bonny', 'Omoku', 'Ahoada'],
-	Sokoto: ['Sokoto', 'Tambuwal', 'Gwadabawa', 'Wurno'],
-	Taraba: ['Jalingo', 'Wukari', 'Bali', 'Takum'],
-	Yobe: ['Damaturu', 'Potiskum', 'Gashua', 'Nguru'],
-	Zamfara: ['Gusau', 'Kaura Namoda', 'Talata Mafara', 'Anka'],
+	'Delta': ['Asaba', 'Warri', 'Sapele', 'Ughelli'],
+	'Ebonyi': ['Abakaliki', 'Afikpo', 'Onueke', 'Ezza'],
+	'Edo': ['Benin City', 'Auchi', 'Ekpoma', 'Uromi'],
+	'Ekiti': ['Ado Ekiti', 'Ikere Ekiti', 'Iyin Ekiti', 'Ikole'],
+	'Enugu': ['Enugu', 'Nsukka', 'Agbani', 'Udi'],
+	'FCT': ['Abuja', 'Gwagwalada', 'Kubwa', 'Kuje', 'Maitama', 'Wuse'],
+	'Gombe': ['Gombe', 'Kaltungo', 'Billiri', 'Dukku'],
+	'Imo': ['Owerri', 'Orlu', 'Okigwe', 'Mbaise'],
+	'Jigawa': ['Dutse', 'Hadejia', 'Gumel', 'Kazaure'],
+	'Kaduna': ['Kaduna', 'Zaria', 'Kafanchan', 'Kagoro'],
+	'Kano': ['Kano', 'Wudil', 'Gwarzo', 'Rano'],
+	'Katsina': ['Katsina', 'Daura', 'Funtua', 'Malumfashi'],
+	'Kebbi': ['Birnin Kebbi', 'Argungu', 'Yauri', 'Zuru'],
+	'Kogi': ['Lokoja', 'Okene', 'Kabba', 'Idah'],
+	'Kwara': ['Ilorin', 'Offa', 'Omu-Aran', 'Lafiagi'],
+	'Lagos': [
+		'Ikeja',
+		'Lekki',
+		'Victoria Island',
+		'Ikoyi',
+		'Surulere',
+		'Yaba',
+		'Ajah',
+		'Epe',
+		'Badagry',
+	],
+	'Nasarawa': ['Lafia', 'Keffi', 'Akwanga', 'Karu'],
+	'Niger': ['Minna', 'Suleja', 'Bida', 'Kontagora'],
+	'Ogun': ['Abeokuta', 'Ijebu Ode', 'Sagamu', 'Ota'],
+	'Ondo': ['Akure', 'Ondo', 'Owo', 'Ikare'],
+	'Osun': ['Osogbo', 'Ile-Ife', 'Ilesa', 'Ede'],
+	'Oyo': ['Ibadan', 'Ogbomoso', 'Oyo', 'Iseyin'],
+	'Plateau': ['Jos', 'Bukuru', 'Pankshin', 'Shendam'],
+	'Rivers': ['Port Harcourt', 'Bonny', 'Omoku', 'Ahoada'],
+	'Sokoto': ['Sokoto', 'Tambuwal', 'Gwadabawa', 'Wurno'],
+	'Taraba': ['Jalingo', 'Wukari', 'Bali', 'Takum'],
+	'Yobe': ['Damaturu', 'Potiskum', 'Gashua', 'Nguru'],
+	'Zamfara': ['Gusau', 'Kaura Namoda', 'Talata Mafara', 'Anka'],
 };
 
 const NIGERIAN_STATES = Object.keys(NIGERIAN_STATE_CITIES);
+
+function normalizeNigerianPhoneInput(value: string) {
+	const trimmed = value.trim();
+	const hasLeadingPlus = trimmed.startsWith('+');
+	const digits = trimmed.replace(/\D/g, '');
+	const normalizedDigits = digits.startsWith('2340')
+		? digits.replace(/^2340/, '234')
+		: digits;
+
+	return `${hasLeadingPlus ? '+' : ''}${normalizedDigits}`.slice(0, 14);
+}
+
+function getLocalNigerianMobileNumber(value: string) {
+	const digits = value.replace(/\D/g, '');
+
+	if (digits.startsWith('234')) {
+		return `0${digits.slice(3)}`;
+	}
+
+	if (digits.length === 10) {
+		return `0${digits}`;
+	}
+
+	return digits;
+}
+
+function isValidNigerianMobileNumber(value: string) {
+	return /^0(70|80|81|90|91)\d{8}$/.test(
+		getLocalNigerianMobileNumber(value),
+	);
+}
+
+function formatNigerianPhoneForSubmission(value: string) {
+	const localNumber = getLocalNigerianMobileNumber(value);
+	return `+234${localNumber.slice(1)}`;
+}
 
 function CheckoutLabel({
 	label,
@@ -90,6 +136,8 @@ function CheckoutInput({
 	onChange,
 	placeholder,
 	type = 'text',
+	inputMode,
+	maxLength,
 	className = '',
 	required,
 	optional,
@@ -99,6 +147,8 @@ function CheckoutInput({
 	onChange: (value: string) => void;
 	placeholder?: string;
 	type?: string;
+	inputMode?: 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
+	maxLength?: number;
 	className?: string;
 	required?: boolean;
 	optional?: boolean;
@@ -112,6 +162,8 @@ function CheckoutInput({
 				onChange={(event) => onChange(event.target.value)}
 				placeholder={placeholder}
 				required={required}
+				inputMode={inputMode}
+				maxLength={maxLength}
 				className='mt-3 h-14 w-full border border-[#b9b9b9] bg-white px-4 font-montserrat text-[16px] text-black outline-none placeholder:text-black/55 focus:border-black sm:mt-5 sm:h-18.5 sm:px-7 sm:text-[15px]'
 			/>
 		</label>
@@ -166,7 +218,8 @@ function SummaryItem({
 	onRemove: (item: CartItem) => void;
 	isRemoving?: boolean;
 }) {
-	const image = item.variant?.imageUrl || item.image || '/images/product_placeholder.png';
+	const image =
+		item.variant?.imageUrl || item.image || '/images/product_placeholder.png';
 
 	return (
 		<div className='grid grid-cols-[96px_1fr_24px] gap-4 border-b border-[#d6d6d6] pb-6 sm:grid-cols-[178px_1fr_24px] sm:gap-9 sm:pb-10'>
@@ -298,6 +351,10 @@ export default function ShippingPage() {
 				return { ...current, state: value, city: '' };
 			}
 
+			if (key === 'phone') {
+				return { ...current, phone: normalizeNigerianPhoneInput(value) };
+			}
+
 			return { ...current, [key]: value };
 		});
 	};
@@ -326,6 +383,11 @@ export default function ShippingPage() {
 			return;
 		}
 
+		if (!isValidNigerianMobileNumber(form.phone)) {
+			toast.error('Enter a valid Nigerian mobile number, e.g. +2348012345678');
+			return;
+		}
+
 		if (!consent) {
 			toast.error('Please authorize contact before completing the request');
 			return;
@@ -336,7 +398,7 @@ export default function ShippingPage() {
 			const response = await checkoutCart({
 				fullName: form.fullName,
 				email: form.email,
-				phone: form.phone,
+				phone: formatNigerianPhoneForSubmission(form.phone),
 				state: form.state,
 				city: form.city,
 				postalCode: form.postalCode,
@@ -408,7 +470,7 @@ export default function ShippingPage() {
 		<div className='min-h-screen bg-white text-black'>
 			<form
 				onSubmit={handleSubmit}
-				className='mx-auto grid max-w-305 gap-10 px-4 pb-14 pt-[132px] sm:px-6 sm:py-24 lg:grid-cols-[1fr_560px] lg:gap-16'>
+				className='mt-10 md-mt-10 mx-auto grid max-w-305 gap-10 px-4 pb-14 pt-[132px] sm:px-6 sm:py-24 lg:grid-cols-[1fr_560px] lg:gap-16'>
 				<section className='min-w-0'>
 					<h1 className='font-mona text-[30px] font-black leading-[0.95] text-black sm:text-[38px] sm:tracking-[-0.04em] md:text-[46px]'>
 						Account Details
@@ -452,7 +514,9 @@ export default function ShippingPage() {
 							label='Mobile Phone Number'
 							value={form.phone}
 							onChange={(value) => updateForm('phone', value)}
-							placeholder='+234'
+							placeholder='+2348012345678'
+							inputMode='tel'
+							maxLength={14}
 							required
 						/>
 					</div>
