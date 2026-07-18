@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
@@ -134,11 +135,13 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
+	await headers();
+
 	return (
 		<html
 			lang='en'
