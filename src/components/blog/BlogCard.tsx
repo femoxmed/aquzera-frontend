@@ -7,7 +7,7 @@ import { blogImage } from '@/features/blogs/api';
 export function BlogCard({ blog }: { blog: Blog }) {
 	return <Link href={`/blog/${blog.slug}`} className='group block min-w-0'>
 		<div className='relative aspect-[4/3] overflow-hidden rounded-[28px] bg-[#e9eef2]'>
-			<Image src={blogImage(blog)} alt={blog.title} fill className='object-cover transition duration-700 group-hover:scale-[1.04]' />
+			<Image src={blogImage(blog)} alt={blog.title} fill sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw' className='object-cover transition duration-700 group-hover:scale-[1.04]' />
 			<div className='absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent' />
 			<span className='absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#061927] backdrop-blur'>{blog.category}</span>
 			<span className='absolute bottom-5 right-5 flex h-11 w-11 items-center justify-center rounded-full bg-[#1229C0] text-white transition group-hover:rotate-45'><ArrowUpRight size={19} /></span>

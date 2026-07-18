@@ -82,9 +82,10 @@ export default function ProductHero({
 					src={imageSrc}
 					alt={name}
 					fill
+					sizes='100vw'
 					priority
 					unoptimized={shouldBypassImageOptimizer(imageSrc)}
-					className='object-contain object-center'
+					className='object-cover object-center'
 				/>
 
 				<div className='absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.78)_0%,rgba(0,0,0,0.52)_46%,rgba(0,0,0,0.38)_100%)]' />
@@ -196,6 +197,7 @@ export default function ProductHero({
 												src={variationImage}
 												alt={variation.label || name}
 												fill
+												sizes='96px'
 												unoptimized={shouldBypassImageOptimizer(variationImage)}
 												className='object-contain p-2'
 											/>

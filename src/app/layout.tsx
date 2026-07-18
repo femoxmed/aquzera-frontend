@@ -116,9 +116,14 @@ const monaSansWide = localFont({
 });
 
 export const metadata: Metadata = {
-	title: { default: 'Aquzera Water Solutions', template: '%s | Aquzera' },
+	metadataBase: new URL('https://aquzera.com'),
+	applicationName: 'Aquzera Water Solutions',
+	title: {
+		default: 'Aquzera Water Purifiers and Filtration Systems',
+		template: '%s | Aquzera Water Solutions',
+	},
 	description:
-		'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering. Starting from ₦200,000.',
+		'Aquzera Water Solutions provides refined water purifiers, filtration systems, installation support, and maintenance services for homes and businesses in Nigeria.',
 	keywords: [
 		'water purifier',
 		'Aquzera',
@@ -127,11 +132,58 @@ export const metadata: Metadata = {
 		'hot and cold water',
 		'Nigeria water purifier',
 	],
+	authors: [{ name: 'Aquzera Water Solutions' }],
+	creator: 'Aquzera Water Solutions',
+	publisher: 'Aquzera Water Solutions',
+	category: 'Water purification',
+	alternates: {
+		canonical: '/',
+	},
+	icons: {
+		icon: [
+			{ url: '/favicon.svg', type: 'image/svg+xml' },
+			{ url: '/icons/icon.svg', type: 'image/svg+xml' },
+		],
+		apple: [{ url: '/icons/apple-touch-icon.svg', type: 'image/svg+xml' }],
+	},
+	manifest: '/manifest.webmanifest',
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+			'max-video-preview': -1,
+		},
+	},
 	openGraph: {
-		title: 'Aquzera Water Solutions',
+		title: 'Aquzera Water Purifiers and Filtration Systems',
 		description:
-			'Aquzera Water Purifier — Advanced filtration, hot & cold always. Starting from ₦200,000.',
+			'Advanced Aquzera water purifiers with hot and cold dispensing, refined filtration, installation support, and maintenance services in Nigeria.',
+		url: 'https://aquzera.com',
+		siteName: 'Aquzera Water Solutions',
 		type: 'website',
+		locale: 'en_NG',
+		images: [
+			{
+				url: '/images/home_bg.png',
+				width: 1200,
+				height: 630,
+				alt: 'Aquzera Water Solutions purifier in a modern kitchen',
+			},
+		],
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'Aquzera Water Purifiers and Filtration Systems',
+		description:
+			'Advanced Aquzera water purifiers, filtration systems, installation support, and maintenance services in Nigeria.',
+		images: ['/images/home_bg.png'],
+	},
+	other: {
+		'theme-color': '#061927',
 	},
 };
 
@@ -140,7 +192,8 @@ export default async function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	await headers();
+	const requestHeaders = await headers();
+	const nonce = requestHeaders.get('x-nonce') || undefined;
 
 	return (
 		<html
@@ -149,6 +202,50 @@ export default async function RootLayout({
 			suppressHydrationWarning={true}>
 			<head>
 				<link rel='preconnect' href='https://cdn.jsdelivr.net' />
+				<script
+					nonce={nonce}
+					suppressHydrationWarning
+					type='application/ld+json'
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify({
+							'@context': 'https://schema.org',
+							'@type': 'Organization',
+							name: 'Aquzera Water Solutions',
+							url: 'https://aquzera.com',
+							logo: 'https://aquzera.com/icons/icon.svg',
+							email: 'info@aquzera.com',
+							sameAs: [
+								'https://instagram.com/aquzeranigeria',
+							],
+							contactPoint: [
+								{
+									'@type': 'ContactPoint',
+									telephone: '+2349062024004',
+									contactType: 'customer support',
+									areaServed: 'NG',
+									availableLanguage: ['English'],
+								},
+							],
+						}),
+					}}
+				/>
+				<script
+					nonce={nonce}
+					suppressHydrationWarning
+					type='application/ld+json'
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify({
+							'@context': 'https://schema.org',
+							'@type': 'WebSite',
+							name: 'Aquzera Water Solutions',
+							url: 'https://aquzera.com',
+							publisher: {
+								'@type': 'Organization',
+								name: 'Aquzera Water Solutions',
+							},
+						}),
+					}}
+				/>
 			</head>
 			<body className={monaSans.variable}>
 				<QueryProvider>

@@ -185,6 +185,7 @@ export default function AquzeraProductItem({
 												src={variationImage}
 												alt={variation.label || cartName}
 												fill
+												sizes='96px'
 												unoptimized={shouldBypassImageOptimizer(variationImage)}
 												className='object-contain p-2'
 											/>

@@ -76,6 +76,7 @@ export default function ProductOverview({
 						src={displayImage}
 						alt={name}
 						fill
+						sizes='(max-width: 640px) 280px, (max-width: 768px) 340px, 450px'
 						unoptimized={shouldBypassImageOptimizer(displayImage)}
 						className='object-contain'
 					/>

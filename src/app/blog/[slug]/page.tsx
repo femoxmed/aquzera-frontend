@@ -41,7 +41,7 @@ export default function BlogDetailPage() {
 					</div>
 				</div>
 			</header>
-			{blog.bannerImage?.url && <div className='container -mt-1 py-10 md:py-14'><div className='relative aspect-[16/8] overflow-hidden rounded-[30px] md:rounded-[46px]'><Image src={blog.bannerImage.url} alt={blog.title} fill priority unoptimized={shouldBypassImageOptimizer(blog.bannerImage.url)} className='object-cover' /></div></div>}
+			{blog.bannerImage?.url && <div className='container -mt-1 py-10 md:py-14'><div className='relative aspect-[16/8] overflow-hidden rounded-[30px] md:rounded-[46px]'><Image src={blog.bannerImage.url} alt={blog.title} fill sizes='(max-width: 1280px) 100vw, 1120px' priority unoptimized={shouldBypassImageOptimizer(blog.bannerImage.url)} className='object-cover' /></div></div>}
 			<div className='container'>
 				<div className='mx-auto max-w-3xl py-8'>
 					{paragraphs.map((paragraph, index) => <p key={index} className={`mb-7 font-montserrat text-[17px] leading-[1.9] text-[#303840] ${index === 0 ? 'first-letter:float-left first-letter:mr-3 first-letter:font-mona-wide first-letter:text-7xl first-letter:font-bold first-letter:leading-[.8] first-letter:text-[#1229C0]' : ''}`}>{paragraph}</p>)}
@@ -56,7 +56,7 @@ export default function BlogDetailPage() {
 					{blog.relatedProducts.map((product) => {
 						const image = productImageUrl(product);
 						return <Link key={product.id} href={`/product/${productSlug(product)}`} className='group rounded-[28px] bg-white p-4 text-[#061927]'>
-						<div className='relative aspect-square overflow-hidden rounded-[20px] bg-[#edf1f3]'><Image src={image} alt={product.name} fill unoptimized={shouldBypassImageOptimizer(image)} className='object-contain p-6 transition group-hover:scale-105' /></div>
+						<div className='relative aspect-square overflow-hidden rounded-[20px] bg-[#edf1f3]'><Image src={image} alt={product.name} fill sizes='(max-width: 640px) 100vw, 33vw' unoptimized={shouldBypassImageOptimizer(image)} className='object-contain p-6 transition group-hover:scale-105' /></div>
 						<div className='flex items-center justify-between gap-4 px-2 pb-2 pt-5'><div><h3 className='font-mona-wide text-xl font-bold'>{product.name}</h3><p className='mt-1 text-sm text-[#6a747b]'>{product.startingPriceLabel || formatStartingPrice(product.price)}</p></div><ArrowUpRight className='text-[#1229C0]' /></div>
 					</Link>;
 					})}

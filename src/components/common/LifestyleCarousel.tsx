@@ -59,6 +59,7 @@ export default function LifestyleCarousel() {
 									src={slide.image}
 									alt={slide.title}
 									fill
+									sizes='(max-width: 640px) 80vw, (max-width: 768px) 55vw, (max-width: 1024px) 42vw, 34vw'
 									className='object-cover'
 								/>
 								<div className='absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.65)_0%,transparent_55%)]' />

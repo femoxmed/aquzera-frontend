@@ -62,6 +62,7 @@ export default function InsideTheBox({
 										src={imageSrc}
 										alt={item.imageAlt || item.title}
 										fill
+										sizes='(max-width: 768px) 100vw, 33vw'
 										unoptimized={shouldBypassImageOptimizer(imageSrc)}
 										className='object-contain'
 									/>

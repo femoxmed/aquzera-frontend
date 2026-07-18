@@ -1,6 +1,12 @@
 import LegalPage from '@/components/common/LegalPage';
+import type { Metadata } from 'next';
 
-export const metadata = { title: 'Shipping & Return Policy' };
+export const metadata: Metadata = {
+	title: 'Aquzera Shipping, Installation and Return Policy',
+	description:
+		'Review Aquzera delivery, installation, damaged item, return eligibility, and support policies for water purifier orders in Nigeria.',
+	alternates: { canonical: '/shipping-policy' },
+};
 
 export default function ShippingPolicyPage() {
 	return (

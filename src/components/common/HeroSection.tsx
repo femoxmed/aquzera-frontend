@@ -82,6 +82,7 @@ export default function HeroSection() {
 				src='/images/home_bg.png'
 				alt='Family enjoying Aquzera water purifier'
 				fill
+				sizes='100vw'
 				className='object-cover object-center'
 				priority
 			/>
@@ -179,6 +180,7 @@ export default function HeroSection() {
 													'Aquzera Water Purifier'
 												}
 												fill
+												sizes='96px'
 												unoptimized={shouldBypassImageOptimizer(variationImage)}
 												className='object-contain p-2'
 											/>

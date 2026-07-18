@@ -222,6 +222,7 @@ export default function CartList() {
 												src={src}
 												alt=''
 												fill
+												sizes='(max-width: 768px) 96px, 132px'
 												unoptimized={shouldBypassImageOptimizer(src)}
 												className='object-contain p-5'
 											/>
@@ -236,6 +237,7 @@ export default function CartList() {
 											src={thumbnails[activeThumb]}
 											alt={productName}
 											fill
+											sizes='(max-width: 768px) 100vw, 50vw'
 											priority
 											unoptimized={shouldBypassImageOptimizer(
 												thumbnails[activeThumb],
@@ -264,6 +266,7 @@ export default function CartList() {
 												src={addOn.image || '/images/product_placeholder.png'}
 												alt={addOn.name}
 												fill
+												sizes='178px'
 												unoptimized={shouldBypassImageOptimizer(addOn.image)}
 												className='object-contain p-10'
 											/>
@@ -372,6 +375,7 @@ export default function CartList() {
 														src={image}
 														alt={item.name}
 														fill
+														sizes='96px'
 														unoptimized={shouldBypassImageOptimizer(image)}
 														className='object-contain p-3'
 													/>

@@ -18,6 +18,7 @@ export default function ProductDetailHero({
 				src={imageSrc}
 				alt={imageAlt}
 				fill
+				sizes='100vw'
 				priority
 				unoptimized={shouldBypassImageOptimizer(imageSrc)}
 				className='object-contain object-center opacity-70'

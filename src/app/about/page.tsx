@@ -1,6 +1,18 @@
 import Image from 'next/image';
+import type { Metadata } from 'next';
 
-export const metadata = { title: 'About Us' };
+export const metadata: Metadata = {
+	title: 'About Aquzera Water Solutions in Nigeria',
+	description:
+		'Learn how Aquzera Water Solutions designs cleaner, safer, and simpler water purification experiences for Nigerian homes and businesses.',
+	alternates: { canonical: '/about' },
+	openGraph: {
+		title: 'About Aquzera Water Solutions in Nigeria',
+		description:
+			'Aquzera Water Solutions helps homes and businesses improve everyday water access with refined purification systems and support.',
+		url: 'https://aquzera.com/about',
+	},
+};
 
 const promises = [
 	'Deliver clean, safe water',
@@ -25,6 +37,7 @@ export default function AboutPage() {
 					src='/images/home_bg.png'
 					alt='Family enjoying clean Aquzera water'
 					fill
+					sizes='100vw'
 					priority
 					className='object-cover object-center'
 				/>
@@ -48,6 +61,7 @@ export default function AboutPage() {
 						src='/images/purifier.png'
 						alt='Aquzera water purifier'
 						fill
+						sizes='(max-width: 768px) 100vw, 420px'
 						className='object-contain'
 					/>
 				</div>
@@ -102,6 +116,7 @@ export default function AboutPage() {
 								src='/images/family_sitting_drinking.png'
 								alt='Drinking clean water'
 								fill
+								sizes='(max-width: 768px) 100vw, 50vw'
 								className='object-cover object-left'
 							/>
 						</div>

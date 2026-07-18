@@ -20,6 +20,7 @@ export default function BusinessesSection() {
 						src='/images/office-business.png'
 						alt='Aquzera water purifier for businesses'
 						fill
+						sizes='(max-width: 1280px) 100vw, 1160px'
 						className='object-cover'
 					/>
 				</div>

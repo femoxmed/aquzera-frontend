@@ -11,6 +11,7 @@ export default function Footer() {
 					src='/images/footer_bg.png'
 					alt='Aquzera footer'
 					fill
+					sizes='100vw'
 					className='object-cover object-center blur-[5px] bg-black/45 backdrop-blur-sm'
 				/>
 				<div className='absolute inset-0 bg-black/65' />

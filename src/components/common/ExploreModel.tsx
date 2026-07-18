@@ -74,6 +74,7 @@ export default function ExploreModel({
 							src={displayImage}
 							alt={name}
 							fill
+							sizes='(max-width: 640px) 260px, (max-width: 768px) 310px, 350px'
 							priority
 							unoptimized={shouldBypassImageOptimizer(displayImage)}
 							className='object-contain'
@@ -162,6 +163,7 @@ export default function ExploreModel({
 						src='/images/family_sitting_drinking.png'
 						alt='Family enjoying Aquzera water purifier'
 						fill
+						sizes='(max-width: 1280px) 100vw, 1120px'
 						className='object-cover object-center'
 					/>
 				</div>

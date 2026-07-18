@@ -1,6 +1,12 @@
 import LegalPage from '@/components/common/LegalPage';
+import type { Metadata } from 'next';
 
-export const metadata = { title: 'Privacy Policy' };
+export const metadata: Metadata = {
+	title: 'Aquzera Privacy Policy and Data Protection',
+	description:
+		'Read how Aquzera Water Solutions collects, uses, and protects customer information for orders, installation, payment, and support services.',
+	alternates: { canonical: '/privacy' },
+};
 
 export default function PrivacyPage() {
 	return (

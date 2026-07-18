@@ -1,6 +1,12 @@
 import LegalPage from '@/components/common/LegalPage';
+import type { Metadata } from 'next';
 
-export const metadata = { title: 'Terms & Conditions' };
+export const metadata: Metadata = {
+	title: 'Aquzera Terms and Conditions of Service',
+	description:
+		'Read the Aquzera Water Solutions terms for products, orders, payments, installation, support, product usage, and website content.',
+	alternates: { canonical: '/terms' },
+};
 
 export default function TermsPage() {
 	return (

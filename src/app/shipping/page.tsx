@@ -228,6 +228,7 @@ function SummaryItem({
 					src={image}
 					alt={item.name}
 					fill
+					sizes='(max-width: 640px) 96px, 178px'
 					unoptimized={shouldBypassImageOptimizer(image)}
 					className='object-contain p-4 sm:p-9'
 				/>

@@ -44,6 +44,7 @@ export default function ProductFeatureItem({
 					src={imageSrc}
 					alt={imageAlt}
 					fill
+					sizes='(max-width: 768px) 100vw, 50vw'
 					unoptimized={shouldBypassImageOptimizer(imageSrc)}
 					className={imageClassName}
 				/>

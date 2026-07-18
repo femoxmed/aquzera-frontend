@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const protectedRoutes = ['/profile', '/cart', '/shipping', '/payment', '/dashboard'];
+const noIndexRoutes = [
+	'/auth',
+	'/cart',
+	'/shipping',
+	'/payment',
+	'/dashboard',
+	'/profile',
+];
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 function generateNonce() {
@@ -15,6 +23,9 @@ function generateNonce() {
 }
 
 function buildContentSecurityPolicy(nonce: string) {
+	const scriptPolicy = isDevelopment
+		? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://js.paystack.co`
+		: `script-src 'self' 'nonce-${nonce}' https://js.paystack.co`;
 	const styleElementPolicy = isDevelopment
 		? "style-src-elem 'self' 'unsafe-inline'"
 		: `style-src-elem 'self' 'nonce-${nonce}'`;
@@ -33,7 +44,7 @@ function buildContentSecurityPolicy(nonce: string) {
 		"base-uri 'self'",
 		"object-src 'none'",
 		"frame-ancestors 'none'",
-		`script-src 'self' 'nonce-${nonce}' https://js.paystack.co`,
+		scriptPolicy,
 		"style-src 'self'",
 		styleElementPolicy,
 		"style-src-attr 'unsafe-inline'",
@@ -46,7 +57,11 @@ function buildContentSecurityPolicy(nonce: string) {
 	].join('; ');
 }
 
-function applySecurityHeaders(response: NextResponse, csp: string) {
+function applySecurityHeaders(
+	response: NextResponse,
+	csp: string,
+	shouldNoIndex = false,
+) {
 	response.headers.set('Content-Security-Policy', csp);
 	response.headers.set(
 		'Strict-Transport-Security',
@@ -55,6 +70,13 @@ function applySecurityHeaders(response: NextResponse, csp: string) {
 	response.headers.set('X-Content-Type-Options', 'nosniff');
 	response.headers.set('X-Frame-Options', 'DENY');
 	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	response.headers.set(
+		'Permissions-Policy',
+		'camera=(), microphone=(), geolocation=(), payment=(self)',
+	);
+	if (shouldNoIndex) {
+		response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+	}
 	return response;
 }
 
@@ -71,13 +93,14 @@ export function proxy(request: NextRequest) {
 	const isProtected = protectedRoutes.some((route) =>
 		pathname.startsWith(route),
 	);
+	const shouldNoIndex = noIndexRoutes.some((route) => pathname.startsWith(route));
 	if (isProtected && !token && !refreshToken) {
 		const signInUrl = new URL('/auth/signin', request.url);
 		signInUrl.searchParams.set(
 			'returnTo',
 			`${request.nextUrl.pathname}${request.nextUrl.search}`,
 		);
-		return applySecurityHeaders(NextResponse.redirect(signInUrl), csp);
+		return applySecurityHeaders(NextResponse.redirect(signInUrl), csp, true);
 	}
 	return applySecurityHeaders(
 		NextResponse.next({
@@ -86,6 +109,7 @@ export function proxy(request: NextRequest) {
 			},
 		}),
 		csp,
+		shouldNoIndex,
 	);
 }
 export const config = {
