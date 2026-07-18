@@ -77,14 +77,14 @@ export default function ProductHero({
 
 	return (
 		<>
-			<section className='relative overflow-hidden h-[500px] sm:h-[600px] md:h-[700px] lg:h-[824px] min-h-[400px] sm:min-h-[450px] md:min-h-[500px] lg:min-h-[520px]'>
+			<section className='relative overflow-hidden h-[500px] sm:h-[600px] md:h-[700px] lg:h-[824px] min-h-[400px] sm:min-h-[450px] md:min-h-[500px] lg:min-h-[520px] bg-black'>
 				<Image
 					src={imageSrc}
 					alt={name}
 					fill
 					priority
 					unoptimized={shouldBypassImageOptimizer(imageSrc)}
-					className='object-cover object-center'
+					className='object-contain object-center'
 				/>
 
 				<div className='absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.78)_0%,rgba(0,0,0,0.52)_46%,rgba(0,0,0,0.38)_100%)]' />

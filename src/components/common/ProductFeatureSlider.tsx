@@ -36,7 +36,7 @@ const features: ProductFeature[] = [
 			'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.',
 		imageSrc: '/images/hot_cold.png',
 		imageAlt: 'Hot and Cold Dispense',
-		imageClassName: 'object-cover object-top',
+		imageClassName: 'object-contain object-center p-8 sm:p-10 md:p-12',
 	},
 	{
 		title: 'Water',
