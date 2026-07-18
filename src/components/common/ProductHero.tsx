@@ -202,10 +202,12 @@ export default function ProductHero({
 										</div>
 										<div className='min-w-0'>
 											<div className='flex items-center gap-2'>
-												<span
+												<svg
+													viewBox='0 0 16 16'
 													className='h-4 w-4 shrink-0 rounded-full border border-black/15'
-													style={{ backgroundColor: variation.value || '#ffffff' }}
-												/>
+													aria-hidden='true'>
+													<circle cx='8' cy='8' r='8' fill={variation.value || '#ffffff'} />
+												</svg>
 												<p className='break-words font-mona text-[16px] font-black text-black'>
 													{variation.label || 'Selected variation'}
 												</p>

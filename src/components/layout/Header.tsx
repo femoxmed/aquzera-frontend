@@ -60,10 +60,9 @@ export default function Header() {
 				{/* Logo */}
 				<Link href='/' className='flex flex-col leading-none select-none'>
 					<span
-						className={`font-mona text-[17px] font-black tracking-[0.18em] ${
+						className={`font-mona text-[17px] font-black tracking-[0.18em] [font-stretch:expanded] ${
 							usesLightHeader ? 'text-[#061927]' : 'text-white'
-						}`}
-						style={{ fontStretch: 'expanded' }}>
+						}`}>
 						AQUZERA
 					</span>
 					<span
