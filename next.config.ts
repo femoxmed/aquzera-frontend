@@ -8,7 +8,7 @@ const securityHeaders = [
 			"base-uri 'self'",
 			"object-src 'none'",
 			"frame-ancestors 'none'",
-			"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.paystack.co",
+			"script-src 'self' https://js.paystack.co",
 			"style-src 'self' 'unsafe-inline'",
 			"img-src 'self' data: blob: https: http://localhost:4000 http://127.0.0.1:4000",
 			"font-src 'self' data:",
@@ -20,7 +20,7 @@ const securityHeaders = [
 	},
 	{
 		key: 'Strict-Transport-Security',
-		value: 'max-age=86400; includeSubDomains',
+		value: 'max-age=15768000; includeSubDomains',
 	},
 	{
 		key: 'X-Content-Type-Options',
