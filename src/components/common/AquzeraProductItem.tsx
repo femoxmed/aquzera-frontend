@@ -7,6 +7,7 @@ import { X } from 'lucide-react';
 import { useAddToCart } from '@/lib/addToCart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import type { ProductColor } from '@/features/products/types';
+import ProductPriceDisplay from './ProductPriceDisplay';
 
 type AquzeraProductItemProps = {
 	imageSrc: string;
@@ -17,6 +18,8 @@ type AquzeraProductItemProps = {
 	cartId: string;
 	cartName: string;
 	cartPrice: number;
+	regularPrice?: number | null;
+	saleLabel?: string | null;
 	variations?: ProductColor[] | null;
 	learnHref?: string;
 	imageOnRight?: boolean;
@@ -31,6 +34,8 @@ export default function AquzeraProductItem({
 	cartId,
 	cartName,
 	cartPrice,
+	regularPrice,
+	saleLabel,
 	variations,
 	learnHref = '/about',
 	imageOnRight = false,
@@ -116,6 +121,17 @@ export default function AquzeraProductItem({
 
 					<p className='mt-4 sm:mt-5 md:mt-6 lg:mt-7 xl:mt-8 max-w-[350px] sm:max-w-[400px] md:max-w-[450px] lg:max-w-[500px] font-montserrat leading-[1.15] text-white/72 text-[14px] sm:text-[15px] md:text-[16px] lg:text-[18px] xl:text-[20px]'>
 						{description}
+					</p>
+
+					<p className='mt-5 font-mona text-[13px] font-black uppercase tracking-[0.2em] text-white sm:text-[15px]'>
+						<ProductPriceDisplay
+							price={cartPrice}
+							regularPrice={regularPrice}
+							saleLabel={saleLabel}
+							currentClassName='text-white'
+							regularClassName='text-white/65'
+							labelClassName='text-[#a7ff18]'
+						/>
 					</p>
 
 					<div className='mt-6 sm:mt-7 md:mt-8 lg:mt-9 xl:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-5'>

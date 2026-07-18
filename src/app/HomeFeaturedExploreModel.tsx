@@ -30,7 +30,9 @@ export default function HomeFeaturedExploreModel() {
 			slug={product.slug}
 			name={product.name}
 			price={product.price}
+			regularPrice={product.regularPrice}
 			priceLabel={priceLabel}
+			saleLabel={product.salePrice ? product.saleLabel || 'Sale' : null}
 			colors={colors || undefined}
 			specifications={product.specifications || undefined}
 			mainImage={

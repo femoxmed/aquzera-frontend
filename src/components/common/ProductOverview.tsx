@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useAddToCart } from '@/lib/addToCart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import ColorSwatch from '@/components/common/ColorSwatch';
+import ProductPriceDisplay from './ProductPriceDisplay';
 
 const COLORS = [
 	{
@@ -28,6 +29,8 @@ type ProductOverviewProps = {
 	id?: string;
 	name?: string;
 	price?: number;
+	regularPrice?: number | null;
+	saleLabel?: string | null;
 	description?: string;
 	imageSrc?: string;
 	colors?: ProductColorInput[];
@@ -37,6 +40,8 @@ export default function ProductOverview({
 	id = 'aquzera-water-purifier',
 	name = 'Aquzera Water Purifier',
 	price = 200000,
+	regularPrice,
+	saleLabel,
 	description = 'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.',
 	imageSrc = '/images/product_placeholder.png',
 	colors = COLORS.map((color) => ({
@@ -68,6 +73,17 @@ export default function ProductOverview({
 
 				<p className='mt-4 sm:mt-5 md:mt-6 max-w-[300px] sm:max-w-[360px] md:max-w-[440px] font-montserrat text-[12px] sm:text-[13px] md:text-[14px] lg:text-[15px] xl:text-[16px] leading-[1.25] text-white/55'>
 					{description}
+				</p>
+
+				<p className='mt-6 font-mona text-[13px] font-black uppercase tracking-[0.2em] text-white sm:text-[15px]'>
+					<ProductPriceDisplay
+						price={price}
+						regularPrice={regularPrice}
+						saleLabel={saleLabel}
+						currentClassName='text-white'
+						regularClassName='text-white/65'
+						labelClassName='text-[#a7ff18]'
+					/>
 				</p>
 
 				<div className='relative mt-10 sm:mt-12 md:mt-14 h-[320px] sm:h-[380px] md:h-[470px] lg:h-[520px] xl:h-[560px] w-full max-w-[280px] sm:max-w-[340px] md:max-w-[430px] lg:max-w-[450px] xl:max-w-[450px]'>

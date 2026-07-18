@@ -6,8 +6,10 @@ import Pagination from '@/components/common/Pagination';
 import ProductHero from '@/components/common/ProductHero';
 import {
 	activeProductColors,
+	isProductSaleActive,
 	productImageUrl,
 	productPrice,
+	productRegularPrice,
 	productSlug,
 } from '@/features/products/api';
 import { useProductListing } from '@/features/products/hooks';
@@ -50,6 +52,12 @@ export default function ProductListClient() {
 						undefined
 					}
 					price={productPrice(bannerProduct)}
+					regularPrice={productRegularPrice(bannerProduct)}
+					saleLabel={
+						isProductSaleActive(bannerProduct)
+							? bannerProduct.saleLabel || 'Sale'
+							: null
+					}
 					imageSrc={
 						bannerProduct.bannerImage?.url || productImageUrl(bannerProduct)
 					}
@@ -69,6 +77,10 @@ export default function ProductListClient() {
 						cartId={product.id}
 						cartName={product.name}
 						cartPrice={productPrice(product)}
+						regularPrice={productRegularPrice(product)}
+						saleLabel={
+							isProductSaleActive(product) ? product.saleLabel || 'Sale' : null
+						}
 						variations={activeProductColors(product)}
 						learnHref={`/product/${productSlug(product)}`}
 						imageOnRight={index % 2 === 1}

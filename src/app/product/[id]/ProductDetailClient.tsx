@@ -8,8 +8,10 @@ import { formatStartingPrice } from '@/lib/utils';
 import ProductSpecs from '@/components/common/ProductSpecs';
 import {
 	activeProductColors,
+	isProductSaleActive,
 	productImageUrl,
 	productPrice,
+	productRegularPrice,
 	productVariantImageUrl,
 } from '@/features/products/api';
 import { useProduct } from '@/features/products/hooks';
@@ -58,6 +60,9 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 		product.description ||
 		product.shortDescription ||
 		'Aquzera purification systems elevate your everyday hydration through advanced filtration and refined engineering.';
+	const saleLabel = isProductSaleActive(product)
+		? product.saleLabel || 'Sale'
+		: null;
 
 	return (
 		<main className='bg-white'>
@@ -65,11 +70,15 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 				imageSrc={product.bannerImage?.url || imageSrc}
 				imageAlt={product.name}
 				priceLabel={`${formatStartingPrice(productPrice(product))}*`}
+				regularPrice={productRegularPrice(product)}
+				saleLabel={saleLabel}
 			/>
 			<ProductOverview
 				id={product.id}
 				name={product.name}
 				price={productPrice(product)}
+				regularPrice={productRegularPrice(product)}
+				saleLabel={saleLabel}
 				description={description}
 				imageSrc={imageSrc}
 				colors={colors || undefined}

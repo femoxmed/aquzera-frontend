@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAddToCart } from '@/lib/addToCart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import ColorSwatch from '@/components/common/ColorSwatch';
+import ProductPriceDisplay from './ProductPriceDisplay';
 import type {
 	ProductColor,
 	ProductSpecification,
@@ -27,7 +28,9 @@ type ExploreModelProps = {
 	slug?: string;
 	name?: string;
 	price?: number;
+	regularPrice?: number | null;
 	priceLabel?: string;
+	saleLabel?: string | null;
 	colors?: ProductColor[];
 	specifications?: ProductSpecification[];
 	mainImage?: string;
@@ -38,7 +41,9 @@ export default function ExploreModel({
 	slug,
 	name = 'Aquzera Water Purifier',
 	price = 200000,
+	regularPrice,
 	priceLabel = 'Starting From ₦200,000',
+	saleLabel,
 	colors = defaultColors,
 	specifications,
 	mainImage = '/images/purifier.png',
@@ -169,7 +174,14 @@ export default function ExploreModel({
 				</div>
 
 				<p className='mt-14 text-center font-mona text-[18px] font-black uppercase tracking-[0.28em] text-[#25282d] sm:text-[22px]'>
-					{priceLabel}
+					<ProductPriceDisplay
+						price={price}
+						regularPrice={regularPrice}
+						saleLabel={saleLabel}
+						currentClassName='text-[#25282d]'
+						regularClassName='text-[#25282d]/55'
+						labelClassName='text-[#1738e6]'
+					/>
 				</p>
 			</div>
 		</section>

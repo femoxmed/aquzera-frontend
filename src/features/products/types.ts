@@ -50,6 +50,10 @@ export type Product = {
 	slug?: string;
 	sku: string;
 	price: number | string;
+	salePrice?: number | string | null;
+	saleLabel?: string | null;
+	saleStartsAt?: string | null;
+	saleEndsAt?: string | null;
 	stock: number;
 	shortDescription?: string | null;
 	description?: string | null;

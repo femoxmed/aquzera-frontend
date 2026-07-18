@@ -7,12 +7,15 @@ import { X } from 'lucide-react';
 import { useAddToCart } from '@/lib/addToCart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import type { ProductColor } from '@/features/products/types';
+import ProductPriceDisplay from './ProductPriceDisplay';
 
 type ProductHeroProps = {
 	id: string;
 	name: string;
 	description?: string;
 	price: number;
+	regularPrice?: number | null;
+	saleLabel?: string | null;
 	imageSrc: string;
 	learnHref: string;
 	priceLabel: string;
@@ -24,6 +27,8 @@ export default function ProductHero({
 	name,
 	description,
 	price,
+	regularPrice,
+	saleLabel,
 	imageSrc,
 	learnHref,
 	priceLabel,
@@ -124,7 +129,14 @@ export default function ProductHero({
 
 				<div className='absolute bottom-0 left-0 right-0 flex h-[48px] sm:h-[54px] md:h-[60px] lg:h-[66px] xl:h-[72px] items-center justify-center'>
 					<p className='font-mona font-black uppercase tracking-[0.2em] sm:tracking-[0.24em] md:tracking-[0.28em] lg:tracking-[0.32em] text-white text-[11px] sm:text-[13px] md:text-[14px] lg:text-[16px] xl:text-[18px]'>
-						{priceLabel}
+						<ProductPriceDisplay
+							price={price}
+							regularPrice={regularPrice}
+							saleLabel={saleLabel}
+							currentClassName='text-white'
+							regularClassName='text-white/70'
+							labelClassName='text-[#a7ff18]'
+						/>
 					</p>
 					<div className='flex flex-col'>
 						<svg

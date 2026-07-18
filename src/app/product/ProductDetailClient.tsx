@@ -1,7 +1,12 @@
 'use client';
 
 import { useProduct } from '@/features/products/hooks';
-import { activeProductColors, productPrice } from '@/features/products/api';
+import {
+	activeProductColors,
+	isProductSaleActive,
+	productPrice,
+	productRegularPrice,
+} from '@/features/products/api';
 import ProductDetailHero from '@/components/common/ProductDetailHero';
 import ProductOverview from '@/components/common/ProductOverview';
 import ProductFeatureSlider from '@/components/common/ProductFeatureSlider';
@@ -48,6 +53,9 @@ export default function ProductDetailClient({
 	const mainImage =
 		product.mainImage?.url || product.galleryImages?.[0]?.url || '';
 	const priceLabel = `${formatStartingPrice(productPrice(product))}*`;
+	const saleLabel = isProductSaleActive(product)
+		? product.saleLabel || 'Sale'
+		: null;
 
 	const activeColors = activeProductColors(product);
 	const colors = activeColors.map((c) => ({
@@ -86,12 +94,16 @@ export default function ProductDetailClient({
 				imageSrc={heroImage}
 				imageAlt={product.name}
 				priceLabel={priceLabel}
+				regularPrice={productRegularPrice(product)}
+				saleLabel={saleLabel}
 			/>
 
 			<ProductOverview
 				id={product.id}
 				name={product.name}
 				price={productPrice(product)}
+				regularPrice={productRegularPrice(product)}
+				saleLabel={saleLabel}
 				description={
 					product.shortDescription || product.description || undefined
 				}
@@ -118,7 +130,9 @@ export default function ProductDetailClient({
 				id={product.id}
 				name={product.name}
 				price={productPrice(product)}
+				regularPrice={productRegularPrice(product)}
 				priceLabel={priceLabel}
+				saleLabel={saleLabel}
 				colors={activeColors || undefined}
 				specifications={product.specifications || undefined}
 				mainImage={mainImage}

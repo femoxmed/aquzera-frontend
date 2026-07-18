@@ -17,6 +17,11 @@ export type FeaturedProductItem = {
 	name: string;
 	slug?: string;
 	price: number;
+	regularPrice?: number;
+	salePrice?: number | null;
+	saleLabel?: string | null;
+	saleStartsAt?: string | null;
+	saleEndsAt?: string | null;
 	priceLabel?: string;
 	startingPriceLabel?: string | null;
 	mainImage?: string | null;
@@ -102,5 +107,37 @@ export function productSlug(product: Product) {
 }
 
 export function productPrice(product: Product) {
-	return Number(product.price || 0);
+	return productEffectivePrice(product);
+}
+
+export function productRegularPrice(product?: Product | null) {
+	return Number(product?.price || 0);
+}
+
+export function isProductSaleActive(product?: Product | null, now = new Date()) {
+	if (!product) return false;
+
+	const regularPrice = productRegularPrice(product);
+	const salePrice = Number(product.salePrice || 0);
+
+	if (!salePrice || !regularPrice || salePrice >= regularPrice) {
+		return false;
+	}
+
+	if (product.saleStartsAt && new Date(product.saleStartsAt) > now) {
+		return false;
+	}
+
+	if (product.saleEndsAt && new Date(product.saleEndsAt) < now) {
+		return false;
+	}
+
+	return true;
+}
+
+export function productEffectivePrice(product?: Product | null) {
+	if (!product) return 0;
+	return isProductSaleActive(product)
+		? Number(product.salePrice || 0)
+		: productRegularPrice(product);
 }
