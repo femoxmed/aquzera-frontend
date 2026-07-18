@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const protectedRoutes = ['/profile', '/cart', '/shipping', '/payment', '/dashboard'];
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 function generateNonce() {
 	const bytes = new Uint8Array(16);
@@ -14,6 +15,19 @@ function generateNonce() {
 }
 
 function buildContentSecurityPolicy(nonce: string) {
+	const styleElementPolicy = isDevelopment
+		? "style-src-elem 'self' 'unsafe-inline'"
+		: `style-src-elem 'self' 'nonce-${nonce}'`;
+	const connectSources = [
+		"'self'",
+		'https://api.aquzera.com',
+		'https://aquzera-api.eu-west-2.elasticbeanstalk.com',
+	];
+
+	if (isDevelopment) {
+		connectSources.push('http://localhost:4000', 'http://127.0.0.1:4000');
+	}
+
 	return [
 		"default-src 'none'",
 		"base-uri 'self'",
@@ -21,11 +35,11 @@ function buildContentSecurityPolicy(nonce: string) {
 		"frame-ancestors 'none'",
 		`script-src 'self' 'nonce-${nonce}' https://js.paystack.co`,
 		"style-src 'self'",
-		`style-src-elem 'self' 'nonce-${nonce}'`,
+		styleElementPolicy,
 		"style-src-attr 'unsafe-inline'",
 		"img-src 'self' data: blob: https:",
 		"font-src 'self' data:",
-		"connect-src 'self' https://api.aquzera.com https://aquzera-api.eu-west-2.elasticbeanstalk.com",
+		`connect-src ${connectSources.join(' ')}`,
 		"frame-src https://checkout.paystack.com https://js.paystack.co",
 		"form-action 'self' https://checkout.paystack.com",
 		"upgrade-insecure-requests",
