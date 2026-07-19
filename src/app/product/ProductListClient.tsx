@@ -61,7 +61,8 @@ export default function ProductListClient() {
 					imageSrc={
 						bannerProduct.bannerImage?.url || productImageUrl(bannerProduct)
 					}
-					learnHref={`/product/${productSlug(bannerProduct)}`}
+					purchaseHref={`/product/${productSlug(bannerProduct)}`}
+					learnHref={`/learn-more/${productSlug(bannerProduct)}`}
 					priceLabel={formatStartingPrice(productPrice(bannerProduct))}
 					variations={activeProductColors(bannerProduct)}
 				/>
@@ -82,7 +83,8 @@ export default function ProductListClient() {
 							isProductSaleActive(product) ? product.saleLabel || 'Sale' : null
 						}
 						variations={activeProductColors(product)}
-						learnHref={`/product/${productSlug(product)}`}
+						purchaseHref={`/product/${productSlug(product)}`}
+						learnHref={`/learn-more/${productSlug(product)}`}
 						imageOnRight={index % 2 === 1}
 					/>
 				))

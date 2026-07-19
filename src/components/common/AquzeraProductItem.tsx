@@ -21,6 +21,7 @@ type AquzeraProductItemProps = {
 	regularPrice?: number | null;
 	saleLabel?: string | null;
 	variations?: ProductColor[] | null;
+	purchaseHref?: string;
 	learnHref?: string;
 	imageOnRight?: boolean;
 };
@@ -37,6 +38,7 @@ export default function AquzeraProductItem({
 	regularPrice,
 	saleLabel,
 	variations,
+	purchaseHref = '/product',
 	learnHref = '/about',
 	imageOnRight = false,
 }: AquzeraProductItemProps) {
@@ -135,14 +137,14 @@ export default function AquzeraProductItem({
 					</p>
 
 					<div className='mt-6 sm:mt-7 md:mt-8 lg:mt-9 xl:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-5'>
-						<button
-							onClick={handleBuyNow}
+						<Link
+							href={purchaseHref}
 							className='inline-flex h-[50px] sm:h-[56px] md:h-[62px] lg:h-[68px] xl:h-[74px] min-w-[150px] sm:min-w-[170px] md:min-w-[185px] lg:min-w-[195px] xl:min-w-[205px] items-center justify-center bg-[#1738e6] px-5 sm:px-6 md:px-7 lg:px-8 xl:px-10 font-mona text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px] xl:text-[15px] font-black uppercase tracking-[0.24em] text-white hover:opacity-90 cursor-pointer'>
 							BUY NOW{' '}
 							<span className='ml-2 sm:ml-3 md:ml-4 text-[18px] sm:text-[20px] md:text-[24px] lg:text-[26px] xl:text-[28px]'>
 								→
 							</span>
-						</button>
+						</Link>
 
 						<Link
 							href={learnHref}

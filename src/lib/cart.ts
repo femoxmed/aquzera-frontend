@@ -12,6 +12,7 @@ export type ServerCartItem = {
 	image?: string;
 	shortDescription?: string | null;
 	slug?: string;
+	type?: 'machine' | 'filter' | 'accessory' | 'service';
 	variant?: {
 		id?: string;
 		label?: string;
@@ -194,7 +195,7 @@ export function serverCartToItems(cart: ServerCart): CartItem[] {
 		variant: item.variant,
 		description: item.shortDescription || undefined,
 		addOns: item.addOns || [],
-		type: 'machine',
+		type: item.type || 'machine',
 	}));
 }
 

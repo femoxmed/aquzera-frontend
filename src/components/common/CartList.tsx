@@ -247,18 +247,19 @@ export default function CartList() {
 												<h3 className='font-mona text-[34px] font-black leading-[0.9] tracking-[-0.05em] text-black'>
 													{addOn.name}
 												</h3>
-												<button
-													onClick={async () => {
-														const item = {
-															id: addOn.productId,
-															name: addOn.name,
-															price: addOn.price,
-															quantity: 1,
-															image: addOn.image,
-															description: addOn.shortDescription || undefined,
-														};
-														addItem(item);
-													}}
+													<button
+														onClick={async () => {
+															const item = {
+																id: addOn.productId,
+																name: addOn.name,
+																price: addOn.price,
+																quantity: 1,
+																image: addOn.image,
+																description: addOn.shortDescription || undefined,
+																type: 'accessory' as const,
+															};
+															addItem(item);
+														}}
 													className='flex h-7 w-7 items-center justify-center rounded-full bg-[#ff676f] text-sm font-black text-white'>
 													+
 												</button>

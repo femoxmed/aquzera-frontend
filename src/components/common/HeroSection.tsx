@@ -76,13 +76,7 @@ export default function HeroSection() {
 			return;
 		}
 
-		if (hasMultipleVariations) {
-			setSelectedVariationId('');
-			setIsVariationModalOpen(true);
-			return;
-		}
-
-		addFeaturedProductToCart(defaultVariation);
+		router.push(`/product/${featuredProduct.slug || featuredProduct.id}`);
 	};
 
 	return (

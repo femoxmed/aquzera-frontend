@@ -17,6 +17,7 @@ type ProductHeroProps = {
 	regularPrice?: number | null;
 	saleLabel?: string | null;
 	imageSrc: string;
+	purchaseHref: string;
 	learnHref: string;
 	priceLabel: string;
 	variations?: ProductColor[] | null;
@@ -30,6 +31,7 @@ export default function ProductHero({
 	regularPrice,
 	saleLabel,
 	imageSrc,
+	purchaseHref,
 	learnHref,
 	priceLabel,
 	variations,
@@ -108,14 +110,14 @@ export default function ProductHero({
 						) : null}
 
 						<div className='mt-5 sm:mt-6 md:mt-8 lg:mt-9 xl:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-5'>
-							<button
-								onClick={handleBuyNow}
+							<Link
+								href={purchaseHref}
 								className='inline-flex h-[44px] sm:h-[50px] md:h-[58px] lg:h-[66px] xl:h-[74px] min-w-[140px] sm:min-w-[160px] md:min-w-[180px] lg:min-w-[195px] xl:min-w-[205px] items-center justify-center bg-[#1738e6] px-4 sm:px-5 md:px-6 lg:px-7 xl:px-8 font-mona text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px] xl:text-[15px] font-black uppercase tracking-[0.24em] text-white hover:opacity-90 cursor-pointer'>
 								BUY NOW{' '}
 								<span className='ml-2 sm:ml-3 md:ml-4 text-[18px] sm:text-[20px] md:text-[24px] lg:text-[26px] xl:text-[28px]'>
 									→
 								</span>
-							</button>
+							</Link>
 
 							<Link
 								href={learnHref}

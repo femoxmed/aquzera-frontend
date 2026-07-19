@@ -63,6 +63,7 @@ export default function ExploreModel({
 	const displayImage =
 		selectedColorData?.image?.url || selectedColorData?.imageUrl || mainImage;
 	const productHref = `/product/${slug || id}`;
+	const learnMoreHref = `/learn-more/${slug || id}`;
 
 	return (
 		<section className='bg-white px-4 py-14 sm:px-6 md:py-20 lg:py-24'>
@@ -134,29 +135,13 @@ export default function ExploreModel({
 
 				{/* CTA */}
 				<div className='mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row'>
-					<button
-						onClick={() =>
-							addToCart({
-								id,
-								slug,
-								name,
-								price,
-								image: displayImage,
-								variant: selectedColorData
-									? {
-											id: selectedColorData.id,
-											label: selectedColorData.label,
-											value: selectedColorData.value,
-											imageUrl: displayImage,
-										}
-									: undefined,
-							})
-						}
-						className='inline-flex h-[58px] min-w-[175px] items-center justify-center bg-[#1738e6] px-8 font-mona text-[13px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 sm:h-[64px] sm:min-w-[205px]'>
-						BUY NOW <span className='ml-3 text-[24px] leading-none'>→</span>
-					</button>
 					<Link
 						href={productHref}
+						className='inline-flex h-[58px] min-w-[175px] items-center justify-center bg-[#1738e6] px-8 font-mona text-[13px] font-black uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 sm:h-[64px] sm:min-w-[205px]'>
+						BUY NOW <span className='ml-3 text-[24px] leading-none'>→</span>
+					</Link>
+					<Link
+						href={learnMoreHref}
 						className='inline-flex h-[58px] min-w-[175px] items-center justify-center border border-[#25282d] px-8 font-mona text-[13px] font-black uppercase tracking-[0.22em] text-[#25282d] transition-colors hover:bg-[#25282d] hover:text-white sm:h-[64px] sm:min-w-[205px]'>
 						View Details
 					</Link>

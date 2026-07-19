@@ -44,6 +44,19 @@ export type ProductBoxItem = {
 	imageAlt?: string;
 };
 
+export type ProductAddOn = {
+	productId: string;
+	name?: string;
+	slug?: string;
+	price?: number | string;
+	regularPrice?: number | string;
+	salePrice?: number | string | null;
+	saleLabel?: string | null;
+	image?: string;
+	shortDescription?: string | null;
+	isCompulsory?: boolean;
+};
+
 export type Product = {
 	id: string;
 	name: string;
@@ -62,6 +75,7 @@ export type Product = {
 	features?: ProductFeature[] | null;
 	specifications?: ProductSpecification[] | null;
 	boxItems?: ProductBoxItem[] | null;
+	addOns?: ProductAddOn[] | null;
 	status?: 'draft' | 'active' | 'archived';
 	featuredAt?: string | null;
 	sortOrder?: number;
