@@ -122,13 +122,35 @@ export async function clearServerCart() {
 }
 
 export async function mergeCart(items: CartItem[]) {
-	const { data } = await api.post<ServerCart>('/cart/merge', {
-		items: items.map((item) => ({
+	const mergeItems = items
+		.filter((item) => isUuid(item.id) && item.quantity > 0)
+		.map((item) => ({
 			productId: item.id,
 			quantity: item.quantity,
 			type: item.type || 'machine',
-			variant: item.variant,
-		})),
+			variant: item.variant
+				? {
+						id: item.variant.id,
+						label: item.variant.label,
+						value: item.variant.value,
+						imageUrl: item.variant.imageUrl,
+					}
+				: undefined,
+		}));
+
+	if (!mergeItems.length) {
+		return {
+			items: [],
+			summary: {
+				distinctItems: 0,
+				itemCount: 0,
+				subtotal: 0,
+			},
+		};
+	}
+
+	const { data } = await api.post<ServerCart>('/cart/merge', {
+		items: mergeItems,
 	});
 	return data;
 }
@@ -174,4 +196,10 @@ export function serverCartToItems(cart: ServerCart): CartItem[] {
 		addOns: item.addOns || [],
 		type: 'machine',
 	}));
+}
+
+function isUuid(value: string) {
+	return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+		value,
+	);
 }

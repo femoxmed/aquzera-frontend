@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
 import { signinSchema } from '@/lib/validators';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { cartItemsToLoginPayload, signIn, verifyAdminOtp } from '@/lib/auth';
+import { signIn, verifyAdminOtp } from '@/lib/auth';
 import { mergeCart, serverCartToItems } from '@/lib/cart';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
@@ -97,7 +97,6 @@ export default function SignInPage() {
 							const response = await signIn({
 								email: values.email,
 								password: values.password,
-								guestCartItems: cartItemsToLoginPayload(cartItems),
 							});
 
 							if ('requiresEmailVerification' in response) {
