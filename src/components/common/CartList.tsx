@@ -5,10 +5,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
+import { useAuthStore } from '@/store/authStore';
 import AnnouncementBar from '@/components/common/AnnouncementBar';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import ColorSwatch from '@/components/common/ColorSwatch';
 import { formatCurrency } from '@/lib/utils';
+import { clearServerCart, removeCartItem } from '@/lib/cart';
+import { toast } from 'sonner';
 
 const specSections = [
 	{
@@ -32,10 +35,13 @@ const specSections = [
 export default function CartList() {
 	const router = useRouter();
 	const { items, addItem, clearCart, updateQuantity } = useCartStore();
+	const accessToken = useAuthStore((state) => state.accessToken);
 
 	const [openSection, setOpenSection] = useState('general');
 	const [activeThumb, setActiveThumb] = useState(0);
 	const [activeLineKey, setActiveLineKey] = useState('');
+	const [isClearingCart, setIsClearingCart] = useState(false);
+	const [removingLineKey, setRemovingLineKey] = useState<string | null>(null);
 
 	const isEmpty = items.length === 0;
 	const cartLineKey = (item: (typeof items)[number]) =>
@@ -88,12 +94,42 @@ export default function CartList() {
 
 	const handleRemoveLine = async (item: (typeof items)[number]) => {
 		const key = variantKey(item);
-		updateQuantity(item.id, 0, key);
+		const lineKey = cartLineKey(item);
+		if (removingLineKey === lineKey) return;
+
+		setRemovingLineKey(lineKey);
+		try {
+			if (accessToken) {
+				await removeCartItem(item.id, key || undefined);
+			}
+			updateQuantity(item.id, 0, key);
+		} catch (error: any) {
+			toast.error(
+				error?.response?.data?.message ||
+					'Unable to remove this item. Please try again.',
+			);
+		} finally {
+			setRemovingLineKey(null);
+		}
 	};
 
 	const handleClearCart = async () => {
-		clearCart();
-		router.push('/product');
+		if (isClearingCart) return;
+		setIsClearingCart(true);
+		try {
+			if (accessToken) {
+				await clearServerCart();
+			}
+			clearCart();
+			router.push('/product');
+		} catch (error: any) {
+			toast.error(
+				error?.response?.data?.message ||
+					'Unable to clear your saved cart. Please try again.',
+			);
+		} finally {
+			setIsClearingCart(false);
+		}
 	};
 
 	const handleProceedToCheckout = async () => {
@@ -334,7 +370,8 @@ export default function CartList() {
 																event.stopPropagation();
 																handleRemoveLine(item);
 															}}
-															className='font-mona text-[18px] font-black text-[#252b31]'>
+															disabled={removingLineKey === key}
+															className='font-mona text-[18px] font-black text-[#252b31] disabled:cursor-not-allowed disabled:opacity-40'>
 															×
 														</button>
 													</div>
@@ -394,8 +431,9 @@ export default function CartList() {
 							<div className='flex flex-col gap-4 sm:flex-row'>
 								<button
 									onClick={handleClearCart}
-									className='inline-flex h-[66px] min-w-[180px] items-center justify-center border border-[#1f2529] px-6 font-mona text-[14px] font-black uppercase tracking-[0.22em] text-[#252b31] hover:bg-black hover:text-white'>
-									× Exit & Cancel
+									disabled={isClearingCart}
+									className='inline-flex h-[66px] min-w-[180px] items-center justify-center border border-[#1f2529] px-6 font-mona text-[14px] font-black uppercase tracking-[0.22em] text-[#252b31] hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-50'>
+									{isClearingCart ? 'Clearing...' : '× Exit & Cancel'}
 								</button>
 								<button
 									onClick={handleProceedToCheckout}

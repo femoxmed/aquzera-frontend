@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CircleHelp, UserCircle, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { checkoutCart } from '@/lib/cart';
+import { checkoutCart, removeCartItem } from '@/lib/cart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore, type CartItem } from '@/store/cartStore';
@@ -438,16 +438,26 @@ export default function ShippingPage() {
 	const handleRemoveItem = async (item: CartItem) => {
 		const key = item.variant?.id || item.variant?.label || '';
 		const lineKey = cartLineKey(item);
+		if (removingLineKey === lineKey) return;
+
 		setRemovingLineKey(lineKey);
-		removeItem(item.id, key);
+		try {
+			if (accessToken) {
+				await removeCartItem(item.id, key || undefined);
+			}
+			removeItem(item.id, key);
 
-		if (items.length <= 1) {
-			router.push('/cart');
-		}
-
-		window.setTimeout(() => {
+			if (items.length <= 1) {
+				router.push('/cart');
+			}
+		} catch (error: any) {
+			toast.error(
+				error?.response?.data?.message ||
+					'Unable to remove this item. Please try again.',
+			);
+		} finally {
 			setRemovingLineKey(null);
-		}, 150);
+		}
 	};
 
 	return (
