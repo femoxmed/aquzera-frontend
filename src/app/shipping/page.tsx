@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CircleHelp, UserCircle, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { checkoutCart, updateCartItem } from '@/lib/cart';
+import { checkoutCart, mergeCart, updateCartItem } from '@/lib/cart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore, type CartItem } from '@/store/cartStore';
@@ -403,6 +403,13 @@ export default function ShippingPage() {
 
 		setIsSubmitting(true);
 		try {
+			const syncedCart = await mergeCart(summaryItems);
+			if (!syncedCart.items.length) {
+				toast.error('Your cart is empty');
+				router.push('/cart');
+				return;
+			}
+
 			const response = await checkoutCart({
 				fullName: form.fullName,
 				email: form.email,

@@ -43,11 +43,17 @@ export default function SignInPage() {
 			);
 		}
 		if (response.cart) {
-			setCartItems(serverCartToItems(response.cart));
+			const serverItems = serverCartToItems(response.cart);
+			if (serverItems.length > 0) {
+				setCartItems(serverItems);
+			}
 		} else if (cartItems.length) {
 			const mergedCart = await mergeCart(cartItems).catch(() => null);
 			if (mergedCart) {
-				setCartItems(serverCartToItems(mergedCart));
+				const mergedItems = serverCartToItems(mergedCart);
+				if (mergedItems.length > 0) {
+					setCartItems(mergedItems);
+				}
 			}
 		}
 		toast.success('Signed in successfully');
