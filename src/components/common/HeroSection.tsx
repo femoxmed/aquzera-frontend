@@ -3,14 +3,16 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useLatestFeaturedProductItem } from '@/features/products/hooks';
-import { useAddToCart } from '@/lib/addToCart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
+import { useCartStore } from '@/store/cartStore';
 import ProductPriceDisplay from './ProductPriceDisplay';
 
 export default function HeroSection() {
 	const { data: featuredProduct } = useLatestFeaturedProductItem();
-	const addToCart = useAddToCart();
+	const router = useRouter();
+	const addItem = useCartStore((state) => state.addItem);
 	const [isVariationModalOpen, setIsVariationModalOpen] = useState(false);
 	const [selectedVariationId, setSelectedVariationId] = useState('');
 	const regularPrice = Number(
@@ -44,16 +46,17 @@ export default function HeroSection() {
 		variation?: (typeof variations)[number] | null,
 	) => {
 		if (!featuredProduct) {
-			window.location.href = '/product';
+			router.push('/product');
 			return;
 		}
 
 		const image = variation?.imageUrl || productImage;
-		addToCart({
+		addItem({
 			id: featuredProduct.id,
 			slug: featuredProduct.slug,
 			name: featuredProduct.name,
 			price: Number(featuredProduct.price) || 0,
+			quantity: 1,
 			image,
 			variant: variation
 				? {
@@ -64,11 +67,12 @@ export default function HeroSection() {
 					}
 				: undefined,
 		});
+		router.push('/cart');
 	};
 
 	const handleBuyNow = () => {
 		if (!featuredProduct) {
-			window.location.href = '/product';
+			router.push('/product');
 			return;
 		}
 

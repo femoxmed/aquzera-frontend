@@ -6,17 +6,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CircleHelp, UserCircle, X } from 'lucide-react';
 import { toast } from 'sonner';
-import {
-	checkoutCart,
-	getCart,
-	prepareCartCheckout,
-	removeCartItem,
-	serverCartToItems,
-	type CheckoutPricing,
-} from '@/lib/cart';
+import { checkoutCart } from '@/lib/cart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore, type CartItem } from '@/store/cartStore';
+import type { AuthUser } from '@/store/authStore';
 import { getMe } from '@/lib/dashboard';
 import { formatCurrency } from '@/lib/utils';
 
@@ -71,6 +65,19 @@ const NIGERIAN_STATE_CITIES: Record<string, string[]> = {
 };
 
 const NIGERIAN_STATES = Object.keys(NIGERIAN_STATE_CITIES);
+
+function getCookieValue(name: string) {
+	if (typeof document === 'undefined') return null;
+	const value =
+		document.cookie
+			.split('; ')
+			.find((row) => row.startsWith(`${name}=`))
+			?.split('=')
+			.slice(1)
+			.join('=') || null;
+
+	return value ? decodeURIComponent(value) : null;
+}
 
 function normalizeNigerianPhoneInput(value: string) {
 	const trimmed = value.trim();
@@ -267,15 +274,14 @@ export default function ShippingPage() {
 	const router = useRouter();
 	const user = useAuthStore((state) => state.user);
 	const accessToken = useAuthStore((state) => state.accessToken);
+	const hasHydrated = useAuthStore((state) => state.hasHydrated);
 	const setAuth = useAuthStore((state) => state.setAuth);
 	const items = useCartStore((state) => state.items);
-	const setItems = useCartStore((state) => state.setItems);
 	const clearCart = useCartStore((state) => state.clearCart);
 	const removeItem = useCartStore((state) => state.removeItem);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [removingLineKey, setRemovingLineKey] = useState<string | null>(null);
 	const [consent, setConsent] = useState(false);
-	const [pricing, setPricing] = useState<CheckoutPricing | null>(null);
 	const [form, setForm] = useState({
 		fullName: user?.fullName || '',
 		email: user?.email || '',
@@ -290,7 +296,7 @@ export default function ShippingPage() {
 		() => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
 		[items],
 	);
-	const totals = pricing || {
+	const totals = {
 		subtotal: fallbackSubtotal,
 		tax: 0,
 		deliveryFee: 0,
@@ -304,11 +310,37 @@ export default function ShippingPage() {
 		`${item.id}::${item.variant?.id || item.variant?.label || ''}`;
 
 	useEffect(() => {
-		if (!accessToken) return;
-		getCart()
-			.then((cart) => setItems(serverCartToItems(cart)))
+		if (!hasHydrated || (user && accessToken)) return;
+
+		const snapshot = sessionStorage.getItem('aquzera-checkout-auth');
+		if (snapshot) {
+			try {
+				const parsed = JSON.parse(snapshot) as {
+					user?: AuthUser;
+					accessToken?: string;
+					refreshToken?: string | null;
+				};
+				if (parsed.user && parsed.accessToken) {
+					setAuth(parsed.user, parsed.accessToken, parsed.refreshToken);
+					sessionStorage.removeItem('aquzera-checkout-auth');
+					return;
+				}
+			} catch {
+				sessionStorage.removeItem('aquzera-checkout-auth');
+			}
+		}
+
+		const cookieAccessToken = getCookieValue('accessToken');
+		const cookieRefreshToken = getCookieValue('refreshToken');
+		if (!cookieAccessToken) return;
+
+		useAuthStore.getState().setTokens(cookieAccessToken, cookieRefreshToken);
+		getMe()
+			.then((me) => {
+				setAuth(me, cookieAccessToken, cookieRefreshToken);
+			})
 			.catch(() => undefined);
-	}, [accessToken, setItems]);
+	}, [accessToken, hasHydrated, setAuth, user]);
 
 	useEffect(() => {
 		if (!user) return;
@@ -319,32 +351,6 @@ export default function ShippingPage() {
 			phone: user.phone || current.phone,
 		}));
 	}, [user]);
-
-	useEffect(() => {
-		if (!accessToken) return;
-
-		getMe()
-			.then((me) => {
-				setAuth(me, accessToken);
-				setForm((current) => ({
-					...current,
-					fullName: me.fullName || current.fullName,
-					email: me.email || current.email,
-					phone: me.phone || current.phone,
-				}));
-			})
-			.catch(() => undefined);
-	}, [accessToken, setAuth]);
-
-	useEffect(() => {
-		if (!accessToken) return;
-
-		prepareCartCheckout()
-			.then((response) => {
-				setPricing(response.pricing);
-			})
-			.catch(() => setPricing(null));
-	}, [accessToken, items.length]);
 
 	const updateForm = (key: keyof typeof form, value: string) => {
 		setForm((current) => {
@@ -364,6 +370,7 @@ export default function ShippingPage() {
 		event.preventDefault();
 
 		if (!accessToken) {
+			sessionStorage.setItem('aquzera-auth-return-to', '/shipping');
 			router.push('/auth/signin?returnTo=/shipping');
 			return;
 		}
@@ -434,37 +441,13 @@ export default function ShippingPage() {
 		setRemovingLineKey(lineKey);
 		removeItem(item.id, key);
 
-		try {
-			if (accessToken) {
-				const cart = await removeCartItem(item.id, key);
-				setItems(serverCartToItems(cart));
-				if (cart.items.length === 0) {
-					setPricing(null);
-					router.push('/cart');
-					return;
-				}
-			} else if (items.length <= 1) {
-				setPricing(null);
-				router.push('/cart');
-				return;
-			}
-			const response = await prepareCartCheckout();
-			setPricing(response.pricing);
-		} catch (error: any) {
-			if (accessToken) {
-				getCart()
-					.then((cart) => setItems(serverCartToItems(cart)))
-					.catch(() => undefined);
-			}
-			setPricing(null);
-			toast.error(
-				error?.response?.data?.message ||
-					error?.message ||
-					'Unable to remove item',
-			);
-		} finally {
-			setRemovingLineKey(null);
+		if (items.length <= 1) {
+			router.push('/cart');
 		}
+
+		window.setTimeout(() => {
+			setRemovingLineKey(null);
+		}, 150);
 	};
 
 	return (
@@ -476,7 +459,13 @@ export default function ShippingPage() {
 					<h1 className='font-mona text-[30px] font-black leading-[0.95] text-black sm:text-[38px] sm:tracking-[-0.04em] md:text-[46px]'>
 						Account Details
 					</h1>
-					{user ? (
+					{!hasHydrated ? (
+						<div className='mt-8 border border-[#d6d6d6] p-5 sm:mt-12 sm:p-7'>
+							<p className='font-montserrat text-[13px] leading-[1.45] text-black/70 sm:text-[15px]'>
+								Loading account details...
+							</p>
+						</div>
+					) : user ? (
 						<div className='mt-8 border border-[#d6d6d6] p-5 sm:mt-12 sm:p-7'>
 							<div className='flex items-start gap-4 sm:gap-5'>
 								<UserCircle className='mt-1 h-8 w-8 shrink-0 text-[#1738e6] sm:h-9 sm:w-9' />

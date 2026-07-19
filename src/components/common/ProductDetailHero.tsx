@@ -28,7 +28,7 @@ export default function ProductDetailHero({
 				sizes='100vw'
 				priority
 				unoptimized={shouldBypassImageOptimizer(imageSrc)}
-				className='object-contain object-center opacity-70'
+				className='object-cover object-center opacity-70'
 			/>
 			<div className='absolute inset-0 bg-black/35' />
 			<div className='absolute bottom-8 left-0 right-0 px-4 text-center sm:bottom-10 md:bottom-12'>

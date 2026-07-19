@@ -6,17 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import AnnouncementBar from '@/components/common/AnnouncementBar';
-import { useAuthStore } from '@/store/authStore';
-import {
-	addCartItem,
-	clearServerCart,
-	getCart,
-	prepareCartCheckout,
-	removeCartItem,
-	serverCartToItems,
-	updateCartItem,
-} from '@/lib/cart';
-import { toast } from 'sonner';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import ColorSwatch from '@/components/common/ColorSwatch';
 import { formatCurrency } from '@/lib/utils';
@@ -42,8 +31,7 @@ const specSections = [
 
 export default function CartList() {
 	const router = useRouter();
-	const { items, addItem, clearCart, updateQuantity, setItems } = useCartStore();
-	const accessToken = useAuthStore((state) => state.accessToken);
+	const { items, addItem, clearCart, updateQuantity } = useCartStore();
 
 	const [openSection, setOpenSection] = useState('general');
 	const [activeThumb, setActiveThumb] = useState(0);
@@ -78,14 +66,6 @@ export default function CartList() {
 	);
 
 	useEffect(() => {
-		if (!accessToken) return;
-
-		getCart()
-			.then((cart) => setItems(serverCartToItems(cart)))
-			.catch(() => undefined);
-	}, [accessToken, setItems]);
-
-	useEffect(() => {
 		if (items.length === 0) {
 			setActiveLineKey('');
 			return;
@@ -104,67 +84,19 @@ export default function CartList() {
 		const key = variantKey(item);
 
 		updateQuantity(item.id, next, key);
-		if (!accessToken) return;
-
-		try {
-			const serverCart = await updateCartItem(item.id, next, key);
-			setItems(serverCartToItems(serverCart));
-		} catch (error: any) {
-			toast.error(
-				error?.response?.data?.message ||
-					error?.message ||
-					'Unable to update cart',
-			);
-		}
 	};
 
 	const handleRemoveLine = async (item: (typeof items)[number]) => {
 		const key = variantKey(item);
 		updateQuantity(item.id, 0, key);
-
-		if (!accessToken) return;
-
-		try {
-			const serverCart = await removeCartItem(item.id, key);
-			setItems(serverCartToItems(serverCart));
-		} catch (error: any) {
-			toast.error(
-				error?.response?.data?.message ||
-					error?.message ||
-					'Unable to remove item',
-			);
-		}
 	};
 
 	const handleClearCart = async () => {
 		clearCart();
-		if (accessToken) {
-			await clearServerCart().catch(() => undefined);
-		}
 		router.push('/product');
 	};
 
 	const handleProceedToCheckout = async () => {
-		if (accessToken) {
-			try {
-				const response = await prepareCartCheckout();
-				sessionStorage.setItem(
-					'aquzera-checkout',
-					JSON.stringify({
-						pricing: response.pricing,
-						order: response.order,
-					}),
-				);
-			} catch (error: any) {
-				toast.error(
-					error?.response?.data?.message ||
-						error?.message ||
-						'Unable to prepare checkout',
-				);
-				return;
-			}
-		}
-
 		router.push('/shipping');
 	};
 
@@ -290,10 +222,6 @@ export default function CartList() {
 															description: addOn.shortDescription || undefined,
 														};
 														addItem(item);
-														if (accessToken) {
-															const serverCart = await addCartItem(item);
-															setItems(serverCartToItems(serverCart));
-														}
 													}}
 													className='flex h-7 w-7 items-center justify-center rounded-full bg-[#ff676f] text-sm font-black text-white'>
 													+

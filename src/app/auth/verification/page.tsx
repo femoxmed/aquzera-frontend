@@ -23,8 +23,14 @@ export default function VerificationPage() {
 		(state) => state.setPendingVerificationEmail,
 	);
 	const email = searchParams.get('email') || pendingVerificationEmail || '';
-	const returnTo = searchParams.get('returnTo') || '/dashboard';
+	const queryReturnTo = searchParams.get('returnTo');
+	const [storedReturnTo, setStoredReturnTo] = useState<string | null>(null);
+	const returnTo = queryReturnTo || storedReturnTo || '/dashboard';
 	const verificationCode = code.join('');
+
+	useEffect(() => {
+		setStoredReturnTo(sessionStorage.getItem('aquzera-auth-return-to'));
+	}, []);
 
 	useEffect(() => {
 		if (!email) {
@@ -53,14 +59,32 @@ export default function VerificationPage() {
 
 		setIsSubmitting(true);
 		try {
+			const finalReturnTo =
+				searchParams.get('returnTo') ||
+				sessionStorage.getItem('aquzera-auth-return-to') ||
+				returnTo;
 			const response = await verifyEmail({ email, code: verificationCode });
 			setAuth(response.user, response.accessToken, response.refreshToken);
+			if (finalReturnTo.startsWith('/shipping')) {
+				sessionStorage.setItem(
+					'aquzera-checkout-auth',
+					JSON.stringify({
+						user: response.user,
+						accessToken: response.accessToken,
+						refreshToken: response.refreshToken,
+					}),
+				);
+			}
 			if (typeof setPendingVerificationEmail === 'function') {
 				setPendingVerificationEmail(null);
 			}
 			toast.success('Account verified');
-			router.push(returnTo);
-			router.refresh();
+			sessionStorage.removeItem('aquzera-auth-return-to');
+			if (finalReturnTo.startsWith('/shipping')) {
+				window.location.replace(finalReturnTo);
+				return;
+			}
+			router.replace(finalReturnTo);
 		} catch (error: any) {
 			console.error('Verify account failed', error);
 			toast.error(

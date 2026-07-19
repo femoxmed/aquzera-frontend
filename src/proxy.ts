@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const protectedRoutes = ['/profile', '/cart', '/shipping', '/payment', '/dashboard'];
+const protectedRoutes = ['/profile', '/dashboard'];
 const noIndexRoutes = [
 	'/auth',
 	'/cart',

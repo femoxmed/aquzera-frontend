@@ -18,6 +18,12 @@ type EmailVerificationRequiredResponse = {
 	message?: string;
 };
 
+type OtpRequiredResponse = {
+	requiresOtp: true;
+	email: string;
+	message?: string;
+};
+
 type RegisterResponse = {
 	accessToken?: string;
 	refreshToken?: string;
@@ -43,10 +49,13 @@ type SignInPayload = {
 
 export async function signIn(payload: SignInPayload) {
 	const { data } = await api.post<
-		AuthResponse | EmailVerificationRequiredResponse
+		AuthResponse | EmailVerificationRequiredResponse | OtpRequiredResponse
 	>('/auth/login', payload);
-	if ('requiresEmailVerification' in data) {
+	if ('requiresEmailVerification' in data || 'requiresOtp' in data) {
 		return data;
+	}
+	if (!data.accessToken || !data.user) {
+		throw new Error('Login succeeded but no session was returned.');
 	}
 	setAuthCookies(data.accessToken, data.refreshToken);
 	return data;
@@ -74,6 +83,12 @@ export async function resendVerification(email: string) {
 	return postAuthJson<{ message: string }>('/auth/resend-verification', {
 		email,
 	});
+}
+
+export async function verifyAdminOtp(payload: { email: string; code: string }) {
+	const data = await postAuthJson<AuthResponse>('/auth/verify-admin-otp', payload);
+	setAuthCookies(data.accessToken, data.refreshToken);
+	return data;
 }
 
 export async function forgotPassword(email: string) {
