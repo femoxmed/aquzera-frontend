@@ -4,7 +4,6 @@ import { API_BASE_URL, normalizeMediaUrls } from '@/lib/media-url';
 
 export const api = axios.create({
 	baseURL: API_BASE_URL,
-	withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
@@ -78,7 +77,6 @@ async function requestRefreshToken() {
 	}>(
 		`${api.defaults.baseURL}/auth/refresh`,
 		{ refreshToken },
-		{ withCredentials: true },
 	);
 
 	const nextRefreshToken = response.data.refreshToken ?? refreshToken;

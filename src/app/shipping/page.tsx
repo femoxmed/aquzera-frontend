@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CircleHelp, UserCircle, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { checkoutCart, removeCartItem } from '@/lib/cart';
+import { checkoutCart, updateCartItem } from '@/lib/cart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore, type CartItem } from '@/store/cartStore';
@@ -443,7 +443,7 @@ export default function ShippingPage() {
 		setRemovingLineKey(lineKey);
 		try {
 			if (accessToken) {
-				await removeCartItem(item.id, key || undefined);
+				await updateCartItem(item.id, 0, key || undefined);
 			}
 			removeItem(item.id, key);
 

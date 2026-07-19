@@ -24,8 +24,8 @@ function generateNonce() {
 
 function buildContentSecurityPolicy(nonce: string, allowDevelopmentRuntime: boolean) {
 	const scriptPolicy = allowDevelopmentRuntime
-		? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://js.paystack.co`
-		: `script-src 'self' 'nonce-${nonce}' https://js.paystack.co`;
+		? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' blob: https://js.paystack.co`
+		: `script-src 'self' 'nonce-${nonce}' blob: https://js.paystack.co`;
 	const styleElementPolicy = allowDevelopmentRuntime
 		? "style-src-elem 'self' 'unsafe-inline'"
 		: `style-src-elem 'self' 'nonce-${nonce}'`;

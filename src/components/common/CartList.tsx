@@ -10,7 +10,7 @@ import AnnouncementBar from '@/components/common/AnnouncementBar';
 import { shouldBypassImageOptimizer } from '@/lib/images';
 import ColorSwatch from '@/components/common/ColorSwatch';
 import { formatCurrency } from '@/lib/utils';
-import { clearServerCart, removeCartItem } from '@/lib/cart';
+import { clearServerCart, updateCartItem } from '@/lib/cart';
 import { toast } from 'sonner';
 
 const specSections = [
@@ -100,7 +100,7 @@ export default function CartList() {
 		setRemovingLineKey(lineKey);
 		try {
 			if (accessToken) {
-				await removeCartItem(item.id, key || undefined);
+				await updateCartItem(item.id, 0, key || undefined);
 			}
 			updateQuantity(item.id, 0, key);
 		} catch (error: any) {

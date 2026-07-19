@@ -32,7 +32,6 @@ import {
 	createMyPaymentIntent,
 	createMyTicket,
 	getMyTicketMessages,
-	getOrderItems,
 	getMe,
 	getMyInvoices,
 	getMyOrders,
@@ -505,51 +504,68 @@ export default function DashboardPage() {
 
 		let isMounted = true;
 		setIsLoading(true);
-		Promise.all([
-			getMe(),
-			getMyOrders(),
-			getMyPurchasedDevices(),
-			getMyServiceBookings(),
-			getMyInvoices(),
-			getMyTickets(),
-		])
-			.then(async ([me, orderRows, productRows, bookingRows, invoiceRows, ticketRows]) => {
-				if (!isMounted) return;
-				const ticketsWithMessages = await Promise.all(
-					ticketRows.map((ticket) =>
-						getMyTicketMessages(ticket.id).catch(() => ticket),
-					),
-				);
+		(async () => {
+			try {
+				const me = await getMe();
 				if (!isMounted) return;
 				const currentAccessToken = useAuthStore.getState().accessToken;
 				if (currentAccessToken) setAuth(me, currentAccessToken);
 				setAccountForm({ fullName: me.fullName || '', phone: me.phone || '' });
-				const orderItems = await Promise.all(
-					orderRows.map((order) =>
-						getOrderItems(order.id)
-							.then((items) => [order.id, items] as const)
-							.catch(() => [order.id, order.items ?? []] as const),
-					),
+
+				if (activeTab === 'products') {
+					const productRows = await getMyPurchasedDevices();
+					if (!isMounted) return;
+					setProducts(productRows);
+					return;
+				}
+
+				if (activeTab === 'orders') {
+					const [orderRows, invoiceRows] = await Promise.all([
+						getMyOrders(),
+						getMyInvoices().catch(() => []),
+					]);
+					if (!isMounted) return;
+					setOrders(orderRows);
+					setOrderItemsByOrderId(
+						Object.fromEntries(
+							orderRows.map((order) => [order.id, order.items ?? []]),
+						),
+					);
+					setInvoices(invoiceRows);
+					return;
+				}
+
+				if (activeTab === 'schedules') {
+					const bookingRows = await getMyServiceBookings();
+					if (!isMounted) return;
+					setBookings(bookingRows);
+					return;
+				}
+
+				if (activeTab === 'tickets') {
+					const ticketRows = await getMyTickets();
+					if (!isMounted) return;
+					const ticketsWithMessages = await Promise.all(
+						ticketRows.map((ticket) =>
+							getMyTicketMessages(ticket.id).catch(() => ticket),
+						),
+					);
+					if (!isMounted) return;
+					setTickets(ticketsWithMessages);
+				}
+			} catch (error: any) {
+				toast.error(
+					error?.response?.data?.message || 'Unable to load dashboard',
 				);
-				if (!isMounted) return;
-				setOrders(orderRows);
-				setOrderItemsByOrderId(Object.fromEntries(orderItems));
-				setProducts(productRows);
-				setBookings(bookingRows);
-				setInvoices(invoiceRows);
-				setTickets(ticketsWithMessages);
-			})
-			.catch((error: any) => {
-				toast.error(error?.response?.data?.message || 'Unable to load dashboard');
-			})
-			.finally(() => {
+			} finally {
 				if (isMounted) setIsLoading(false);
-			});
+			}
+		})();
 
 		return () => {
 			isMounted = false;
 		};
-	}, [accessToken, hasHydrated, refreshToken, router, setAuth]);
+	}, [accessToken, activeTab, hasHydrated, pathname, refreshToken, router, setAuth]);
 
 	const handleLogout = () => {
 		clearAuthSession();
@@ -645,15 +661,10 @@ export default function DashboardPage() {
 
 	const refreshOrders = async () => {
 		const orderRows = await getMyOrders();
-		const orderItems = await Promise.all(
-			orderRows.map((order) =>
-				getOrderItems(order.id)
-					.then((items) => [order.id, items] as const)
-					.catch(() => [order.id, order.items ?? []] as const),
-			),
-		);
 		setOrders(orderRows);
-		setOrderItemsByOrderId(Object.fromEntries(orderItems));
+		setOrderItemsByOrderId(
+			Object.fromEntries(orderRows.map((order) => [order.id, order.items ?? []])),
+		);
 	};
 
 	const payPendingOrder = async (order: DashboardOrder) => {
