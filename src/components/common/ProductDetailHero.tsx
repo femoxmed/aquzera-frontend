@@ -31,7 +31,7 @@ export default function ProductDetailHero({
 				className='object-contain object-center opacity-70'
 			/>
 			<div className='absolute inset-0 bg-black/35' />
-			<div className='absolute bottom-6 sm:bottom-7 md:bottom-8 left-0 right-0 text-center'>
+			<div className='absolute bottom-8 left-0 right-0 px-4 text-center sm:bottom-10 md:bottom-12'>
 				<p className='font-mona text-[11px] sm:text-[13px] md:text-[14px] lg:text-[16px] xl:text-[18px] font-black uppercase tracking-[0.22em] sm:tracking-[0.24em] md:tracking-[0.28em] text-white'>
 					<ProductPriceDisplay
 						price={currentPrice}

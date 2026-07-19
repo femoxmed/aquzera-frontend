@@ -95,7 +95,7 @@ export default function ProductHero({
 
 				<div className='absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.78)_0%,rgba(0,0,0,0.52)_46%,rgba(0,0,0,0.38)_100%)]' />
 
-				<div className='relative z-10 mx-auto flex h-full max-w-[1500px] items-center px-4 sm:px-6 md:px-8 lg:px-10 xl:px-16 pt-8 sm:pt-10 md:pt-12'>
+				<div className='relative z-10 mx-auto flex h-full max-w-[1500px] items-center px-4 pb-24 pt-8 sm:px-6 sm:pb-28 sm:pt-10 md:px-8 md:pb-32 md:pt-12 lg:px-10 lg:pb-36 xl:px-16'>
 					<div className='max-w-[280px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[480px] xl:max-w-[520px]'>
 						<h1 className='font-mona-wide font-bold leading-[0.95] tracking-[-0.04em] text-white text-[28px] sm:text-[34px] md:text-[44px] lg:text-[52px] xl:text-[62px]'>
 							{name}
@@ -127,7 +127,7 @@ export default function ProductHero({
 					</div>
 				</div>
 
-				<div className='absolute bottom-0 left-0 right-0 flex h-[48px] sm:h-[54px] md:h-[60px] lg:h-[66px] xl:h-[72px] items-center justify-center'>
+				<div className='absolute bottom-5 left-0 right-0 flex min-h-[48px] items-center justify-center px-4 sm:bottom-7 sm:min-h-[54px] md:bottom-8 md:min-h-[60px] lg:min-h-[66px] xl:min-h-[72px]'>
 					<p className='font-mona font-black uppercase tracking-[0.2em] sm:tracking-[0.24em] md:tracking-[0.28em] lg:tracking-[0.32em] text-white text-[11px] sm:text-[13px] md:text-[14px] lg:text-[16px] xl:text-[18px]'>
 						<ProductPriceDisplay
 							price={price}

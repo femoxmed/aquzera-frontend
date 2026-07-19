@@ -4,16 +4,21 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { useLatestFeaturedProductItem } from '@/features/products/hooks';
-import { formatStartingPrice } from '@/lib/utils';
 import { useAddToCart } from '@/lib/addToCart';
 import { shouldBypassImageOptimizer } from '@/lib/images';
+import ProductPriceDisplay from './ProductPriceDisplay';
 
 export default function HeroSection() {
 	const { data: featuredProduct } = useLatestFeaturedProductItem();
 	const addToCart = useAddToCart();
 	const [isVariationModalOpen, setIsVariationModalOpen] = useState(false);
 	const [selectedVariationId, setSelectedVariationId] = useState('');
-	const priceLabel = formatStartingPrice(featuredProduct?.price ?? 200000);
+	const regularPrice = Number(
+		featuredProduct?.regularPrice || featuredProduct?.price || 200000,
+	);
+	const saleLabel = featuredProduct?.salePrice
+		? featuredProduct.saleLabel || 'Sale'
+		: null;
 	const variations = useMemo(
 		() =>
 			(featuredProduct?.colors || []).filter(
@@ -88,7 +93,7 @@ export default function HeroSection() {
 			/>
 			<div className='absolute inset-0 bg-[linear-gradient(100deg,rgba(0,0,0,0.78)_0%,rgba(0,0,0,0.45)_45%,rgba(0,0,0,0.10)_100%)]' />
 
-			<div className='absolute inset-0 flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-30'>
+			<div className='absolute inset-0 flex flex-col justify-center px-4 pb-24 pt-12 sm:px-6 sm:pb-28 md:px-12 md:pb-32 lg:px-30 lg:pb-36'>
 				<h1 className='font-mona-wide font-bold text-white leading-[1.02] text-[clamp(2rem,5vw,3.6rem)] sm:text-[clamp(2.5rem,5vw,3.6rem)] lg:text-[clamp(4.4rem,5vw,3.6rem)]'>
 					Aquzera
 					<br />
@@ -108,9 +113,16 @@ export default function HeroSection() {
 				</div>
 			</div>
 
-			<div className='absolute flex flex-col bottom-0 left-0 right-0 items-center justify-center gap-2 sm:gap-3 py-2 sm:py-3'>
+			<div className='absolute bottom-5 left-0 right-0 flex flex-col items-center justify-center gap-2 px-4 sm:bottom-7 sm:gap-3 md:bottom-8'>
 				<span className='font-mona text-white font-semibold text-[14px] sm:text-[18px] md:text-[22px] lg:text-[25px] leading-[110%] tracking-[0.12em] sm:tracking-[0.15em]'>
-					{priceLabel}
+					<ProductPriceDisplay
+						price={featuredProduct?.price ?? 200000}
+						regularPrice={regularPrice}
+						saleLabel={saleLabel}
+						currentClassName='text-white'
+						regularClassName='text-white/70'
+						labelClassName='text-[#a7ff18]'
+					/>
 				</span>
 				<svg
 					width='16'
