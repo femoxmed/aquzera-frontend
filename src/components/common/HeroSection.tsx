@@ -103,11 +103,11 @@ export default function HeroSection() {
 				</p>
 				<div className='mt-8'>
 					<button
-						type='button'
-						onClick={handleBuyNow}
-						className='inline-flex font-mona justify-center items-center gap-3 font-bold tracking-[0.18em] text-white text-sm sm:text-base px-5 sm:px-7 py-3 sm:py-[14px] h-[56px] sm:h-[66px] lg:h-[76px] w-[180px] sm:w-[200px] lg:w-[225px] bg-[#1229C0] hover:opacity-90 transition-opacity cursor-pointer'>
-						BUY NOW &nbsp;→
-					</button>
+							type='button'
+							onClick={handleBuyNow}
+							className='inline-flex font-mona justify-center items-center gap-3 font-bold tracking-[0.18em] text-white text-[21px] px-5 sm:px-7 py-3 sm:py-[14px] h-[56px] sm:h-[66px] lg:h-[76px] w-[180px] sm:w-[200px] lg:w-[225px] bg-[#1229C0] hover:opacity-90 transition-opacity cursor-pointer'>
+							BUY NOW &nbsp;→
+						</button>
 				</div>
 			</div>
 
