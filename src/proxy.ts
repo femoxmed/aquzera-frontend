@@ -21,9 +21,6 @@ function generateNonce() {
 }
 
 function buildContentSecurityPolicy(nonce: string, allowDevelopmentRuntime: boolean) {
-	const scriptPolicy = allowDevelopmentRuntime
-		? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' blob: https://js.paystack.co`
-		: `script-src 'self' 'nonce-${nonce}' blob: https://js.paystack.co`;
 	const styleElementPolicy = allowDevelopmentRuntime
 		? "style-src-elem 'self' 'unsafe-inline'"
 		: `style-src-elem 'self' 'nonce-${nonce}'`;
@@ -48,7 +45,7 @@ function buildContentSecurityPolicy(nonce: string, allowDevelopmentRuntime: bool
 		"base-uri 'self'",
 		"object-src 'none'",
 		"frame-ancestors 'none'",
-		scriptPolicy,
+		`script-src 'self' 'nonce-${nonce}' blob: https://js.paystack.co`,
 		"style-src 'self'",
 		styleElementPolicy,
 		"style-src-attr 'unsafe-inline'",
@@ -57,7 +54,7 @@ function buildContentSecurityPolicy(nonce: string, allowDevelopmentRuntime: bool
 		`connect-src ${connectSources.join(' ')}`,
 		"manifest-src 'self'",
 		"frame-src https://checkout.paystack.com https://js.paystack.co",
-		"form-action 'self' https://checkout.paystack.com",
+		"form-action 'self'",
 		'block-all-mixed-content',
 		"upgrade-insecure-requests",
 	].join('; ');
