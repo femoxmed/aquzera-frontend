@@ -63,12 +63,7 @@ export default function LifestyleCarousel() {
 									className='object-cover'
 								/>
 								<div className='absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.65)_0%,transparent_55%)]' />
-								<button
-									className='w-[35px] h-[35px] sm:w-[45px] sm:h-[45px] md:w-[60px] md:h-[60px] lg:w-[73px] lg:h-[73px] bg-[#1229C0] text-[16px] sm:text-[20px] md:text-[28px] lg:text-[35px] absolute top-2 sm:top-3 right-2 sm:right-3 flex items-center justify-center rounded-full text-white shadow-lg'
-									onClick={(e) => e.stopPropagation()}>
-									+
-								</button>
-								<div className='absolute w-full h-[60px] sm:h-[80px] lg:h-[100px] bottom-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.5)_0%,rgba(30,30,30,0.7)_65.75%)] flex items-center px-4 sm:px-6 lg:px-10'>
+									<div className='absolute w-full h-[60px] sm:h-[80px] lg:h-[100px] bottom-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.5)_0%,rgba(30,30,30,0.7)_65.75%)] flex items-center px-4 sm:px-6 lg:px-10'>
 									<p className='text-white font-bold leading-snug whitespace-pre-line text-sm sm:text-base lg:text-lg'>
 										{slide.title}
 									</p>

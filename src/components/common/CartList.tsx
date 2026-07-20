@@ -168,10 +168,15 @@ export default function CartList() {
 
 	return (
 		<>
-			{/* <AnnouncementBar /> */}
-			<section className='bg-white pt-[120px] lg:pt-[140px]'>
-				<div className='mx-auto max-w-[1280px] px-5 pb-20 sm:px-8 lg:px-10 xl:px-0'>
-					<div className='grid gap-14 lg:grid-cols-2 lg:gap-20'>
+				{/* <AnnouncementBar /> */}
+				<section className='bg-white pt-[120px] lg:pt-[140px]'>
+					<div className='mx-auto max-w-[1280px] px-5 pb-20 sm:px-8 lg:px-10 xl:px-0'>
+						<header className='mb-10 text-center'>
+							<h1 className='font-mona-wide text-[34px] font-black leading-none tracking-[-0.04em] text-black sm:text-[46px] lg:text-[58px]'>
+								My Cart
+							</h1>
+						</header>
+						<div className='grid gap-14 lg:grid-cols-2 lg:gap-20'>
 						{/* LEFT */}
 						<div>
 							<div className='flex flex-col gap-8 md:flex-row md:gap-10'>
