@@ -32,10 +32,16 @@ function buildContentSecurityPolicy(nonce: string, allowDevelopmentRuntime: bool
 		'https://api.aquzera.com',
 		'https://aquzera-api.eu-west-2.elasticbeanstalk.com',
 	];
-
-	if (allowDevelopmentRuntime) {
-		connectSources.push('http://localhost:4000', 'http://127.0.0.1:4000');
-	}
+	const imageSources = [
+		"'self'",
+		'data:',
+		'blob:',
+		'https://api.aquzera.com',
+		'https://aquzera-api.eu-west-2.elasticbeanstalk.com',
+		'https://*.s3.eu-west-2.amazonaws.com',
+		'https://*.s3.amazonaws.com',
+		'https://cdn.jsdelivr.net',
+	];
 
 	return [
 		"default-src 'none'",
@@ -46,7 +52,7 @@ function buildContentSecurityPolicy(nonce: string, allowDevelopmentRuntime: bool
 		"style-src 'self'",
 		styleElementPolicy,
 		"style-src-attr 'unsafe-inline'",
-		"img-src 'self' data: blob: https:",
+		`img-src ${imageSources.join(' ')}`,
 		"font-src 'self' data:",
 		`connect-src ${connectSources.join(' ')}`,
 		"manifest-src 'self'",
