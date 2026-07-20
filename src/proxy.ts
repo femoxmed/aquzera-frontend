@@ -10,8 +10,6 @@ const noIndexRoutes = [
 	'/dashboard',
 	'/profile',
 ];
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
 function generateNonce() {
 	const bytes = new Uint8Array(16);
 	crypto.getRandomValues(bytes);
@@ -54,6 +52,7 @@ function buildContentSecurityPolicy(nonce: string, allowDevelopmentRuntime: bool
 		"manifest-src 'self'",
 		"frame-src https://checkout.paystack.com https://js.paystack.co",
 		"form-action 'self' https://checkout.paystack.com",
+		'block-all-mixed-content',
 		"upgrade-insecure-requests",
 	].join('; ');
 }
@@ -88,7 +87,7 @@ export function proxy(request: NextRequest) {
 		request.nextUrl.hostname === '127.0.0.1';
 	const csp = buildContentSecurityPolicy(
 		nonce,
-		isDevelopment || isLocalRequest,
+		isLocalRequest,
 	);
 	const requestHeaders = new Headers(request.headers);
 	requestHeaders.set('x-nonce', nonce);
